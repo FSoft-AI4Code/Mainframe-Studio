@@ -1,0 +1,56 @@
+[
+  {
+    "level": "01",
+    "name": "TRAN-CAT-RECORD",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "TRAN-CAT-KEY",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "TRAN-TYPE-CD",
+    "picture_clause": "X(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "TRAN-CAT-CD",
+    "picture_clause": "9(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-CAT-TYPE-DESC",
+    "picture_clause": "X(50)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

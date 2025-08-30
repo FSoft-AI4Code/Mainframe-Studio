@@ -1,0 +1,33 @@
+{
+  "overview": {
+    "job_name": "REPTFILE",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM efficiently facilitates job control and execution by defining job parameters and steps, such as program execution and dataset handling."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DEFINE GENERATIONDATAGROUP -\r\n   (NAME(FPTLT01.DEMO.CARDDEMO.TRANREPT) -\r\n    LIMIT(10) -\r\n   )\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

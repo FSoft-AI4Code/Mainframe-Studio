@@ -1,0 +1,221 @@
+{
+  "overview": {
+    "job_name": "CARDFILE",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The best property of JCL IBM is its ability to execute a sequence of complex job steps with precise control over data and programs, as demonstrated by the detailed execution of IDCAMS and SDSF utilities in various steps of the provided job."
+  },
+  "step_list": [
+    {
+      "step_name": "CLCIFIL",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /F CICSA,'CEMT SET FIL(CARDDAT ) CLO'\r\n /F CICSA,'CEMT SET FIL(CARDAIX ) CLO'\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP05",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DELETE FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS -\r\n          CLUSTER\r\n   IF MAXCC LE 08 THEN SET MAXCC = 0\r\n   DELETE FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.AIX -\r\n          ALTERNATEINDEX\r\n   IF MAXCC LE 08 THEN SET MAXCC = 0\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP10",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DEFINE CLUSTER (NAME(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS) -\r\n          CYLINDERS(1 5) -\r\n          VOLUMES(USER04 -\r\n          ) -\r\n          KEYS(16 0) -\r\n          RECORDSIZE(150 150) -\r\n          SHAREOPTIONS(2 3) -\r\n          ERASE -\r\n          INDEXED -\r\n          ) -\r\n          DATA (NAME(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS.DAT) -\r\n          ) -\r\n          INDEX (NAME(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS.IDX) -\r\n          )\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP15",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CARDDATA",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CARDDATA.PS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CARDDATA.PS",
+              "variable_name": "CARDDATA",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDDATA.PS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "CARDVSAM",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS",
+              "variable_name": "CARDVSAM",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   REPRO INFILE(CARDDATA) OUTFILE(CARDVSAM)\r\n"
+        }
+      ],
+      "io_statements": [
+        "CARDDATA: DSN=FPTLT01.DEMO.CARDDEMO.CARDDATA.PS\n",
+        "CARDVSAM: DSN=FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS\n"
+      ],
+      "property": "The JCL step named STEP15 executes the IDCAMS program to perform a REPRO operation, copying data from the CARDDATA PS dataset to the CARDVSAM VSAM KSDS dataset."
+    },
+    {
+      "step_name": "STEP40",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DEFINE ALTERNATEINDEX (NAME(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.AIX)-\r\n   RELATE(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS)                    -\r\n   KEYS(11 16)                                                   -\r\n   NONUNIQUEKEY                                                  -\r\n   UPGRADE                                                       -\r\n   RECORDSIZE(150,150)                                           -\r\n   VOLUMES(USER04)                                               -\r\n   CYLINDERS(5,1))                                               -\r\n   DATA (NAME(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.AIX.DAT))           -\r\n   INDEX (NAME(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.AIX.IDX))\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP50",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "  DEFINE PATH                                           -\r\n   (NAME(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.AIX.PATH)        -\r\n    PATHENTRY(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.AIX))\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP60",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   BLDINDEX                                                      -\r\n   INDATASET(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS)                 -\r\n   OUTDATASET(FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.AIX)\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "OPCIFIL",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /F CICSA,'CEMT SET FIL(CARDDAT ) OPE'\r\n /F CICSA,'CEMT SET FIL(CARDAIX ) OPE'\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

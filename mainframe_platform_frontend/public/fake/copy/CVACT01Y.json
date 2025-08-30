@@ -1,0 +1,128 @@
+[
+  {
+    "level": "01",
+    "name": "ACCOUNT-RECORD",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "ACCT-ID",
+    "picture_clause": "9(11)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-ACTIVE-STATUS",
+    "picture_clause": "X(01)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-CURR-BAL",
+    "picture_clause": "S9(10)V99",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-CREDIT-LIMIT",
+    "picture_clause": "S9(10)V99",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-CASH-CREDIT-LIMIT",
+    "picture_clause": "S9(10)V99",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-OPEN-DATE",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-EXPIRAION-DATE",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-REISSUE-DATE",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-CURR-CYC-CREDIT",
+    "picture_clause": "S9(10)V99",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-CURR-CYC-DEBIT",
+    "picture_clause": "S9(10)V99",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-ADDR-ZIP",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "ACCT-GROUP-ID",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(178)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

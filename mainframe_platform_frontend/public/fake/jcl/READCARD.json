@@ -1,0 +1,62 @@
+{
+  "overview": {
+    "job_name": "READCARD",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM allows precise control over job execution with detailed DD statements for resource allocation and file handling."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05",
+      "program_executed": "CBACT02C",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.LOADLIB" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "program_id": "CBACT02C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "CARDFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS",
+              "variable_name": "CARDFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS",
+              "program_id": "CBACT02C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB\n",
+        "CARDFILE: DSN=FPTLT01.DEMO.CARDDEMO.CARDDATA.VSAM.KSDS\n"
+      ],
+      "property": "JCL IBM allows precise control over job execution with detailed DD statements for resource allocation and file handling."
+    }
+  ]
+}

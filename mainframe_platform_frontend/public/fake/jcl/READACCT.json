@@ -1,0 +1,62 @@
+{
+  "overview": {
+    "job_name": "READACCT",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The JCL IBM job 'READACCT' executes program 'CBACT01C' with datasets 'FPTLT01.DEMO.CARDDEMO.LOADLIB' and 'FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS', directing SYSOUT and SYSPRINT to the system output."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05",
+      "program_executed": "CBACT01C",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.LOADLIB" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "program_id": "CBACT01C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "ACCTFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS",
+              "variable_name": "ACCTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS",
+              "program_id": "CBACT01C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB\n",
+        "ACCTFILE: DSN=FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS\n"
+      ],
+      "property": "The JCL IBM STEP05 executes program CBACT01C, using input datasets FPTLT01.DEMO.CARDDEMO.LOADLIB and FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS, with SYSOUT and SYSPRINT directed to the system output."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+
+dependencies:
+  enabled: false
+replicaCount: 1
+image:
+  repository: cobolmigration.azurecr.io/mainframe_platform_frontend
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 0.0.119
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+podAnnotations: {}
+service:
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: beta.mainframe-studio.fpt-aic.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+resources: {}
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+configmaps: {}

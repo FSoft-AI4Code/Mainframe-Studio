@@ -1,0 +1,33 @@
+{
+  "overview": {
+    "job_name": "DALYREJS",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The best property of JCL IBM is its ability to efficiently manage and execute batch processing tasks through detailed job control statements."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DEFINE GENERATIONDATAGROUP -\r\n   (NAME(FPTLT01.DEMO.CARDDEMO.DALYREJS) -\r\n    LIMIT(5) -\r\n    SCRATCH -\r\n   )\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

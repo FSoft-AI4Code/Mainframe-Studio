@@ -1,0 +1,164 @@
+{
+  "id": "4ec8853ab3154f088c8d6dff99ac2b42",
+  "name": "CBCUS01C",
+  "path": "DEMO.CARDDEMO.CBL/CBCUS01C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBCUS01C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": ["CVCUS01Y"],
+    "call_files": ["'CEE3ABD'::static"],
+    "summarization": "### Summary of Main Flow:\n\n1. **Start Execution**:\n   - The program begins by displaying the message \"START OF EXECUTION OF PROGRAM CBCUS01C\".\n   \n2. **Open Customer File**:\n   - The `0000-CUSTFILE-OPEN` section is performed to open the CUSTFILE-FILE. \n   - If the file opens successfully (`CUSTFILE-STATUS = '00'`), the program continues; otherwise, it handles the error by displaying an error message and calling the `Z-ABEND-PROGRAM` section.\n\n3. **Process Customer Records**:\n   - A loop runs as long as the `END-OF-FILE` indicator is 'N'.\n   - Inside this loop:\n     - `1000-CUSTFILE-GET-NEXT` is performed to read the next record from CUSTFILE-FILE.\n     - If records are successfully read (`CUSTFILE-STATUS = '00'`), it displays the records via `DISPLAY CUSTOMER-RECORD`.\n     - If the end of the file is reached (`CUSTFILE-STATUS = '10'`), `END-OF-FILE` is set to 'Y'.\n     - If a different error occurs, an error message is displayed, and the program handles it by calling the `Z-DISPLAY-IO-STATUS` and `Z-ABEND-PROGRAM` sections.\n\n4. **Close Customer File**:\n   - Upon completing the loop, `9000-CUSTFILE-CLOSE` is performed to close the CUSTFILE-FILE.\n   - Similar to the opening process, it checks if the file closes successfully. If not, it displays an error message and abends the program.\n\n5. **End Execution**:\n   - After closing the file, the program displays the message \"END OF EXECUTION OF PROGRAM CBCUS01C\" and executes the `GOBACK` statement to end the program.\n\n### Error Handling:\n- **Z-DISPLAY-IO-STATUS**: Displays detailed information about the file status.\n- **Z-ABEND-PROGRAM**: Displays an abend message and calls `CEE3ABD` to terminate the program.\n\n### Critical Tables/Files:\n- **CUSTFILE-FILE**: The main file accessed by the program, holding customer records.\n- **CUSTOMER-RECORD**: Holds the record structure for individual customer data.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "CUSTFILE-FILE",
+        "physical_name": "CUSTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "1000-CUSTFILE-GET-NEXT": {
+        "paragraph_name": "1000-CUSTFILE-GET-NEXT",
+        "section": "procedure division",
+        "paragraph_code": "1000-CUSTFILE-GET-NEXT.\n           READ CUSTFILE-FILE INTO CUSTOMER-RECORD.\n           IF  CUSTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n               DISPLAY CUSTOMER-RECORD\n           ELSE\n               IF  CUSTFILE-STATUS = '10'\n                   MOVE 16 TO APPL-RESULT\n               ELSE\n                   MOVE 12 TO APPL-RESULT\n               END-IF\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               IF  APPL-EOF\n                   MOVE 'Y' TO END-OF-FILE\n               ELSE\n                   DISPLAY 'ERROR READING CUSTOMER FILE'\n                   MOVE CUSTFILE-STATUS TO IO-STATUS\n                   PERFORM Z-DISPLAY-IO-STATUS\n                   PERFORM Z-ABEND-PROGRAM\n               END-IF\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [92, 116],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads the next record from the customer file into the CUSTOMER-RECORD.",
+          "Checks if the read operation was successful; updates the result and displays the record if successful.",
+          "If the read status is 10, sets the application result to 16; otherwise, sets it to 12.",
+          "If the application is in an OK state, the program continues without any action.",
+          "If the end of the file is reached, sets the END-OF-FILE flag to Y.",
+          "If an error occurs, displays an error message, moves the status to IO-STATUS, and performs <Z-DISPLAY-IO-STATUS> to display the read status and <Z-ABEND-PROGRAM> to terminate the program."
+        ]
+      },
+      "0000-CUSTFILE-OPEN": {
+        "paragraph_name": "0000-CUSTFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0000-CUSTFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT CUSTFILE-FILE\n           IF  CUSTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING CUSTFILE'\n               MOVE CUSTFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [118, 134],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Opens the customer file for reading.",
+          "Checks if the customer file was opened successfully; if so, sets the application result to 0, otherwise sets it to 12.",
+          "If the file open operation is successful, the program continues execution.",
+          "If there is an error opening the file, displays an error message and sets the IO status.",
+          "Calls the [IO status display process]<Z-DISPLAY-IO-STATUS> to display the current IO status.",
+          "Calls the [program abend process]<Z-ABEND-PROGRAM> to terminate the program due to the error."
+        ]
+      },
+      "9000-CUSTFILE-CLOSE": {
+        "paragraph_name": "9000-CUSTFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9000-CUSTFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE CUSTFILE-FILE\n           IF  CUSTFILE-STATUS = '00'\n               SUBTRACT APPL-RESULT FROM APPL-RESULT\n           ELSE\n               ADD 12 TO ZERO GIVING APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CUSTOMER FILE'\n               MOVE CUSTFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [136, 152],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Adds 8 to zero and stores the result in the variable APPL-RESULT.",
+          "Closes the customer file (CUSTFILE-FILE).",
+          "Checks if the file status is 00; if true, resets APPL-RESULT to zero; otherwise, adds 12 to zero.",
+          "Performs a conditional check on APPL-AOK, continues if true, otherwise displays an error message.",
+          "Moves the file status to IO-STATUS and calls the error display process <Z-DISPLAY-IO-STATUS>.",
+          "Calls the program abend process <Z-ABEND-PROGRAM> if the closing operation fails."
+        ]
+      },
+      "Z-ABEND-PROGRAM": {
+        "paragraph_name": "Z-ABEND-PROGRAM",
+        "section": "procedure division",
+        "paragraph_code": "Z-ABEND-PROGRAM.\n           DISPLAY 'ABENDING PROGRAM'\n           MOVE 0 TO TIMING\n           MOVE 999 TO ABCODE\n           CALL 'CEE3ABD'.\n\n",
+        "paragraph_lines": [154, 158],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays an abend message indicating the program is abending.",
+          "Moves 0 to the variable TIMING as part of the abend process.",
+          "Sets the variable ABCODE to 999, possibly denoting an abend code.",
+          "Calls the CEE3ABD routine to perform the abend operation."
+        ]
+      },
+      "Z-DISPLAY-IO-STATUS": {
+        "paragraph_name": "Z-DISPLAY-IO-STATUS",
+        "section": "procedure division",
+        "paragraph_code": "Z-DISPLAY-IO-STATUS.\n           IF  IO-STATUS NOT NUMERIC\n           OR  IO-STAT1 = '9'\n               MOVE IO-STAT1 TO IO-STATUS-04(1:1)\n               MOVE 0        TO TWO-BYTES-BINARY\n               MOVE IO-STAT2 TO TWO-BYTES-RIGHT\n               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           ELSE\n               MOVE '0000' TO IO-STATUS-04\n               MOVE IO-STATUS TO IO-STATUS-04(3:2)\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [161, 174],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "plaintext",
+          "Checks if the IO status is not numeric or if the first byte of IO status is 9.",
+          "If the condition is met, moves specific values to IO status fields and displays a formatted message FILE STATUS IS: NNNN.",
+          "Otherwise, sets default 0000 and the current IO status to specific fields and displays the same formatted message."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CEE3ABD",
+        "program_type": "Cobol",
+        "program_name": "CEE3ABD",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "Z-ABEND-PROGRAM",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "CVCUS01Y",
+        "program_type": "Copy",
+        "program_name": "CVCUS01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "id": "d74cbfc3658847ecb7bb40524112ab8d",
+  "name": "CBACT03C",
+  "path": "DEMO.CARDDEMO.CBL/CBACT03C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBACT03C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": ["CVACT03Y"],
+    "call_files": ["'CEE3ABD'::static"],
+    "summarization": "This COBOL program, identified as CBACT03C, manages the reading of records from a KSDS VSAM data set identified by the file name `XREFFILE-FILE`. The main flow of the program is as follows:\n\n1. **Initialization and Opening the File**:\n   - The program begins execution and displays a start message.\n   - It performs the section `0000-XREFFILE-OPEN` to initialize and open the `XREFFILE-FILE` for input.\n\n2. **Reading Records Until End-of-File**:\n   - The program enters a loop (`PERFORM UNTIL END-OF-FILE = 'Y'`) to read records continuously until the end of the file is reached.\n   - Within the loop, if the end-of-file is not yet reached (`END-OF-FILE = 'N'`), it performs the `1000-XREFFILE-GET-NEXT` section to read the next record.\n       - The current record from `XREFFILE-FILE` is stored into `CARD-XREF-RECORD`.\n       - Depending on the file status, it updates the application result and potentially displays the record.\n       - If an error occurs (indicated by `XREFFILE-STATUS` not being '00'), it handles the error and checks for end-of-file condition or abends the program if needed.\n\n3. **Closing the File**:\n   - After exiting the loop (i.e., when `END-OF-FILE = 'Y'`), it performs the `9000-XREFFILE-CLOSE` section to close the `XREFFILE-FILE`.\n       - The closure of the file is validated, and errors are managed similarly to the read operation, including potential program abend.\n\n4. **Ending Program Execution**:\n   - A closing message is displayed indicating the end of the program's execution.\n   - The program concludes with a `GOBACK`.\n\n5. **Error Handling and Auxiliary Routines**:\n   - `9999-ABEND-PROGRAM` handles program abends by displaying a message and calling an abnormal end routine.\n   - `9910-DISPLAY-IO-STATUS` provides a readable format for the file status for error diagnostics.\n\nIn summary, the primary function of this COBOL program is to read records from a KSDS VSAM file (`XREFFILE-FILE`), display them, and handle any file operation errors, terminating gracefully upon reaching the end of the file or encountering a critical error.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "XREFFILE-FILE",
+        "physical_name": "XREFFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "1000-XREFFILE-GET-NEXT": {
+        "paragraph_name": "1000-XREFFILE-GET-NEXT",
+        "section": "procedure division",
+        "paragraph_code": "1000-XREFFILE-GET-NEXT.\n           READ XREFFILE-FILE INTO CARD-XREF-RECORD.\n           IF  XREFFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n               DISPLAY CARD-XREF-RECORD\n           ELSE\n               IF  XREFFILE-STATUS = '10'\n                   MOVE 16 TO APPL-RESULT\n               ELSE\n                   MOVE 12 TO APPL-RESULT\n               END-IF\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               IF  APPL-EOF\n                   MOVE 'Y' TO END-OF-FILE\n               ELSE\n                   DISPLAY 'ERROR READING XREFFILE'\n                   MOVE XREFFILE-STATUS TO IO-STATUS\n                   PERFORM 9910-DISPLAY-IO-STATUS\n                   PERFORM 9999-ABEND-PROGRAM\n               END-IF\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [92, 116],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads the next record from XREFFILE-FILE into CARD-XREF-RECORD.",
+          "If the read operation is successful (00 status), moves 0 to APPL-RESULT and displays the record.",
+          "If the read status is 10, moves 16 to APPL-RESULT; otherwise, moves 12 to APPL-RESULT.",
+          "If APPL-AOK, continues processing; otherwise, handles end-of-file or displays an error message.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> and the [program termination process]<9999-ABEND-PROGRAM> upon read error."
+        ]
+      },
+      "0000-XREFFILE-OPEN": {
+        "paragraph_name": "0000-XREFFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0000-XREFFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT XREFFILE-FILE\n           IF  XREFFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING XREFFILE'\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [118, 134],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Opens the cross-reference file (XREFFILE-FILE) and sets the initial application result to 8.",
+          "Updates the application result to 0 if the file opens successfully; otherwise, sets it to 12.",
+          "Checks if the application status is okay (APPL-AOK); continues if true.",
+          "Displays an error message and moves the file status to IO-STATUS if the file fails to open.",
+          "Calls the [display IO status process]<9910-DISPLAY-IO-STATUS> to display the specific I/O status code.",
+          "Calls the [abend program process]<9999-ABEND-PROGRAM> to terminate the program due to the error."
+        ]
+      },
+      "9000-XREFFILE-CLOSE": {
+        "paragraph_name": "9000-XREFFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9000-XREFFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE XREFFILE-FILE\n           IF  XREFFILE-STATUS = '00'\n               SUBTRACT APPL-RESULT FROM APPL-RESULT\n           ELSE\n               ADD 12 TO ZERO GIVING APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING XREFFILE'\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [136, 152],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Closes the cross-reference file after adding 8 to APPL-RESULT.",
+          "Checks the file status, adjusting APPL-RESULT to zero if its successful or adding 12 otherwise.",
+          "Continues if the application is in an OK state, otherwise logs an error message and moves file status to IO-STATUS.",
+          "Displays the input/output status by calling <9910-DISPLAY-IO-STATUS>.",
+          "Calls the program termination routine <9999-ABEND-PROGRAM> if an error occurred."
+        ]
+      },
+      "9999-ABEND-PROGRAM": {
+        "paragraph_name": "9999-ABEND-PROGRAM",
+        "section": "procedure division",
+        "paragraph_code": "9999-ABEND-PROGRAM.\n           DISPLAY 'ABENDING PROGRAM'\n           MOVE 0 TO TIMING\n           MOVE 999 TO ABCODE\n           CALL 'CEE3ABD'.\n\n",
+        "paragraph_lines": [154, 158],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays the message ABENDING PROGRAM to the user.",
+          "Sets the TIMING variable to 0, indicating the timing measurement is stopped.",
+          "Sets the ABCODE variable to 999, which may indicate a specific type of abnormal ending or error code.",
+          "Calls the CEE3ABD subroutine to abnormally terminate the program."
+        ]
+      },
+      "9910-DISPLAY-IO-STATUS": {
+        "paragraph_name": "9910-DISPLAY-IO-STATUS",
+        "section": "procedure division",
+        "paragraph_code": "9910-DISPLAY-IO-STATUS.\n           IF  IO-STATUS NOT NUMERIC\n           OR  IO-STAT1 = '9'\n               MOVE IO-STAT1 TO IO-STATUS-04(1:1)\n               MOVE 0        TO TWO-BYTES-BINARY\n               MOVE IO-STAT2 TO TWO-BYTES-RIGHT\n               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           ELSE\n               MOVE '0000' TO IO-STATUS-04\n               MOVE IO-STATUS TO IO-STATUS-04(3:2)\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [161, 174],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the IO-STATUS is numeric or if IO-STAT1 equals 9.",
+          "If true, prepares the formatted status for display using values of IO-STAT1 and IO-STAT2.",
+          "Otherwise, prepares the default 0000 status and merges actual IO-STATUS into display string.",
+          "Displays the final status message on the screen.",
+          "Ends the current paragraph."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CEE3ABD",
+        "program_type": "Cobol",
+        "program_name": "CEE3ABD",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "9999-ABEND-PROGRAM",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "CVACT03Y",
+        "program_type": "Copy",
+        "program_name": "CVACT03Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

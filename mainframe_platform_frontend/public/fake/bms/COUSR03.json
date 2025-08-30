@@ -1,0 +1,296 @@
+{
+  "overview": {
+    "name": "COUSR03",
+    "file_name": "COUSR03",
+    "related_pgms": ["COUSR03C"]
+  },
+  "data": [
+    {
+      "name": "COUSR03",
+      "item_type": "DFHMSD",
+      "position": null,
+      "size": null,
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "COUSR3A",
+      "item_type": "DFHMDI",
+      "position": null,
+      "size": [24, 80],
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [1, 1],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Tran:",
+      "comment": ""
+    },
+    {
+      "name": "TRNNAME",
+      "item_type": "DFHMDF",
+      "position": [1, 21],
+      "size": null,
+      "length": 40,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [1, 65],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Date:",
+      "comment": ""
+    },
+    {
+      "name": "CURDATE",
+      "item_type": "DFHMDF",
+      "position": [1, 71],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "mm/dd/yy",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [2, 1],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Prog:",
+      "comment": ""
+    },
+    {
+      "name": "PGMNAME",
+      "item_type": "DFHMDF",
+      "position": [2, 21],
+      "size": null,
+      "length": 40,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [2, 65],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Time:",
+      "comment": ""
+    },
+    {
+      "name": "CURTIME",
+      "item_type": "DFHMDF",
+      "position": [2, 71],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "hh:mm:ss",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [4, 35],
+      "size": null,
+      "length": 11,
+      "attribute": "(ASKIP,BRT)",
+      "color": "NEUTRAL",
+      "initial_value": "Delete User",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [6, 6],
+      "size": null,
+      "length": 14,
+      "attribute": "(ASKIP,NORM)",
+      "color": "GREEN",
+      "initial_value": "Enter User ID:",
+      "comment": ""
+    },
+    {
+      "name": "USRIDIN",
+      "item_type": "DFHMDF",
+      "position": [6, 21],
+      "size": null,
+      "length": 8,
+      "attribute": "(FSET,IC,NORM,UNPROT)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [6, 30],
+      "size": null,
+      "length": 0,
+      "attribute": "(ASKIP,NORM)",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [8, 6],
+      "size": null,
+      "length": 70,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "***********************************************-\r\n               ***********************",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [11, 6],
+      "size": null,
+      "length": 11,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "First Name:",
+      "comment": ""
+    },
+    {
+      "name": "FNAME",
+      "item_type": "DFHMDF",
+      "position": [11, 18],
+      "size": null,
+      "length": 20,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [11, 39],
+      "size": null,
+      "length": 0,
+      "attribute": "(ASKIP,NORM)",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [13, 6],
+      "size": null,
+      "length": 10,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "Last Name:",
+      "comment": ""
+    },
+    {
+      "name": "LNAME",
+      "item_type": "DFHMDF",
+      "position": [13, 18],
+      "size": null,
+      "length": 20,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [13, 39],
+      "size": null,
+      "length": 0,
+      "attribute": "(ASKIP,NORM)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [15, 6],
+      "size": null,
+      "length": 11,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "User Type: ",
+      "comment": ""
+    },
+    {
+      "name": "USRTYPE",
+      "item_type": "DFHMDF",
+      "position": [15, 17],
+      "size": null,
+      "length": 1,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [15, 19],
+      "size": null,
+      "length": 17,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "(A=Admin, U=User)",
+      "comment": ""
+    },
+    {
+      "name": "ERRMSG",
+      "item_type": "DFHMDF",
+      "position": [23, 1],
+      "size": null,
+      "length": 78,
+      "attribute": "(ASKIP,BRT,FSET)",
+      "color": "RED",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [24, 1],
+      "size": null,
+      "length": 58,
+      "attribute": "(ASKIP,NORM)",
+      "color": "YELLOW",
+      "initial_value": "ENTER=Fetch  F3=Back  F4=Clear  F5=Delete",
+      "comment": ""
+    }
+  ],
+  "screen_string": "Tran:               XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Date: mm/dd/yy  \nProg:               XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Time: hh:mm:ss  \n                                                                                \n                                  Delete User                                   \n                                                                                \n     Enter User ID: XXXXXXXX                                                    \n                                                                                \n     ***********************************************-\r\n               *****     \n                                                                                \n                                                                                \n     First Name: XXXXXXXXXXXXXXXXXXXX                                           \n                                                                                \n     Last Name:  XXXXXXXXXXXXXXXXXXXX                                           \n                                                                                \n     User Type: X (A=Admin, U=User)                                             \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \nENTER=Fetch  F3=Back  F4=Clear  F5=Delete                                       "
+}

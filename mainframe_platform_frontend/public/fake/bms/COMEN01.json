@@ -1,0 +1,318 @@
+{
+  "overview": {
+    "name": "COMEN01",
+    "file_name": "COMEN01",
+    "related_pgms": ["COSGN00C", "COMEN01C"]
+  },
+  "data": [
+    {
+      "name": "COMEN01",
+      "item_type": "DFHMSD",
+      "position": null,
+      "size": null,
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "COMEN1A",
+      "item_type": "DFHMDI",
+      "position": null,
+      "size": [24, 80],
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [1, 1],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Tran:",
+      "comment": ""
+    },
+    {
+      "name": "TRNNAME",
+      "item_type": "DFHMDF",
+      "position": [1, 21],
+      "size": null,
+      "length": 40,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [1, 65],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Date:",
+      "comment": ""
+    },
+    {
+      "name": "CURDATE",
+      "item_type": "DFHMDF",
+      "position": [1, 71],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "mm/dd/yy",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [2, 1],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Prog:",
+      "comment": ""
+    },
+    {
+      "name": "PGMNAME",
+      "item_type": "DFHMDF",
+      "position": [2, 21],
+      "size": null,
+      "length": 40,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [2, 65],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Time:",
+      "comment": ""
+    },
+    {
+      "name": "CURTIME",
+      "item_type": "DFHMDF",
+      "position": [2, 71],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "hh:mm:ss",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [4, 35],
+      "size": null,
+      "length": 9,
+      "attribute": "(ASKIP,BRT)",
+      "color": "NEUTRAL",
+      "initial_value": "Main Menu",
+      "comment": ""
+    },
+    {
+      "name": "OPTN001",
+      "item_type": "DFHMDF",
+      "position": [6, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN002",
+      "item_type": "DFHMDF",
+      "position": [7, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN003",
+      "item_type": "DFHMDF",
+      "position": [8, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN004",
+      "item_type": "DFHMDF",
+      "position": [9, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN005",
+      "item_type": "DFHMDF",
+      "position": [10, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN006",
+      "item_type": "DFHMDF",
+      "position": [11, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN007",
+      "item_type": "DFHMDF",
+      "position": [12, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN008",
+      "item_type": "DFHMDF",
+      "position": [13, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN009",
+      "item_type": "DFHMDF",
+      "position": [14, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN010",
+      "item_type": "DFHMDF",
+      "position": [15, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN011",
+      "item_type": "DFHMDF",
+      "position": [16, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "OPTN012",
+      "item_type": "DFHMDF",
+      "position": [17, 20],
+      "size": null,
+      "length": 40,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": " ",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [20, 15],
+      "size": null,
+      "length": 25,
+      "attribute": "(ASKIP,BRT)",
+      "color": "TURQUOISE",
+      "initial_value": "Please select an option :",
+      "comment": ""
+    },
+    {
+      "name": "OPTION",
+      "item_type": "DFHMDF",
+      "position": [20, 41],
+      "size": null,
+      "length": 2,
+      "attribute": "(FSET,IC,NORM,NUM,UNPROT)",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [20, 44],
+      "size": null,
+      "length": 0,
+      "attribute": "(ASKIP,NORM)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "ERRMSG",
+      "item_type": "DFHMDF",
+      "position": [23, 1],
+      "size": null,
+      "length": 78,
+      "attribute": "(ASKIP,BRT,FSET)",
+      "color": "RED",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [24, 1],
+      "size": null,
+      "length": 23,
+      "attribute": "(ASKIP,NORM)",
+      "color": "YELLOW",
+      "initial_value": "ENTER=Continue  F3=Exit",
+      "comment": ""
+    }
+  ],
+  "screen_string": "Tran:               XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Date: mm/dd/yy  \nProg:               XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Time: hh:mm:ss  \n                                                                                \n                                  Main Menu                                     \n                                                                                \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     \n                                                                                \n                                                                                \n              Please select an option : XX                                      \n                                                                                \n                                                                                \nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \nENTER=Continue  F3=Exit                                                         "
+}

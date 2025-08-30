@@ -1,0 +1,71 @@
+{
+  "overview": {
+    "job_name": "CBADMCDJ",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": "1440",
+    "description": "JCL IBM allows detailed job control, providing precise execution control and resource allocation for programs like DFHCSDUP."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP1",
+      "program_executed": "DFHCSDUP",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": {
+            "DSN": "OEM.CICSTS.V05R06M0.CICS.SDFHLOAD",
+            "DISP": "OEM.CICSTS.V05R06M0.CICS.SDFHLOAD"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "OEM.CICSTS.V05R06M0.CICS.SDFHLOAD",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=OEM.CICSTS.V05R06M0.CICS.SDFHLOAD",
+              "program_id": "DFHCSDUP"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "DFHCSD",
+          "parameters_map": { "UNIT": "SYSDA", "DISP": "SYSDA", "DSN": "SYSDA" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SYSDA",
+              "variable_name": "DFHCSD",
+              "dd_statement": "DSN=OEM.CICSTS.DFHCSD",
+              "program_id": "DFHCSDUP"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "OUTDD",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*", "SYMBOLS": "JCLONLY" },
+          "dataset_map_list": [],
+          "logic": "*/********************************************************************/\r\n*/*  CARDDEMO CICS DEFINITIONS                                       */\r\n*/********************************************************************/\r\n* NOTE: INSTALL GROUP(CARDDEMO) - CEDA IN G(CARDDEMO)                *\r\n*     IF YOU ARE RERUNNING THIS, UNCOMMENT THE DELETE COMMAND. *\r\n*\r\n* START CARDDEMO RESOURCES:\r\n*\r\n* DELETE GROUP(CARDDEMO)\r\n\r\n  DEFINE LIBRARY(COM2DOLL) GROUP(CARDDEMO)\r\n                DSNAME01(&HLQ..LOADLIB)\r\n\r\n* DEFINE TDQUEUE(CSSD) GROUP(CARDDEMO) TYPE(INTRA)\r\n* DEFINE TDQUEUE(IRDC) GROUP(CARDDEMO) TYPE(INTRA)\r\n\r\n  DEFINE MAPSET(COSGN00M)   GROUP(CARDDEMO)\r\n         DESCRIPTION(LOGIN SCREEN)\r\n\r\n  DEFINE MAPSET(COSGN00M)   GROUP(CARDDEMO)\r\n         DESCRIPTION(LOGIN SCREEN)\r\n\r\n  DEFINE MAPSET(COACT00S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(ACCOUNT MENU)\r\n  DEFINE MAPSET(COACTVWS)   GROUP(CARDDEMO)\r\n         DESCRIPTION(VIEW ACCOUNT)\r\n  DEFINE MAPSET(COACTUPS)   GROUP(CARDDEMO)\r\n         DESCRIPTION(UPDATE ACCOUNT)\r\n  DEFINE MAPSET(COACTDES)   GROUP(CARDDEMO)\r\n         DESCRIPTION(DEACTIVATE ACCOUNT)\r\n\r\n  DEFINE MAPSET(COACT00S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(CARD MENU)\r\n  DEFINE MAPSET(COACTVWS)   GROUP(CARDDEMO)\r\n         DESCRIPTION(VIEW CARD)\r\n  DEFINE MAPSET(COACTUPS)   GROUP(CARDDEMO)\r\n         DESCRIPTION(UPDATE CARD)\r\n  DEFINE MAPSET(COACTDES)   GROUP(CARDDEMO)\r\n         DESCRIPTION(DEACTIVATE CARD)\r\n\r\n  DEFINE MAPSET(COTRN00S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(TRANSACTION)\r\n  DEFINE MAPSET(COTRNVWS)   GROUP(CARDDEMO)\r\n         DESCRIPTION(TRANSACTION REPORT)\r\n  DEFINE MAPSET(COTRNVDS)   GROUP(CARDDEMO)\r\n         DESCRIPTION(TRANSACTION DETAILS)\r\n  DEFINE MAPSET(COTRNATS)   GROUP(CARDDEMO)\r\n         DESCRIPTION(ADD TRANSACTIONS)\r\n\r\n  DEFINE MAPSET(COBIL00S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(BILL PAY SETUP)\r\n\r\n  DEFINE MAPSET(COADM00S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(ADMIN MENU)\r\n\r\n  DEFINE MAPSET(COTSTP1S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(PGM1 TEST)\r\n  DEFINE MAPSET(COTSTP2S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(PGM2 TEST)\r\n  DEFINE MAPSET(COTSTP3S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(PGM3 TEST)\r\n  DEFINE MAPSET(COTSTP4S)   GROUP(CARDDEMO)\r\n         DESCRIPTION(PGM4 TEST)\r\n\r\n  DEFINE PROGRAM(COSGN00C) GROUP(CARDDEMO) DA(ANY) TRANSID(CC00)\r\n         DESCRIPTION(LOGIN)\r\n\r\n  DEFINE PROGRAM(COACT00C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(ACCOUNT MAIN MENU)\r\n  DEFINE PROGRAM(COACTVWC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(VIEW ACCOUNT)\r\n  DEFINE PROGRAM(COACTUPC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(UPDATE ACCOUNT)\r\n  DEFINE PROGRAM(COACTDEC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(DEACTIVATE ACCOUNT)\r\n\r\n  DEFINE PROGRAM(COACT00C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(CARD MENU)\r\n  DEFINE PROGRAM(COACTVWC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(VIEW CARD)\r\n  DEFINE PROGRAM(COACTUPC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(UPDATE CARD)\r\n  DEFINE PROGRAM(COACTDEC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(DEACTIVATE CARD)\r\n  DEFINE PROGRAM(COTRN00C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(TRANSACTION)\r\n  DEFINE PROGRAM(COTRNVWC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(TRANSACTION REPORT)\r\n  DEFINE PROGRAM(COTRNVDC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(TRANSACTION DETAILS)\r\n  DEFINE PROGRAM(COTRNATC) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(ADD TRANSACTIONS)\r\n\r\n  DEFINE PROGRAM(COBIL00C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(BILL PAY)\r\n\r\n  DEFINE PROGRAM(COADM00C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(ADMIN MENU)\r\n         TRANSID(CCAD)\r\n\r\n  DEFINE PROGRAM(COTSTP1C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(PGM1 TEST)\r\n         TRANSID(CCT1)\r\n  DEFINE PROGRAM(COTSTP2C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(PGM2 TEST)\r\n         TRANSID(CCT2)\r\n  DEFINE PROGRAM(COTSTP3C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(PGM1 TEST)\r\n         TRANSID(CCT3)\r\n  DEFINE PROGRAM(COTSTP4C) GROUP(CARDDEMO) DA(ANY)\r\n         DESCRIPTION(PGM4 TEST)\r\n         TRANSID(CCT4)\r\n\r\n  DEFINE TRANSACTION(CCDM) GROUP(CARDDEMO)\r\n                PROGRAM(COADM00C) TASKDATAL(ANY)\r\n\r\n  DEFINE TRANSACTION(CCT1) GROUP(CARDDEMO)\r\n                PROGRAM(COTSTP1C) TASKDATAL(ANY)\r\n  DEFINE TRANSACTION(CCT2) GROUP(CARDDEMO)\r\n                PROGRAM(COTSTP2C) TASKDATAL(ANY)\r\n  DEFINE TRANSACTION(CCT3) GROUP(CARDDEMO)\r\n                PROGRAM(COTSTP3C) TASKDATAL(ANY)\r\n  DEFINE TRANSACTION(CCT4) GROUP(CARDDEMO)\r\n                PROGRAM(COTSTP4C) TASKDATAL(ANY)\r\n\r\n  LIST   GROUP(CARDDEMO)\r\n*\r\n* END CARDDEMO RESOURCES\r\n*\r\n"
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=OEM.CICSTS.V05R06M0.CICS.SDFHLOAD\n",
+        "DFHCSD: DSN=OEM.CICSTS.DFHCSD\n"
+      ],
+      "property": "JCL IBM allows detailed job control, providing precise execution control and resource allocation for programs like DFHCSDUP."
+    }
+  ]
+}

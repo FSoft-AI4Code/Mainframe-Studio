@@ -1,0 +1,733 @@
+{
+  "id": "5197843cdf5848278142d1f01f1a3b75",
+  "name": "COCRDLIC",
+  "path": "DEMO.CARDDEMO.CBL/COCRDLIC",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COCRDLIC",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "CVCRD01Y",
+      "COCOM01Y",
+      "DFHBMSCA",
+      "DFHAID",
+      "COTTL01Y",
+      "COCRDLI",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CSUSR01Y",
+      "CVACT02Y",
+      "'CSSTRPFY'"
+    ],
+    "call_files": [],
+    "summarization": "The provided COBOL code is a complex CICS transaction program that reads and processes card data, handling user input via a terminal. The code can be broken down into several logical sections, each performing specific tasks. A concise summary of the main flow of the COBOL code sections is as follows:\n\n1. **Initialization (0000-MAIN)**\n   - Various working areas and commareas are initialized.\n   - Prepares the context by storing the transaction ID and checks if it is the first run.\n   - Initializes fields for new runs or retrieves passed data from a commarea for context continuation.\n   - Handles navigation keys (PF3, PF8, etc.) for user inputs with specific behaviors, including exiting to main menu (PF3) or reading/editing data inputs.\n\n2. **Receive User Input (2000-RECEIVE-MAP)**\n   - Handles the receipt of screen input data.\n   - Validates and edits user inputs (account IDs, card numbers, etc.) and ensures they meet expected criteria.\n\n3. **Processing Loops (9000-READ-FORWARD, 9100-READ-BACKWARDS)**\n   - Iterates through card records using CICS commands to browse and retrieve data from a predefined dataset (`LIT-CARD-FILE`).\n   - Filters records based on specific criteria (account ID and card number validation).\n\n4. **Screen Management (1000-SEND-MAP, 1100-SCREEN-INIT, 1200-SCREEN-ARRAY-INIT, 1250-SETUP-ARRAY-ATTRIBS, 1300-SETUP-SCREEN-ATTRS, 1400-SETUP-MESSAGE, 1500-SEND-SCREEN)**\n   - Sets up and sends the screen map (`LIT-THISMAP`) and array attributes to the terminal.\n   - Initializes screen fields and handles screen-specific attributes such as messages and error display.\n\n5. **PF Key Handling (COPY 'CSSTRPFY')**\n   - Stores mapped PF keys for subsequent user actions.\n\n6. **Common Code and Exits (COMMON-RETURN, 0000-MAIN-EXIT, SEND-PLAIN-TEXT, SEND-LONG-TEXT)**\n   - Common exit routines and functionality for handling plain text and long text messages primarily for debugging purposes.\n\nThe primary tables involved are:\n- **CARDDEMO-COMMAREA**: Used for capturing contextual and operational states.\n- **WS-CURDATE-DATA & WS-CURTIME-DATA**: Handle date and time data manipulations.\n- **CCRDLIAO & CCRDLIAI**: Represent output and input maps respectively for interfacing with the terminal.\n- **WS-ALL-ROWS, WS-ROW-ACCTNO, WS-ROW-CARD-NUM, WS-ROW-CARD-STATUS**: Temporary storage for card and account information during browse and display operations.\n\nThis program exemplifies a typical online COBOL CICS transaction that involves initializing data, handling user inputs via the terminal, performing data reads and validation, managing paging, and updating screen displays.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "1",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "1",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "0000-MAIN": {
+        "paragraph_name": "0000-MAIN",
+        "section": "procedure division",
+        "paragraph_code": "0000-MAIN.\n\n           INITIALIZE CC-WORK-AREA\n                      WS-MISC-STORAGE\n                      WS-COMMAREA\n\n      *****************************************************************\n      * Store our context\n      *****************************************************************\n           MOVE LIT-THISTRANID       TO WS-TRANID\n      *****************************************************************\n      * Ensure error message is cleared                               *\n      *****************************************************************\n           SET WS-ERROR-MSG-OFF  TO TRUE\n      *****************************************************************\n      * Retrived passed data if  any. Initialize them if first run.\n      *****************************************************************\n           IF EIBCALEN = 0\n              INITIALIZE CARDDEMO-COMMAREA\n                         WS-THIS-PROGCOMMAREA\n              MOVE LIT-THISTRANID        TO CDEMO-FROM-TRANID\n              MOVE LIT-THISPGM           TO CDEMO-FROM-PROGRAM\n              SET CDEMO-USRTYP-USER      TO TRUE\n              SET CDEMO-PGM-ENTER        TO TRUE\n              MOVE LIT-THISMAP           TO CDEMO-LAST-MAP\n              MOVE LIT-THISMAPSET        TO CDEMO-LAST-MAPSET\n              SET CA-FIRST-PAGE          TO TRUE\n              SET CA-LAST-PAGE-NOT-SHOWN TO TRUE\n           ELSE\n              MOVE DFHCOMMAREA (1:LENGTH OF CARDDEMO-COMMAREA) TO\n                                CARDDEMO-COMMAREA\n              MOVE DFHCOMMAREA(LENGTH OF CARDDEMO-COMMAREA + 1:\n                               LENGTH OF WS-THIS-PROGCOMMAREA )TO\n                                WS-THIS-PROGCOMMAREA\n           END-IF\n      *****************************************************************\n      * If coming in from menu. Lets forget the past and start afresh *\n      *****************************************************************\n           IF (CDEMO-PGM-ENTER\n           AND CDEMO-FROM-PROGRAM NOT EQUAL LIT-THISPGM)\n               INITIALIZE WS-THIS-PROGCOMMAREA\n               SET CDEMO-PGM-ENTER      TO TRUE\n               MOVE LIT-THISMAP         TO CDEMO-LAST-MAP\n               SET CA-FIRST-PAGE        TO TRUE\n               SET CA-LAST-PAGE-NOT-SHOWN TO TRUE\n           END-IF\n\n      ******************************************************************\n      * Remap PFkeys as needed.\n      * Store the Mapped PF Key\n      *****************************************************************\n           PERFORM YYYY-STORE-PFKEY\n              THRU YYYY-STORE-PFKEY-EXIT\n\n      ******************************************************************\n      * If something is present in commarea\n      * and the from program is this program itself,\n      * read and edit the inputs given\n      *****************************************************************\n           IF  EIBCALEN > 0\n           AND CDEMO-FROM-PROGRAM  EQUAL LIT-THISPGM\n               PERFORM 2000-RECEIVE-MAP\n               THRU    2000-RECEIVE-MAP-EXIT\n\n           END-IF\n      *****************************************************************\n      * Check the mapped key  to see if its valid at this point       *\n      * F3    - Exit\n      * Enter - List of cards for current start key\n      * F8    - Page down\n      * F7    - Page up\n      *****************************************************************\n           SET PFK-INVALID TO TRUE\n           IF CCARD-AID-ENTER OR\n              CCARD-AID-PFK03 OR\n              CCARD-AID-PFK07 OR\n              CCARD-AID-PFK08\n               SET PFK-VALID TO TRUE\n           END-IF\n\n           IF PFK-INVALID\n              SET CCARD-AID-ENTER TO TRUE\n           END-IF\n      *****************************************************************\n      * If the user pressed PF3 go back to main menu\n      *****************************************************************\n           IF  (CCARD-AID-PFK03\n           AND CDEMO-FROM-PROGRAM  EQUAL LIT-THISPGM)\n              MOVE LIT-THISTRANID   TO CDEMO-FROM-TRANID\n              MOVE LIT-THISPGM      TO CDEMO-FROM-PROGRAM\n              SET  CDEMO-USRTYP-USER TO TRUE\n              SET  CDEMO-PGM-ENTER  TO TRUE\n              MOVE LIT-THISMAPSET   TO CDEMO-LAST-MAPSET\n              MOVE LIT-THISMAP      TO CDEMO-LAST-MAP\n              MOVE LIT-MENUPGM      TO CDEMO-TO-PROGRAM\n\n              MOVE LIT-MENUMAPSET   TO CCARD-NEXT-MAPSET\n              MOVE LIT-THISMAP      TO CCARD-NEXT-MAP\n              SET WS-EXIT-MESSAGE            TO TRUE\n\n      *       CALL MENU PROGRAM\n      *\n              SET CDEMO-PGM-ENTER   TO TRUE\n      *\n              EXEC CICS XCTL\n                        PROGRAM (LIT-MENUPGM)\n                        COMMAREA(CARDDEMO-COMMAREA)\n              END-EXEC\n           END-IF\n      *****************************************************************\n      * If the user did not press PF8, lets reset the last page flag\n      *****************************************************************\n           IF CCARD-AID-PFK08\n              CONTINUE\n           ELSE\n              SET CA-LAST-PAGE-NOT-SHOWN   TO TRUE\n           END-IF\n      *****************************************************************\n      * Now we decide what to do\n      *****************************************************************\n           EVALUATE TRUE\n               WHEN INPUT-ERROR\n      *****************************************************************\n      *        ASK FOR CORRECTIONS TO INPUTS\n      *****************************************************************\n                    MOVE WS-ERROR-MSG    TO CCARD-ERROR-MSG\n                    MOVE LIT-THISPGM     TO CDEMO-FROM-PROGRAM\n                    MOVE LIT-THISMAPSET  TO CDEMO-LAST-MAPSET\n                    MOVE LIT-THISMAP     TO CDEMO-LAST-MAP\n\n                    MOVE LIT-THISPGM     TO CCARD-NEXT-PROG\n                    MOVE LIT-THISMAPSET  TO CCARD-NEXT-MAPSET\n                    MOVE LIT-THISMAP     TO CCARD-NEXT-MAP\n                    IF  NOT FLG-ACCTFILTER-NOT-OK\n                    AND NOT FLG-CARDFILTER-NOT-OK\n                       PERFORM 9000-READ-FORWARD\n                          THRU 9000-READ-FORWARD-EXIT\n                    END-IF\n                    PERFORM 1000-SEND-MAP\n                       THRU 1000-SEND-MAP\n                    GO TO COMMON-RETURN\n               WHEN CCARD-AID-PFK07\n                    AND CA-FIRST-PAGE\n      *****************************************************************\n      *        PAGE UP - PF7 - BUT ALREADY ON FIRST PAGE\n      *****************************************************************\n               WHEN CCARD-AID-PFK07\n                    AND CA-FIRST-PAGE\n                    MOVE WS-CA-FIRST-CARD-NUM\n                                  TO WS-CARD-RID-CARDNUM\n      *             MOVE WS-CA-FIRST-CARD-ACCT-ID\n      *                           TO WS-CARD-RID-ACCT-ID\n                    PERFORM 9000-READ-FORWARD\n                       THRU 9000-READ-FORWARD-EXIT\n                    PERFORM 1000-SEND-MAP\n                       THRU 1000-SEND-MAP\n                    GO TO COMMON-RETURN\n      *****************************************************************\n      *        BACK - PF3 IF WE CAME FROM SOME OTHER PROGRAM\n      *****************************************************************\n               WHEN CCARD-AID-PFK03\n               WHEN CDEMO-PGM-REENTER AND\n                    CDEMO-FROM-PROGRAM NOT EQUAL LIT-THISPGM\n\n                    INITIALIZE CARDDEMO-COMMAREA\n                               WS-THIS-PROGCOMMAREA\n                    MOVE LIT-THISTRANID      TO CDEMO-FROM-TRANID\n                    MOVE LIT-THISPGM         TO CDEMO-FROM-PROGRAM\n                    SET CDEMO-USRTYP-USER    TO TRUE\n                    SET CDEMO-PGM-ENTER      TO TRUE\n                    MOVE LIT-THISMAP         TO CDEMO-LAST-MAP\n                    MOVE LIT-THISMAPSET      TO CDEMO-LAST-MAPSET\n                    SET CA-FIRST-PAGE        TO TRUE\n                    SET CA-LAST-PAGE-NOT-SHOWN TO TRUE\n\n                    MOVE WS-CA-FIRST-CARD-NUM\n                                  TO WS-CARD-RID-CARDNUM\n      *             MOVE WS-CA-FIRST-CARD-ACCT-ID\n      *                           TO WS-CARD-RID-ACCT-ID\n\n                    PERFORM 9000-READ-FORWARD\n                       THRU 9000-READ-FORWARD-EXIT\n                    PERFORM 1000-SEND-MAP\n                       THRU 1000-SEND-MAP\n                    GO TO COMMON-RETURN\n      *****************************************************************\n      *        PAGE DOWN\n      *****************************************************************\n               WHEN CCARD-AID-PFK08\n                    AND CA-NEXT-PAGE-EXISTS\n                    MOVE WS-CA-LAST-CARD-NUM\n                                  TO WS-CARD-RID-CARDNUM\n      *             MOVE WS-CA-LAST-CARD-ACCT-ID\n      *                           TO WS-CARD-RID-ACCT-ID\n                    ADD   +1       TO WS-CA-SCREEN-NUM\n                    PERFORM 9000-READ-FORWARD\n                       THRU 9000-READ-FORWARD-EXIT\n                    PERFORM 1000-SEND-MAP\n                       THRU 1000-SEND-MAP-EXIT\n                    GO TO COMMON-RETURN\n      *****************************************************************\n      *        PAGE UP\n      *****************************************************************\n               WHEN CCARD-AID-PFK07\n                    AND NOT CA-FIRST-PAGE\n\n                    MOVE WS-CA-FIRST-CARD-NUM\n                                  TO WS-CARD-RID-CARDNUM\n      *             MOVE WS-CA-FIRST-CARD-ACCT-ID\n      *                           TO WS-CARD-RID-ACCT-ID\n                    SUBTRACT 1    FROM WS-CA-SCREEN-NUM\n                    PERFORM 9100-READ-BACKWARDS\n                       THRU 9100-READ-BACKWARDS-EXIT\n                    PERFORM 1000-SEND-MAP\n                       THRU 1000-SEND-MAP-EXIT\n                    GO TO COMMON-RETURN\n      *****************************************************************\n      *        TRANSFER TO CARD DETAIL VIEW\n      *****************************************************************\n               WHEN CCARD-AID-ENTER\n                AND VIEW-REQUESTED-ON(I-SELECTED)\n                AND CDEMO-FROM-PROGRAM  EQUAL LIT-THISPGM\n                   MOVE LIT-THISTRANID    TO CDEMO-FROM-TRANID\n                   MOVE LIT-THISPGM       TO CDEMO-FROM-PROGRAM\n                   SET  CDEMO-USRTYP-USER TO TRUE\n                   SET  CDEMO-PGM-ENTER   TO TRUE\n                   MOVE LIT-THISMAPSET    TO CDEMO-LAST-MAPSET\n                   MOVE LIT-THISMAP       TO CDEMO-LAST-MAP\n                   MOVE LIT-CARDDTLPGM    TO CCARD-NEXT-PROG\n\n                   MOVE LIT-CARDDTLMAPSET TO CCARD-NEXT-MAPSET\n                   MOVE LIT-CARDDTLMAP    TO CCARD-NEXT-MAP\n\n                   MOVE WS-ROW-ACCTNO (I-SELECTED)\n                                          TO CDEMO-ACCT-ID\n                   MOVE WS-ROW-CARD-NUM (I-SELECTED)\n                                          TO CDEMO-CARD-NUM\n\n      *            CALL CARD DETAIL PROGRAM\n      *\n                   EXEC CICS XCTL\n                        PROGRAM (CCARD-NEXT-PROG)\n                        COMMAREA(CARDDEMO-COMMAREA)\n                   END-EXEC\n      *****************************************************************\n      *        TRANSFER TO CARD UPDATED PROGRAM\n      *****************************************************************\n               WHEN CCARD-AID-ENTER\n                AND UPDATE-REQUESTED-ON(I-SELECTED)\n                AND CDEMO-FROM-PROGRAM  EQUAL LIT-THISPGM\n                   MOVE LIT-THISTRANID    TO CDEMO-FROM-TRANID\n                   MOVE LIT-THISPGM       TO CDEMO-FROM-PROGRAM\n                   SET  CDEMO-USRTYP-USER TO TRUE\n                   SET  CDEMO-PGM-ENTER   TO TRUE\n                   MOVE LIT-THISMAPSET    TO CDEMO-LAST-MAPSET\n                   MOVE LIT-THISMAP       TO CDEMO-LAST-MAP\n                   MOVE LIT-CARDUPDPGM    TO CCARD-NEXT-PROG\n\n                   MOVE LIT-CARDUPDMAPSET TO CCARD-NEXT-MAPSET\n                   MOVE LIT-CARDUPDMAP    TO CCARD-NEXT-MAP\n\n                   MOVE WS-ROW-ACCTNO (I-SELECTED)\n                                          TO CDEMO-ACCT-ID\n                   MOVE WS-ROW-CARD-NUM (I-SELECTED)\n                                          TO CDEMO-CARD-NUM\n\n      *            CALL CARD UPDATE PROGRAM\n      *\n                   EXEC CICS XCTL\n                        PROGRAM (CCARD-NEXT-PROG)\n                        COMMAREA(CARDDEMO-COMMAREA)\n                   END-EXEC\n\n      *****************************************************************\n               WHEN OTHER\n      *****************************************************************\n                    MOVE WS-CA-FIRST-CARD-NUM\n                                  TO WS-CARD-RID-CARDNUM\n      *             MOVE WS-CA-FIRST-CARD-ACCT-ID\n      *                           TO WS-CARD-RID-ACCT-ID\n                    PERFORM 9000-READ-FORWARD\n                       THRU 9000-READ-FORWARD-EXIT\n                    PERFORM 1000-SEND-MAP\n                       THRU 1000-SEND-MAP\n                    GO TO COMMON-RETURN\n           END-EVALUATE\n\n      * If we had an error setup error message to display and return\n           IF INPUT-ERROR\n              MOVE WS-ERROR-MSG   TO CCARD-ERROR-MSG\n              MOVE LIT-THISPGM     TO CDEMO-FROM-PROGRAM\n              MOVE LIT-THISMAPSET  TO CDEMO-LAST-MAPSET\n              MOVE LIT-THISMAP     TO CDEMO-LAST-MAP\n\n              MOVE LIT-THISPGM     TO CCARD-NEXT-PROG\n              MOVE LIT-THISMAPSET  TO CCARD-NEXT-MAPSET\n              MOVE LIT-THISMAP     TO CCARD-NEXT-MAP\n      *       PERFORM 1000-SEND-MAP\n      *          THRU 1000-SEND-MAP\n              GO TO COMMON-RETURN\n           END-IF\n\n           MOVE LIT-THISPGM        TO CCARD-NEXT-PROG\n           GO TO COMMON-RETURN\n           .\n\n",
+        "paragraph_lines": [298, 602],
+        "ref_paragraphs": [
+          "YYYY-STORE-PFKEY",
+          "YYYY-STORE-PFKEY-EXIT",
+          "2000-RECEIVE-MAP",
+          "2000-RECEIVE-MAP-EXIT",
+          "9000-READ-FORWARD",
+          "9000-READ-FORWARD-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP",
+          "9000-READ-FORWARD",
+          "9000-READ-FORWARD-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP",
+          "9000-READ-FORWARD",
+          "9000-READ-FORWARD-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP",
+          "9000-READ-FORWARD",
+          "9000-READ-FORWARD-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP-EXIT",
+          "9100-READ-BACKWARDS",
+          "9100-READ-BACKWARDS-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP-EXIT",
+          "9000-READ-FORWARD",
+          "9000-READ-FORWARD-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP"
+        ],
+        "paragraph_logic": [
+          "Initializes various work areas for program execution and sets up the transaction context.",
+          "Calls the [PF Key storage process]<YYYY-STORE-PFKEY> to map and store the PF keys for further use.",
+          "Checks and receives the communication area if passed data is available, else initializes default values.",
+          "Evaluates user inputs and navigates accordingly, including reading forwards or backwards, and sending the map for user display.",
+          "Based on user actions, either transitions to specific programs (e.g., card detail or update) or continues to process within the current map."
+        ]
+      },
+      "COMMON-RETURN": {
+        "paragraph_name": "COMMON-RETURN",
+        "section": "procedure division",
+        "paragraph_code": "COMMON-RETURN.\n           MOVE  LIT-THISTRANID TO CDEMO-FROM-TRANID\n           MOVE  LIT-THISPGM     TO CDEMO-FROM-PROGRAM\n           MOVE  LIT-THISMAPSET  TO CDEMO-LAST-MAPSET\n           MOVE  LIT-THISMAP     TO CDEMO-LAST-MAP\n           MOVE  CARDDEMO-COMMAREA    TO WS-COMMAREA\n           MOVE  WS-THIS-PROGCOMMAREA TO\n                  WS-COMMAREA(LENGTH OF CARDDEMO-COMMAREA + 1:\n                               LENGTH OF WS-THIS-PROGCOMMAREA )\n\n\n           EXEC CICS RETURN\n                TRANSID (LIT-THISTRANID)\n                COMMAREA (WS-COMMAREA)\n                LENGTH(LENGTH OF WS-COMMAREA)\n           END-EXEC\n           .\n",
+        "paragraph_lines": [604, 620],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the current transaction ID into the from transaction ID field.",
+          "Moves the current program name into the from program field.",
+          "Moves the current mapset name into the last mapset field.",
+          "Moves the current map name into the last map field.",
+          "Copies the program-specific data to the working storage commarea.",
+          "Executes a CICS RETURN command to return control to CICS, passing the commarea data back for the next transaction."
+        ]
+      },
+      "0000-MAIN-EXIT": {
+        "paragraph_name": "0000-MAIN-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "0000-MAIN-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [621, 623],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Terminates the program execution and exits the main procedure."]
+      },
+      "1000-SEND-MAP": {
+        "paragraph_name": "1000-SEND-MAP",
+        "section": "procedure division",
+        "paragraph_code": "1000-SEND-MAP.\n           PERFORM 1100-SCREEN-INIT\n              THRU 1100-SCREEN-INIT-EXIT\n           PERFORM 1200-SCREEN-ARRAY-INIT\n              THRU 1200-SCREEN-ARRAY-INIT-EXIT\n           PERFORM 1250-SETUP-ARRAY-ATTRIBS\n              THRU 1250-SETUP-ARRAY-ATTRIBS-EXIT\n           PERFORM 1300-SETUP-SCREEN-ATTRS\n              THRU 1300-SETUP-SCREEN-ATTRS-EXIT\n           PERFORM 1400-SETUP-MESSAGE\n              THRU 1400-SETUP-MESSAGE-EXIT\n           PERFORM 1500-SEND-SCREEN\n              THRU 1500-SEND-SCREEN-EXIT\n           .\n\n",
+        "paragraph_lines": [624, 637],
+        "ref_paragraphs": [
+          "1100-SCREEN-INIT",
+          "1100-SCREEN-INIT-EXIT",
+          "1200-SCREEN-ARRAY-INIT",
+          "1200-SCREEN-ARRAY-INIT-EXIT",
+          "1250-SETUP-ARRAY-ATTRIBS",
+          "1250-SETUP-ARRAY-ATTRIBS-EXIT",
+          "1300-SETUP-SCREEN-ATTRS",
+          "1300-SETUP-SCREEN-ATTRS-EXIT",
+          "1400-SETUP-MESSAGE",
+          "1400-SETUP-MESSAGE-EXIT",
+          "1500-SEND-SCREEN",
+          "1500-SEND-SCREEN-EXIT"
+        ],
+        "paragraph_logic": [
+          "Calls the [screen initialization process]<1100-SCREEN-INIT> to clear and prepare the screen for new data.",
+          "Calls the [array initialization process]<1200-SCREEN-ARRAY-INIT> to initialize the array fields to be displayed on the screen.",
+          "Calls the [array attribute setup process]<1250-SETUP-ARRAY-ATTRIBS> to set up attributes for each array element, like whether the field is protected or not.",
+          "Calls the [screen attribute setup process]<1300-SETUP-SCREEN-ATTRS> to prepare screen attributes, such as positioning and field length.",
+          "Calls the [message setup process]<1400-SETUP-MESSAGE> to check if any error messages need to be displayed and set them up accordingly.",
+          "Calls the [screen sending process]<1500-SEND-SCREEN> to send the screen map to the user, showing the updated data."
+        ]
+      },
+      "1000-SEND-MAP-EXIT": {
+        "paragraph_name": "1000-SEND-MAP-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1000-SEND-MAP-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [639, 641],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 1000-SEND-MAP paragraph and returns control to the calling paragraph."
+        ]
+      },
+      "1100-SCREEN-INIT": {
+        "paragraph_name": "1100-SCREEN-INIT",
+        "section": "procedure division",
+        "paragraph_code": "1100-SCREEN-INIT.\n           MOVE LOW-VALUES             TO CCRDLIAO\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF CCRDLIAO\n           MOVE CCDA-TITLE02           TO TITLE02O OF CCRDLIAO\n           MOVE LIT-THISTRANID         TO TRNNAMEO OF CCRDLIAO\n           MOVE LIT-THISPGM            TO PGMNAMEO OF CCRDLIAO\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF CCRDLIAO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF CCRDLIAO\n      *    PAGE NUMBER\n      *\n           MOVE WS-CA-SCREEN-NUM       TO PAGENOO  OF CCRDLIAO\n\n           SET WS-NO-INFO-MESSAGE      TO TRUE\n           MOVE WS-INFO-MSG            TO INFOMSGO OF CCRDLIAO\n           MOVE DFHBMDAR               TO INFOMSGC OF CCRDLIAO\n           .\n\n",
+        "paragraph_lines": [642, 672],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initializes the screen by populating critical fields with initial values.",
+          "Sets date and time related fields using the current system date and time.",
+          "Prepares the screen headers, transaction ID, and program name for display.",
+          "Formats and moves the current date and time to corresponding screen fields.",
+          "Sets the page number and potential informational message indicators."
+        ]
+      },
+      "1100-SCREEN-INIT-EXIT": {
+        "paragraph_name": "1100-SCREEN-INIT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1100-SCREEN-INIT-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [674, 676],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the screen initialization process, indicating the end of this paragraph execution flow."
+        ]
+      },
+      "1200-SCREEN-ARRAY-INIT": {
+        "paragraph_name": "1200-SCREEN-ARRAY-INIT",
+        "section": "procedure division",
+        "paragraph_code": "1200-SCREEN-ARRAY-INIT.\n      *    USE REDEFINES AND CLEAN UP REPETITIVE CODE !!\n           IF   WS-EACH-CARD(1)            EQUAL LOW-VALUES\n              CONTINUE\n           ELSE\n              MOVE WS-EDIT-SELECT(1)       TO CRDSEL1O OF CCRDLIAO\n              MOVE WS-ROW-ACCTNO(1)        TO ACCTNO1O OF CCRDLIAO\n              MOVE WS-ROW-CARD-NUM(1)      TO CRDNUM1O OF CCRDLIAO\n              MOVE WS-ROW-CARD-STATUS(1)   TO CRDSTS1O OF CCRDLIAO\n           END-IF\n\n           IF   WS-EACH-CARD(2)        EQUAL LOW-VALUES\n              CONTINUE\n           ELSE\n              MOVE WS-EDIT-SELECT(2)       TO CRDSEL2O OF CCRDLIAO\n              MOVE WS-ROW-ACCTNO(2)        TO ACCTNO2O OF CCRDLIAO\n              MOVE WS-ROW-CARD-NUM(2)      TO CRDNUM2O OF CCRDLIAO\n              MOVE WS-ROW-CARD-STATUS(2)   TO CRDSTS2O OF CCRDLIAO\n           END-IF\n\n           IF   WS-EACH-CARD(3)        EQUAL LOW-VALUES\n              CONTINUE\n           ELSE\n              MOVE WS-EDIT-SELECT(3)       TO CRDSEL3O OF CCRDLIAO\n              MOVE WS-ROW-ACCTNO(3)        TO ACCTNO3O OF CCRDLIAO\n              MOVE WS-ROW-CARD-NUM(3)      TO CRDNUM3O OF CCRDLIAO\n              MOVE WS-ROW-CARD-STATUS(3)   TO CRDSTS3O OF CCRDLIAO\n           END-IF\n\n           IF   WS-EACH-CARD(4)        EQUAL LOW-VALUES\n              CONTINUE\n           ELSE\n              MOVE WS-EDIT-SELECT(4)       TO CRDSEL4O OF CCRDLIAO\n              MOVE WS-ROW-ACCTNO(4)        TO ACCTNO4O OF CCRDLIAO\n              MOVE WS-ROW-CARD-NUM(4)      TO CRDNUM4O OF CCRDLIAO\n              MOVE WS-ROW-CARD-STATUS(4)   TO CRDSTS4O OF CCRDLIAO\n           END-IF\n\n           IF   WS-EACH-CARD(5)        EQUAL LOW-VALUES\n              CONTINUE\n           ELSE\n              MOVE WS-EDIT-SELECT(5)       TO CRDSEL5O OF CCRDLIAO\n              MOVE WS-ROW-ACCTNO(5)        TO ACCTNO5O OF CCRDLIAO\n              MOVE WS-ROW-CARD-NUM(5)      TO CRDNUM5O OF CCRDLIAO\n              MOVE WS-ROW-CARD-STATUS(5)   TO CRDSTS5O OF CCRDLIAO\n           END-IF\n\n\n           IF   WS-EACH-CARD(6)        EQUAL LOW-VALUES\n              CONTINUE\n           ELSE\n              MOVE WS-EDIT-SELECT(6)       TO CRDSEL6O OF CCRDLIAO\n              MOVE WS-ROW-ACCTNO(6)        TO ACCTNO6O OF CCRDLIAO\n              MOVE WS-ROW-CARD-NUM(6)      TO CRDNUM6O OF CCRDLIAO\n              MOVE WS-ROW-CARD-STATUS(6)   TO CRDSTS6O OF CCRDLIAO\n           END-IF\n\n           IF   WS-EACH-CARD(7)        EQUAL LOW-VALUES\n              CONTINUE\n           ELSE\n              MOVE WS-EDIT-SELECT(7)       TO CRDSEL7O OF CCRDLIAO\n              MOVE WS-ROW-ACCTNO(7)        TO ACCTNO7O OF CCRDLIAO\n              MOVE WS-ROW-CARD-NUM(7)      TO CRDNUM7O OF CCRDLIAO\n              MOVE WS-ROW-CARD-STATUS(7)   TO CRDSTS7O OF CCRDLIAO\n           END-IF\n           .\n\n",
+        "paragraph_lines": [678, 743],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initializes the screen array by checking each card.",
+          "For each card, checks if its assigned a low value to determine if further actions are needed.",
+          "If the card is valid, moves card selection data to the screen output field.",
+          "Updates account number for each card to the respective screen fields.",
+          "Populates the card number and card status in the corresponding screen fields.",
+          "Continues the process for up to seven cards, ensuring the screen is populated with relevant data."
+        ]
+      },
+      "1200-SCREEN-ARRAY-INIT-EXIT": {
+        "paragraph_name": "1200-SCREEN-ARRAY-INIT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1200-SCREEN-ARRAY-INIT-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [745, 747],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Marks the exit of the screen array initialization logic block.",
+          "Signals the end of the 1200-SCREEN-ARRAY-INIT processing section.",
+          "Has no further actions or calls within this paragraph."
+        ]
+      },
+      "1250-SETUP-ARRAY-ATTRIBS": {
+        "paragraph_name": "1250-SETUP-ARRAY-ATTRIBS",
+        "section": "procedure division",
+        "paragraph_code": "1250-SETUP-ARRAY-ATTRIBS.\n      *    USE REDEFINES AND CLEAN UP REPETITIVE CODE !!\n\n           IF   WS-EACH-CARD(1)            EQUAL LOW-VALUES\n           OR   FLG-PROTECT-SELECT-ROWS-YES\n              MOVE DFHBMPRF                TO CRDSEL1A OF CCRDLIAI\n           ELSE\n              IF WS-ROW-CRDSELECT-ERROR(1) = '1'\n                 MOVE DFHRED               TO CRDSEL1C OF CCRDLIAO\n                 IF WS-EDIT-SELECT(1) = SPACE OR LOW-VALUES\n                    MOVE '*'               TO CRDSEL1O OF CCRDLIAO\n                 END-IF\n              END-IF\n              MOVE DFHBMFSE                TO CRDSEL1A OF CCRDLIAI\n           END-IF\n\n           IF   WS-EACH-CARD(2)            EQUAL LOW-VALUES\n           OR   FLG-PROTECT-SELECT-ROWS-YES\n              MOVE DFHBMPRO                TO CRDSEL2A OF CCRDLIAI\n           ELSE\n              IF WS-ROW-CRDSELECT-ERROR(2) = '1'\n                 MOVE DFHRED               TO CRDSEL2C OF CCRDLIAO\n                 MOVE -1                   TO CRDSEL2L OF CCRDLIAI\n              END-IF\n              MOVE DFHBMFSE                TO CRDSEL2A OF CCRDLIAI\n           END-IF\n\n           IF   WS-EACH-CARD(3)            EQUAL LOW-VALUES\n           OR   FLG-PROTECT-SELECT-ROWS-YES\n              MOVE DFHBMPRO                TO CRDSEL3A OF CCRDLIAI\n\n           ELSE\n              IF WS-ROW-CRDSELECT-ERROR(3) = '1'\n                 MOVE DFHRED               TO CRDSEL3C OF CCRDLIAO\n                 MOVE -1                   TO CRDSEL3L OF CCRDLIAI\n              END-IF\n              MOVE DFHBMFSE                TO CRDSEL3A OF CCRDLIAI\n           END-IF\n\n           IF   WS-EACH-CARD(4)            EQUAL LOW-VALUES\n           OR   FLG-PROTECT-SELECT-ROWS-YES\n              MOVE DFHBMPRO                TO CRDSEL4A OF CCRDLIAI\n              I\n           ELSE\n              IF WS-ROW-CRDSELECT-ERROR(4) = '1'\n                 MOVE DFHRED               TO CRDSEL4C OF CCRDLIAO\n                 MOVE -1                   TO CRDSEL4L OF CCRDLIAI\n              END-IF\n              MOVE DFHBMFSE                TO CRDSEL4A OF CCRDLIAI\n           END-IF\n\n           IF   WS-EACH-CARD(5)            EQUAL LOW-VALUES\n           OR   FLG-PROTECT-SELECT-ROWS-YES\n              MOVE DFHBMPRO                TO CRDSEL5A OF CCRDLIAI\n           ELSE\n              IF WS-ROW-CRDSELECT-ERROR(5) = '1'\n                 MOVE DFHRED               TO CRDSEL5C OF CCRDLIAO\n                 MOVE -1                   TO CRDSEL5L OF CCRDLIAI\n              END-IF\n              MOVE DFHBMFSE                TO CRDSEL5A OF CCRDLIAI\n           END-IF\n\n           IF   WS-EACH-CARD(6)            EQUAL LOW-VALUES\n           OR   FLG-PROTECT-SELECT-ROWS-YES\n              MOVE DFHBMPRO                TO CRDSEL6A OF CCRDLIAI\n\n           ELSE\n              IF WS-ROW-CRDSELECT-ERROR(6) = '1'\n                 MOVE DFHRED               TO CRDSEL6C OF CCRDLIAO\n                 MOVE -1                   TO CRDSEL6L OF CCRDLIAI\n              END-IF\n              MOVE DFHBMFSE                TO CRDSEL6A OF CCRDLIAI\n           END-IF\n\n           IF   WS-EACH-CARD(7)            EQUAL LOW-VALUES\n           OR   FLG-PROTECT-SELECT-ROWS-YES\n              MOVE DFHBMPRO                TO CRDSEL7A OF CCRDLIAI\n           ELSE\n              IF WS-ROW-CRDSELECT-ERROR(7) = '1'\n                 MOVE DFHRED               TO CRDSEL7C OF CCRDLIAO\n                 MOVE -1                   TO CRDSEL7L OF CCRDLIAI\n              END-IF\n              MOVE DFHBMFSE                TO CRDSEL7A OF CCRDLIAI\n           END-IF\n           .\n\n",
+        "paragraph_lines": [748, 832],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if each cards value is either LOW-VALUES or if rows protection is active, then sets the appropriate screen field for selection.",
+          "For each card array element, if an error exists, moves the error indicator to the output and sets the designated screen field for error.",
+          "Populates the screen field for selection attribute with protected or unprotected values based on the cards status and protection flags.",
+          "Iterates through seven card elements to repeat the above checks and assignments.",
+          "Ensures the correct value is placed in the screen fields based on the card data attributes and error conditions."
+        ]
+      },
+      "1250-SETUP-ARRAY-ATTRIBS-EXIT": {
+        "paragraph_name": "1250-SETUP-ARRAY-ATTRIBS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1250-SETUP-ARRAY-ATTRIBS-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [834, 836],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the [exit routine]<1250-SETUP-ARRAY-ATTRIBS-EXIT> to terminate the array attribute setup process."
+        ]
+      },
+      "1300-SETUP-SCREEN-ATTRS": {
+        "paragraph_name": "1300-SETUP-SCREEN-ATTRS",
+        "section": "procedure division",
+        "paragraph_code": "1300-SETUP-SCREEN-ATTRS.\n      *    INITIALIZE SEARCH CRITERIA\n           IF EIBCALEN = 0\n           OR (CDEMO-PGM-ENTER\n           AND CDEMO-FROM-PROGRAM = LIT-MENUPGM)\n              CONTINUE\n           ELSE\n              EVALUATE TRUE\n                  WHEN FLG-ACCTFILTER-ISVALID\n                  WHEN FLG-ACCTFILTER-NOT-OK\n                     MOVE CC-ACCT-ID   TO ACCTSIDO OF CCRDLIAO\n                     MOVE DFHBMFSE     TO ACCTSIDA OF CCRDLIAI\n                  WHEN CDEMO-ACCT-ID = 0\n                     MOVE LOW-VALUES   TO ACCTSIDO OF CCRDLIAO\n                  WHEN OTHER\n                    MOVE CDEMO-ACCT-ID TO ACCTSIDO OF CCRDLIAO\n                    MOVE DFHBMFSE      TO ACCTSIDA OF CCRDLIAI\n              END-EVALUATE\n\n              EVALUATE TRUE\n                  WHEN FLG-CARDFILTER-ISVALID\n                  WHEN FLG-CARDFILTER-NOT-OK\n                     MOVE CC-CARD-NUM  TO CARDSIDO OF CCRDLIAO\n                     MOVE DFHBMFSE     TO CARDSIDA OF CCRDLIAI\n                  WHEN CDEMO-CARD-NUM = 0\n                     MOVE LOW-VALUES   TO CARDSIDO OF CCRDLIAO\n                  WHEN OTHER\n                    MOVE CDEMO-CARD-NUM\n                                       TO CARDSIDO OF CCRDLIAO\n                    MOVE DFHBMFSE      TO CARDSIDA OF CCRDLIAI\n              END-EVALUATE\n           END-IF\n\n      *    POSITION CURSOR\n\n           IF FLG-ACCTFILTER-NOT-OK\n              MOVE  DFHRED             TO ACCTSIDC OF CCRDLIAO\n              MOVE  -1                 TO ACCTSIDL OF CCRDLIAI\n           END-IF\n\n           IF FLG-CARDFILTER-NOT-OK\n              MOVE  DFHRED             TO CARDSIDC OF CCRDLIAO\n              MOVE  -1                 TO CARDSIDL OF CCRDLIAI\n           END-IF\n\n      *    IF NO ERRORS POSITION CURSOR AT ACCTID\n\n           IF INPUT-OK\n             MOVE   -1                 TO ACCTSIDL OF CCRDLIAI\n           END-IF\n\n\n           .\n",
+        "paragraph_lines": [837, 889],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initializes the search criteria for accounts and cards by evaluating conditions on account ID and card number.",
+          "Prepares the account filter by evaluating its validity and assigns appropriate values to the account fields.",
+          "Prepares the card filter by evaluating its validity and assigns appropriate values to the card fields.",
+          "Positions the cursor with an error marker if the account or card filter is not valid.",
+          "Positions the cursor at the account ID if there are no input errors."
+        ]
+      },
+      "1300-SETUP-SCREEN-ATTRS-EXIT": {
+        "paragraph_name": "1300-SETUP-SCREEN-ATTRS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1300-SETUP-SCREEN-ATTRS-EXIT.\n           EXIT\n           .\n\n\n",
+        "paragraph_lines": [890, 892],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Marks the exit point for the screen attribute setup process, effectively ending the current procedure."
+        ]
+      },
+      "1400-SETUP-MESSAGE": {
+        "paragraph_name": "1400-SETUP-MESSAGE",
+        "section": "procedure division",
+        "paragraph_code": "1400-SETUP-MESSAGE.\n      *    SETUP MESSAGE\n           EVALUATE TRUE\n                WHEN FLG-ACCTFILTER-NOT-OK\n                WHEN FLG-CARDFILTER-NOT-OK\n                  CONTINUE\n                WHEN CCARD-AID-PFK07\n                    AND CA-FIRST-PAGE\n                  MOVE 'NO PREVIOUS PAGES TO DISPLAY'\n                  TO WS-ERROR-MSG\n                WHEN CCARD-AID-PFK08\n                 AND CA-NEXT-PAGE-NOT-EXISTS\n                 AND CA-LAST-PAGE-SHOWN\n                  MOVE 'NO MORE PAGES TO DISPLAY'\n                  TO WS-ERROR-MSG\n                WHEN CCARD-AID-PFK08\n                 AND CA-NEXT-PAGE-NOT-EXISTS\n                  SET WS-INFORM-REC-ACTIONS TO TRUE\n                  IF  CA-LAST-PAGE-NOT-SHOWN\n                  AND CA-NEXT-PAGE-NOT-EXISTS\n                      SET CA-LAST-PAGE-SHOWN TO TRUE\n                  END-IF\n                WHEN WS-NO-INFO-MESSAGE\n                WHEN CA-NEXT-PAGE-EXISTS\n                  SET WS-INFORM-REC-ACTIONS TO TRUE\n                WHEN OTHER\n                   SET WS-NO-INFO-MESSAGE TO TRUE\n           END-EVALUATE\n\n           MOVE WS-ERROR-MSG          TO ERRMSGO OF CCRDLIAO\n\n           IF  NOT WS-NO-INFO-MESSAGE\n           AND NOT WS-NO-RECORDS-FOUND\n              MOVE WS-INFO-MSG        TO INFOMSGO OF CCRDLIAO\n              MOVE DFHNEUTR           TO INFOMSGC OF CCRDLIAO\n           END-IF\n\n           .\n",
+        "paragraph_lines": [895, 932],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Evaluates various conditions to set appropriate messages on the screen.",
+          "Handles cases where account or card filter settings are invalid.",
+          "Sets an error message if navigating to a non-existent previous or next page.",
+          "Sets an informative message when necessary for additional actions or no information conditions.",
+          "Moves the final error message to the output field ERRMSGO and information message to INFOMSGO when applicable."
+        ]
+      },
+      "1400-SETUP-MESSAGE-EXIT": {
+        "paragraph_name": "1400-SETUP-MESSAGE-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1400-SETUP-MESSAGE-EXIT.\n           EXIT\n           .\n\n\n",
+        "paragraph_lines": [933, 935],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 1400-SETUP-MESSAGE paragraph to conclude the message setup process and return control to the calling procedure."
+        ]
+      },
+      "1500-SEND-SCREEN": {
+        "paragraph_name": "1500-SEND-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "1500-SEND-SCREEN.\n           EXEC CICS SEND MAP(LIT-THISMAP)\n                          MAPSET(LIT-THISMAPSET)\n                          FROM(CCRDLIAO)\n                          CURSOR\n                          ERASE\n                          RESP(WS-RESP-CD)\n                          FREEKB\n           END-EXEC\n           .\n",
+        "paragraph_lines": [938, 947],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the CICS command to send the specified map (LIT-THISMAP) from the screen section (CCRDLIAO).",
+          "Specifies the mapset (LIT-THISMAPSET) that contains the map.",
+          "Positions the cursor for the users convenience.",
+          "Clears the screen before displaying the new map.",
+          "Stores the response code for further error handling or processing.",
+          "Enables the keyboard to be free for user input."
+        ]
+      },
+      "1500-SEND-SCREEN-EXIT": {
+        "paragraph_name": "1500-SEND-SCREEN-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1500-SEND-SCREEN-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [948, 950],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Exits the SEND SCREEN process cleanly."]
+      },
+      "2000-RECEIVE-MAP": {
+        "paragraph_name": "2000-RECEIVE-MAP",
+        "section": "procedure division",
+        "paragraph_code": "2000-RECEIVE-MAP.\n           PERFORM 2100-RECEIVE-SCREEN\n              THRU 2100-RECEIVE-SCREEN-EXIT\n\n           PERFORM 2200-EDIT-INPUTS\n            THRU   2200-EDIT-INPUTS-EXIT\n           .\n\n",
+        "paragraph_lines": [951, 957],
+        "ref_paragraphs": [
+          "2100-RECEIVE-SCREEN",
+          "2100-RECEIVE-SCREEN-EXIT",
+          "2200-EDIT-INPUTS",
+          "2200-EDIT-INPUTS-EXIT"
+        ],
+        "paragraph_logic": [
+          "Calls the [screen receiving process]<2100-RECEIVE-SCREEN> to capture user input data from the screen.",
+          "Calls the [input editing process]<2200-EDIT-INPUTS> to validate and edit the received inputs, ensuring they meet the required criteria."
+        ]
+      },
+      "2000-RECEIVE-MAP-EXIT": {
+        "paragraph_name": "2000-RECEIVE-MAP-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2000-RECEIVE-MAP-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [959, 961],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the current paragraph, indicating the end of the process.",
+          "\u65e5Marks the conclusion of the RECEIVE MAP operation within the procedure division."
+        ]
+      },
+      "2100-RECEIVE-SCREEN": {
+        "paragraph_name": "2100-RECEIVE-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "2100-RECEIVE-SCREEN.\n           EXEC CICS RECEIVE MAP(LIT-THISMAP)\n                          MAPSET(LIT-THISMAPSET)\n                          INTO(CCRDLIAI)\n                          RESP(WS-RESP-CD)\n           END-EXEC\n\n           MOVE ACCTSIDI OF CCRDLIAI  TO CC-ACCT-ID\n           MOVE CARDSIDI OF CCRDLIAI  TO CC-CARD-NUM\n\n           MOVE CRDSEL1I OF CCRDLIAI  TO WS-EDIT-SELECT(1)\n           MOVE CRDSEL2I OF CCRDLIAI  TO WS-EDIT-SELECT(2)\n           MOVE CRDSEL3I OF CCRDLIAI  TO WS-EDIT-SELECT(3)\n           MOVE CRDSEL4I OF CCRDLIAI  TO WS-EDIT-SELECT(4)\n           MOVE CRDSEL5I OF CCRDLIAI  TO WS-EDIT-SELECT(5)\n           MOVE CRDSEL6I OF CCRDLIAI  TO WS-EDIT-SELECT(6)\n           MOVE CRDSEL7I OF CCRDLIAI  TO WS-EDIT-SELECT(7)\n           .\n\n",
+        "paragraph_lines": [962, 979],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Receives the screen map data by executing the CICS RECEIVE command for the specified map and mapset.",
+          "Moves the account ID from the received map data to the internal variable CC-ACCT-ID.",
+          "Moves the card number from the received map data to the internal variable CC-CARD-NUM.",
+          "Copies the first edit selection from the received map data to the internal array WS-EDIT-SELECT(1).",
+          "Copies the second through seventh edit selections from the received map data to the corresponding internal array elements WS-EDIT-SELECT(2) to WS-EDIT-SELECT(7)."
+        ]
+      },
+      "2100-RECEIVE-SCREEN-EXIT": {
+        "paragraph_name": "2100-RECEIVE-SCREEN-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2100-RECEIVE-SCREEN-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [981, 983],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the received screen process, indicating that all necessary tasks have been completed for this step."
+        ]
+      },
+      "2200-EDIT-INPUTS": {
+        "paragraph_name": "2200-EDIT-INPUTS",
+        "section": "procedure division",
+        "paragraph_code": "2200-EDIT-INPUTS.\n           SET INPUT-OK                   TO TRUE\n           SET FLG-PROTECT-SELECT-ROWS-NO TO TRUE\n\n           PERFORM 2210-EDIT-ACCOUNT\n              THRU 2210-EDIT-ACCOUNT-EXIT\n\n           PERFORM 2220-EDIT-CARD\n              THRU 2220-EDIT-CARD-EXIT\n\n           PERFORM 2250-EDIT-ARRAY\n              THRU 2250-EDIT-ARRAY-EXIT\n           .\n\n",
+        "paragraph_lines": [985, 997],
+        "ref_paragraphs": [
+          "2210-EDIT-ACCOUNT",
+          "2210-EDIT-ACCOUNT-EXIT",
+          "2220-EDIT-CARD",
+          "2220-EDIT-CARD-EXIT",
+          "2250-EDIT-ARRAY",
+          "2250-EDIT-ARRAY-EXIT"
+        ],
+        "paragraph_logic": [
+          "Sets initial flags for input validation and row protection.",
+          "Calls the [account editing process]<2210-EDIT-ACCOUNT> to validate and edit account-related inputs.",
+          "Calls the [card editing process]<2220-EDIT-CARD> to validate and edit card-related inputs.",
+          "Calls the [array editing process]<2250-EDIT-ARRAY> to validate and edit array-related inputs."
+        ]
+      },
+      "2200-EDIT-INPUTS-EXIT": {
+        "paragraph_name": "2200-EDIT-INPUTS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2200-EDIT-INPUTS-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [999, 1001],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 2200-EDIT-INPUTS paragraph and no further processing occurs in this section."
+        ]
+      },
+      "2210-EDIT-ACCOUNT": {
+        "paragraph_name": "2210-EDIT-ACCOUNT",
+        "section": "procedure division",
+        "paragraph_code": "2210-EDIT-ACCOUNT.\n           SET FLG-ACCTFILTER-BLANK TO TRUE\n\n      *    Not supplied\n           IF CC-ACCT-ID   EQUAL LOW-VALUES\n           OR CC-ACCT-ID   EQUAL SPACES\n           OR CC-ACCT-ID-N EQUAL ZEROS\n              SET FLG-ACCTFILTER-BLANK  TO TRUE\n              MOVE ZEROES       TO CDEMO-ACCT-ID\n              GO TO  2210-EDIT-ACCOUNT-EXIT\n           END-IF\n      *\n      *    Not numeric\n      *    Not 11 characters\n           IF CC-ACCT-ID  IS NOT NUMERIC\n              SET INPUT-ERROR TO TRUE\n              SET FLG-ACCTFILTER-NOT-OK TO TRUE\n              SET FLG-PROTECT-SELECT-ROWS-YES TO TRUE\n              MOVE\n              'ACCOUNT FILTER,IF SUPPLIED MUST BE A 11 DIGIT NUMBER'\n                              TO WS-ERROR-MSG\n              MOVE ZERO       TO CDEMO-ACCT-ID\n              GO TO 2210-EDIT-ACCOUNT-EXIT\n           ELSE\n              MOVE CC-ACCT-ID TO CDEMO-ACCT-ID\n              SET FLG-ACCTFILTER-ISVALID TO TRUE\n           END-IF\n           .\n\n",
+        "paragraph_lines": [1003, 1030],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets the account filter flag to true indicating the account filter field is blank.",
+          "Checks if the account filter ID is not supplied and sets default values if true.",
+          "Validates whether the provided account filter ID is numeric.",
+          "Sets the input error flag and other relevant flags, and displays an error message if the account filter ID is invalid.",
+          "Assigns the validated account filter ID to the account field if it is valid."
+        ]
+      },
+      "2210-EDIT-ACCOUNT-EXIT": {
+        "paragraph_name": "2210-EDIT-ACCOUNT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2210-EDIT-ACCOUNT-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1032, 1034],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the [2210-EDIT-ACCOUNT-EXIT] paragraph and returns control to the calling paragraph."
+        ]
+      },
+      "2220-EDIT-CARD": {
+        "paragraph_name": "2220-EDIT-CARD",
+        "section": "procedure division",
+        "paragraph_code": "2220-EDIT-CARD.\n      *    Not numeric\n      *    Not 16 characters\n           SET FLG-CARDFILTER-BLANK TO TRUE\n\n      *    Not supplied\n           IF CC-CARD-NUM   EQUAL LOW-VALUES\n           OR CC-CARD-NUM   EQUAL SPACES\n           OR CC-CARD-NUM-N EQUAL ZEROS\n              SET FLG-CARDFILTER-BLANK  TO TRUE\n              MOVE ZEROES       TO CDEMO-CARD-NUM\n              GO TO  2220-EDIT-CARD-EXIT\n           END-IF\n      *\n      *    Not numeric\n      *    Not 16 characters\n           IF CC-CARD-NUM  IS NOT NUMERIC\n              SET INPUT-ERROR TO TRUE\n              SET FLG-CARDFILTER-NOT-OK TO TRUE\n              SET FLG-PROTECT-SELECT-ROWS-YES TO TRUE\n              IF WS-ERROR-MSG-OFF\n                 MOVE\n              'CARD ID FILTER,IF SUPPLIED MUST BE A 16 DIGIT NUMBER'\n                              TO WS-ERROR-MSG\n              END-IF\n              MOVE ZERO       TO CDEMO-CARD-NUM\n              GO TO 2220-EDIT-CARD-EXIT\n           ELSE\n              MOVE CC-CARD-NUM-N TO CDEMO-CARD-NUM\n              SET FLG-CARDFILTER-ISVALID TO TRUE\n           END-IF\n           .\n\n",
+        "paragraph_lines": [1036, 1067],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets card filter flag to blank if the card number is not supplied.",
+          "Checks if the card number is not numeric or not 16 characters, and sets input error flags accordingly.",
+          "Sets error message if the card number is invalid.",
+          "Moves zero to the card number if validation fails.",
+          "If the card number is valid, moves it to the appropriate field and sets a valid flag."
+        ]
+      },
+      "2220-EDIT-CARD-EXIT": {
+        "paragraph_name": "2220-EDIT-CARD-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2220-EDIT-CARD-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1069, 1071],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exit the paragraph 2220-EDIT-CARD-EXIT, marking the end of the Edit Card process."
+        ]
+      },
+      "2250-EDIT-ARRAY": {
+        "paragraph_name": "2250-EDIT-ARRAY",
+        "section": "procedure division",
+        "paragraph_code": "2250-EDIT-ARRAY.\n\n           IF INPUT-ERROR\n              GO TO 2250-EDIT-ARRAY-EXIT\n           END-IF\n\n           INSPECT  WS-EDIT-SELECT-FLAGS\n           TALLYING I\n           FOR ALL 'S'\n               ALL 'U'\n\n           IF I > +1\n               SET INPUT-ERROR      TO TRUE\n               SET WS-MORE-THAN-1-ACTION TO TRUE\n\n               MOVE WS-EDIT-SELECT-FLAGS\n                                   TO WS-EDIT-SELECT-ERROR-FLAGS\n               INSPECT WS-EDIT-SELECT-ERROR-FLAGS\n                 REPLACING ALL 'S' BY '1'\n                           ALL 'U' BY '1'\n                 CHARACTERS        BY '0'\n\n           END-IF\n\n           MOVE ZERO TO I-SELECTED\n\n           PERFORM VARYING I FROM 1 BY 1 UNTIL I > 7\n               EVALUATE TRUE\n                 WHEN SELECT-OK(I)\n                   MOVE I TO I-SELECTED\n                   IF WS-MORE-THAN-1-ACTION\n                      MOVE '1' TO WS-ROW-CRDSELECT-ERROR(I)\n                   END-IF\n                 WHEN SELECT-BLANK(I)\n                   CONTINUE\n                 WHEN OTHER\n                   SET INPUT-ERROR TO TRUE\n                   MOVE '1' TO WS-ROW-CRDSELECT-ERROR(I)\n                   IF WS-ERROR-MSG-OFF\n                      SET WS-INVALID-ACTION-CODE TO TRUE\n                   END-IF\n              END-EVALUATE\n           END-PERFORM\n\n           .\n\n",
+        "paragraph_lines": [1073, 1117],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks for input errors and exits if any are found.",
+          "Tallies the occurrences of selection flags S and U in WS-EDIT-SELECT-FLAGS.",
+          "If more than one S or U is found, flags an input error and prepares error flags.",
+          "Resets the selected index (I-SELECTED) to zero for processing selections.",
+          "Iterates through the selection flags, updating error messages and flags based on conditions."
+        ]
+      },
+      "2250-EDIT-ARRAY-EXIT": {
+        "paragraph_name": "2250-EDIT-ARRAY-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2250-EDIT-ARRAY-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1119, 1121],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 2250-EDIT-ARRAY paragraph, indicating the end of the editing process on an array."
+        ]
+      },
+      "9000-READ-FORWARD": {
+        "paragraph_name": "9000-READ-FORWARD",
+        "section": "procedure division",
+        "paragraph_code": "9000-READ-FORWARD.\n           MOVE LOW-VALUES           TO WS-ALL-ROWS\n\n      *****************************************************************\n      *    Start Browse\n      *****************************************************************\n           EXEC CICS STARTBR\n                DATASET(LIT-CARD-FILE)\n                RIDFLD(WS-CARD-RID-CARDNUM)\n                KEYLENGTH(LENGTH OF WS-CARD-RID-CARDNUM)\n                GTEQ\n                RESP(WS-RESP-CD)\n                RESP2(WS-REAS-CD)\n           END-EXEC\n      *****************************************************************\n      *    Loop through records and fetch max screen records\n      *****************************************************************\n           MOVE ZEROES TO WS-SCRN-COUNTER\n           SET CA-NEXT-PAGE-EXISTS    TO TRUE\n           SET MORE-RECORDS-TO-READ   TO TRUE\n\n           PERFORM UNTIL READ-LOOP-EXIT\n\n           EXEC CICS READNEXT\n                DATASET(LIT-CARD-FILE)\n                INTO (CARD-RECORD)\n                LENGTH(LENGTH OF CARD-RECORD)\n                RIDFLD(WS-CARD-RID-CARDNUM)\n                KEYLENGTH(LENGTH OF WS-CARD-RID-CARDNUM)\n                RESP(WS-RESP-CD)\n                RESP2(WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n               WHEN DFHRESP(DUPREC)\n                   PERFORM 9500-FILTER-RECORDS\n                      THRU 9500-FILTER-RECORDS-EXIT\n\n                   IF WS-DONOT-EXCLUDE-THIS-RECORD\n                      ADD 1             TO WS-SCRN-COUNTER\n\n                      MOVE CARD-NUM     TO WS-ROW-CARD-NUM(\n                      WS-SCRN-COUNTER)\n                      MOVE CARD-ACCT-ID TO\n                      WS-ROW-ACCTNO(WS-SCRN-COUNTER)\n                      MOVE CARD-ACTIVE-STATUS\n                                        TO WS-ROW-CARD-STATUS(\n                                        WS-SCRN-COUNTER)\n\n                      IF WS-SCRN-COUNTER = 1\n                         MOVE CARD-ACCT-ID\n                                        TO WS-CA-FIRST-CARD-ACCT-ID\n                         MOVE CARD-NUM  TO WS-CA-FIRST-CARD-NUM\n                         IF   WS-CA-SCREEN-NUM = 0\n                           ADD   +1     TO WS-CA-SCREEN-NUM\n                         ELSE\n                           CONTINUE\n                         END-IF\n                      ELSE\n                         CONTINUE\n                      END-IF\n                   ELSE\n                       CONTINUE\n                   END-IF\n      ******************************************************************\n      *            Max Screen size\n      ******************************************************************\n                   IF WS-SCRN-COUNTER = WS-MAX-SCREEN-LINES\n                      SET READ-LOOP-EXIT  TO TRUE\n\n                      MOVE CARD-ACCT-ID     TO WS-CA-LAST-CARD-ACCT-ID\n                      MOVE CARD-NUM         TO WS-CA-LAST-CARD-NUM\n\n                      EXEC CICS READNEXT\n                        DATASET(LIT-CARD-FILE)\n                        INTO (CARD-RECORD)\n                        LENGTH(LENGTH OF CARD-RECORD)\n                        RIDFLD(WS-CARD-RID-CARDNUM)\n                        KEYLENGTH(LENGTH OF WS-CARD-RID-CARDNUM)\n                        RESP(WS-RESP-CD)\n                        RESP2(WS-REAS-CD)\n                      END-EXEC\n\n                      EVALUATE WS-RESP-CD\n                         WHEN DFHRESP(NORMAL)\n                         WHEN DFHRESP(DUPREC)\n                              SET CA-NEXT-PAGE-EXISTS\n                                                TO TRUE\n                              MOVE CARD-ACCT-ID TO\n                                   WS-CA-LAST-CARD-ACCT-ID\n                              MOVE CARD-NUM     TO WS-CA-LAST-CARD-NUM\n                        WHEN DFHRESP(ENDFILE)\n                            SET CA-NEXT-PAGE-NOT-EXISTS     TO TRUE\n\n                            IF WS-ERROR-MSG-OFF\n                                MOVE 'NO MORE RECORDS TO SHOW'\n                                                TO WS-ERROR-MSG\n                            END-IF\n                            WHEN OTHER\n      *                     This is some kind of error. Change to END BR\n      *                     And exit\n                            SET READ-LOOP-EXIT      TO TRUE\n                            MOVE 'READ'              TO ERROR-OPNAME\n                            MOVE LIT-CARD-FILE       TO ERROR-FILE\n                            MOVE WS-RESP-CD          TO ERROR-RESP\n                            MOVE WS-REAS-CD          TO ERROR-RESP2\n                          MOVE WS-FILE-ERROR-MESSAGE TO WS-ERROR-MSG\n                      END-EVALUATE\n                  END-IF\n               WHEN DFHRESP(ENDFILE)\n                  SET READ-LOOP-EXIT              TO TRUE\n                  SET CA-NEXT-PAGE-NOT-EXISTS     TO TRUE\n                  MOVE CARD-ACCT-ID     TO WS-CA-LAST-CARD-ACCT-ID\n                  MOVE CARD-NUM         TO WS-CA-LAST-CARD-NUM\n                  IF WS-ERROR-MSG-OFF\n                     MOVE 'NO MORE RECORDS TO SHOW'  TO WS-ERROR-MSG\n                  END-IF\n                  IF WS-CA-SCREEN-NUM = 1\n                  AND WS-SCRN-COUNTER = 0\n      *               MOVE 'NO RECORDS TO SHOW'  TO WS-ERROR-MSG\n                      SET WS-NO-RECORDS-FOUND    TO TRUE\n                  END-IF\n               WHEN OTHER\n      *           This is some kind of error. Change to END BR\n      *           And exit\n                  SET READ-LOOP-EXIT             TO TRUE\n                  MOVE 'READ'                     TO ERROR-OPNAME\n                  MOVE LIT-CARD-FILE              TO ERROR-FILE\n                  MOVE WS-RESP-CD                 TO ERROR-RESP\n                  MOVE WS-REAS-CD                 TO ERROR-RESP2\n                  MOVE WS-FILE-ERROR-MESSAGE      TO WS-ERROR-MSG\n           END-EVALUATE\n           END-PERFORM\n\n           EXEC CICS ENDBR FILE(LIT-CARD-FILE)\n           END-EXEC\n           .\n",
+        "paragraph_lines": [1123, 1260],
+        "ref_paragraphs": ["9500-FILTER-RECORDS", "9500-FILTER-RECORDS-EXIT"],
+        "paragraph_logic": [
+          "Initializes the browsing position within the dataset by setting key values and attribute variables.",
+          "Starts browsing through the dataset of cards using the card number as the initial key.",
+          "Loops through the card records, executing a CICS READNEXT command to fetch the next card record.",
+          "Evaluates each records response code and performs filtering steps, including invoking <9500-FILTER-RECORDS> to determine if the record should be included.",
+          "Populates screen data fields with card number, account ID, and status for each valid record found.",
+          "Checks if the screen size limit is reached and sets appropriate flags to indicate more records exist or to handle end-of-file scenarios."
+        ]
+      },
+      "9000-READ-FORWARD-EXIT": {
+        "paragraph_name": "9000-READ-FORWARD-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9000-READ-FORWARD-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [1261, 1263],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Marks the end of the 9000-READ-FORWARD processing logic.",
+          "Exits the 9000-READ-FORWARD paragraph."
+        ]
+      },
+      "9100-READ-BACKWARDS": {
+        "paragraph_name": "9100-READ-BACKWARDS",
+        "section": "procedure division",
+        "paragraph_code": "9100-READ-BACKWARDS.\n\n           MOVE LOW-VALUES           TO WS-ALL-ROWS\n\n           MOVE WS-CA-FIRST-CARDKEY  TO WS-CA-LAST-CARDKEY\n\n      *****************************************************************\n      *    Start Browse\n      *****************************************************************\n           EXEC CICS STARTBR\n                DATASET(LIT-CARD-FILE)\n                RIDFLD(WS-CARD-RID-CARDNUM)\n                KEYLENGTH(LENGTH OF WS-CARD-RID-CARDNUM)\n                GTEQ\n                RESP(WS-RESP-CD)\n                RESP2(WS-REAS-CD)\n           END-EXEC\n      *****************************************************************\n      *    Loop through records and fetch max screen records\n      *****************************************************************\n           COMPUTE WS-SCRN-COUNTER =\n                                   WS-MAX-SCREEN-LINES + 1\n           END-COMPUTE\n           SET CA-NEXT-PAGE-EXISTS    TO TRUE\n           SET MORE-RECORDS-TO-READ   TO TRUE\n\n      *****************************************************************\n      *    Now we show the records from previous set.\n      *****************************************************************\n\n           EXEC CICS READPREV\n                DATASET(LIT-CARD-FILE)\n                INTO (CARD-RECORD)\n                LENGTH(LENGTH OF CARD-RECORD)\n                RIDFLD(WS-CARD-RID-CARDNUM)\n                KEYLENGTH(LENGTH OF WS-CARD-RID-CARDNUM)\n                RESP(WS-RESP-CD)\n                RESP2(WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n               WHEN DFHRESP(DUPREC)\n                   SUBTRACT 1          FROM WS-SCRN-COUNTER\n               WHEN OTHER\n      *           This is some kind of error. Change to END BR\n      *           And exit\n                  SET READ-LOOP-EXIT             TO TRUE\n                  MOVE 'READ'                     TO ERROR-OPNAME\n                  MOVE LIT-CARD-FILE              TO ERROR-FILE\n                  MOVE WS-RESP-CD                 TO ERROR-RESP\n                  MOVE WS-REAS-CD                 TO ERROR-RESP2\n                  MOVE WS-FILE-ERROR-MESSAGE      TO WS-ERROR-MSG\n                  GO TO 9100-READ-BACKWARDS-EXIT\n           END-EVALUATE\n\n           PERFORM UNTIL READ-LOOP-EXIT\n\n           EXEC CICS READPREV\n                DATASET(LIT-CARD-FILE)\n                INTO (CARD-RECORD)\n                LENGTH(LENGTH OF CARD-RECORD)\n                RIDFLD(WS-CARD-RID-CARDNUM)\n                KEYLENGTH(LENGTH OF WS-CARD-RID-CARDNUM)\n                RESP(WS-RESP-CD)\n                RESP2(WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n               WHEN DFHRESP(DUPREC)\n                   PERFORM 9500-FILTER-RECORDS\n                      THRU 9500-FILTER-RECORDS-EXIT\n                   IF WS-DONOT-EXCLUDE-THIS-RECORD\n                      MOVE CARD-NUM\n                                  TO WS-ROW-CARD-NUM(WS-SCRN-COUNTER)\n                      MOVE CARD-ACCT-ID\n                                  TO WS-ROW-ACCTNO(WS-SCRN-COUNTER)\n                      MOVE CARD-ACTIVE-STATUS\n                                  TO\n                                  WS-ROW-CARD-STATUS(WS-SCRN-COUNTER)\n\n                      SUBTRACT 1  FROM WS-SCRN-COUNTER\n                      IF WS-SCRN-COUNTER = 0\n                         SET READ-LOOP-EXIT  TO TRUE\n\n                         MOVE CARD-ACCT-ID\n                                  TO WS-CA-FIRST-CARD-ACCT-ID\n                         MOVE CARD-NUM\n                                  TO WS-CA-FIRST-CARD-NUM\n                      ELSE\n                         CONTINUE\n                      END-IF\n                   ELSE\n                       CONTINUE\n                   END-IF\n\n               WHEN OTHER\n      *           This is some kind of error. Change to END BR\n      *           And exit\n                  SET READ-LOOP-EXIT             TO TRUE\n                  MOVE 'READ'                     TO ERROR-OPNAME\n                  MOVE LIT-CARD-FILE              TO ERROR-FILE\n                  MOVE WS-RESP-CD                 TO ERROR-RESP\n                  MOVE WS-REAS-CD                 TO ERROR-RESP2\n                  MOVE WS-FILE-ERROR-MESSAGE      TO WS-ERROR-MSG\n           END-EVALUATE\n           END-PERFORM\n           .\n\n",
+        "paragraph_lines": [1264, 1372],
+        "ref_paragraphs": ["9500-FILTER-RECORDS", "9500-FILTER-RECORDS-EXIT"],
+        "paragraph_logic": [
+          "Initializes the working storage values and sets starting key.",
+          "Begins browsing the card dataset from the specified key.",
+          "Calculates the initial screen counter and sets indicators for page and record availability.",
+          "Reads the previous record from the dataset and evaluates the response code.",
+          "If normal or duplicate record is encountered, performs filtering logic<9500-FILTER-RECORDS>, processes the record, and updates the screen.",
+          "If an error is encountered, handles the error by setting flags, assigning error messages, and exiting the loop."
+        ]
+      },
+      "9100-READ-BACKWARDS-EXIT": {
+        "paragraph_name": "9100-READ-BACKWARDS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9100-READ-BACKWARDS-EXIT.\n           EXEC CICS\n                ENDBR FILE(LIT-CARD-FILE)\n           END-EXEC\n\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1374, 1380],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Ends the browse operation on the card file dataset.",
+          "Executes the CICS ENDBR command to close the browse.",
+          "Exits the paragraph after completing the browse ending operation."
+        ]
+      },
+      "9500-FILTER-RECORDS": {
+        "paragraph_name": "9500-FILTER-RECORDS",
+        "section": "procedure division",
+        "paragraph_code": "9500-FILTER-RECORDS.\n           SET WS-DONOT-EXCLUDE-THIS-RECORD TO TRUE\n\n           IF FLG-ACCTFILTER-ISVALID\n              IF  CARD-ACCT-ID = CC-ACCT-ID\n                  CONTINUE\n              ELSE\n                  SET WS-EXCLUDE-THIS-RECORD  TO TRUE\n                  GO TO 9500-FILTER-RECORDS-EXIT\n              END-IF\n           ELSE\n             CONTINUE\n           END-IF\n\n           IF FLG-CARDFILTER-ISVALID\n              IF  CARD-NUM = CC-CARD-NUM-N\n                  CONTINUE\n              ELSE\n                  SET WS-EXCLUDE-THIS-RECORD TO TRUE\n                  GO TO 9500-FILTER-RECORDS-EXIT\n              END-IF\n           ELSE\n             CONTINUE\n           END-IF\n\n           .\n\n",
+        "paragraph_lines": [1382, 1407],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets a flag to include the current record by default.",
+          "Checks if the account filter is valid.",
+          "If the account ID matches, continues processing; otherwise, sets the exclusion flag and exits the paragraph.",
+          "Checks if the card filter is valid.",
+          "If the card number matches, continues processing; otherwise, sets the exclusion flag and exits the paragraph."
+        ]
+      },
+      "9500-FILTER-RECORDS-EXIT": {
+        "paragraph_name": "9500-FILTER-RECORDS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9500-FILTER-RECORDS-EXIT.\n           EXIT\n           .\n\n      *****************************************************************\n      *Common code to store PFKey\n      *****************************************************************\n       COPY 'CSSTRPFY'\n           .\n\n",
+        "paragraph_lines": [1409, 1417],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the current paragraph [].",
+          "Includes a common code block for storing PFKey by copying the CSSTRPFY member []."
+        ]
+      },
+      "SEND-PLAIN-TEXT": {
+        "paragraph_name": "SEND-PLAIN-TEXT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-PLAIN-TEXT.\n           EXEC CICS SEND TEXT\n                     FROM(WS-ERROR-MSG)\n                     LENGTH(LENGTH OF WS-ERROR-MSG)\n                     ERASE\n                     FREEKB\n           END-EXEC\n\n           EXEC CICS RETURN\n           END-EXEC\n           .\n",
+        "paragraph_lines": [1422, 1432],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes CICS command to send plain text from workspace error message (WS-ERROR-MSG) to the terminal.",
+          "Specifies the length of the text to be sent based on the length of WS-ERROR-MSG.",
+          "Includes the ERASE and FREEKB options to clear the screen and unlock the keyboard.",
+          "Executes CICS RETURN command to pass control back to the CICS region."
+        ]
+      },
+      "SEND-PLAIN-TEXT-EXIT": {
+        "paragraph_name": "SEND-PLAIN-TEXT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-PLAIN-TEXT-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [1433, 1435],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Ends the SEND-PLAIN-TEXT paragraph and returns control to the calling process."
+        ]
+      },
+      "SEND-LONG-TEXT": {
+        "paragraph_name": "SEND-LONG-TEXT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-LONG-TEXT.\n           EXEC CICS SEND TEXT\n                     FROM(WS-LONG-MSG)\n                     LENGTH(LENGTH OF WS-LONG-MSG)\n                     ERASE\n                     FREEKB\n           END-EXEC\n\n           EXEC CICS RETURN\n           END-EXEC\n           .\n",
+        "paragraph_lines": [1441, 1451],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sends a long text message from working storage using CICS command.",
+          "Specifies the length of the message to be sent.",
+          "Erases the screen before displaying the message.",
+          "Allows the user to type input after the message is displayed.",
+          "Returns control to CICS after sending the message."
+        ]
+      },
+      "SEND-LONG-TEXT-EXIT": {
+        "paragraph_name": "SEND-LONG-TEXT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-LONG-TEXT-EXIT.\n           EXIT\n           .\n\n\n",
+        "paragraph_lines": [1452, 1454],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the exit routine for sending long text and terminates the paragraph."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CVCRD01Y",
+        "program_type": "Copy",
+        "program_name": "CVCRD01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "COCRDLI",
+        "program_type": "Copy",
+        "program_name": "COCRDLI",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 8,
+        "program_id": "CSUSR01Y",
+        "program_type": "Copy",
+        "program_name": "CSUSR01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 9,
+        "program_id": "CVACT02Y",
+        "program_type": "Copy",
+        "program_name": "CVACT02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 10,
+        "program_id": "'CSSTRPFY'",
+        "program_type": "Copy",
+        "program_name": "'CSSTRPFY'",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "level": "01",
+    "name": "CARD-RECORD",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "CARD-NUM",
+    "picture_clause": "X(16)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "CARD-ACCT-ID",
+    "picture_clause": "9(11)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "CARD-CVV-CD",
+    "picture_clause": "9(03)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "CARD-EMBOSSED-NAME",
+    "picture_clause": "X(50)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "CARD-EXPIRAION-DATE",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "CARD-ACTIVE-STATUS",
+    "picture_clause": "X(01)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(59)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

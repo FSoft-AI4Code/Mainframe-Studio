@@ -1,0 +1,182 @@
+[
+  {
+    "level": "01",
+    "name": "CARDDEMO-ADMIN-MENU-OPTIONS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "CDEMO-ADMIN-OPT-COUNT",
+    "picture_clause": "9(02)",
+    "default_value": "4",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "CDEMO-ADMIN-OPTIONS-DATA",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "1",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'User List (Security)               '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COUSR00C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "2",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'User Add (Security)                '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COUSR01C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "3",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'User Update (Security)             '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COUSR02C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "4",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'User Delete (Security)             '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COUSR03C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "CDEMO-ADMIN-OPTIONS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "CDEMO-ADMIN-OPTIONS-DATA",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "CDEMO-ADMIN-OPT",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": 9,
+    "data_type": null
+  },
+  {
+    "level": "15",
+    "name": "CDEMO-ADMIN-OPT-NUM",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "15",
+    "name": "CDEMO-ADMIN-OPT-NAME",
+    "picture_clause": "X(35)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "15",
+    "name": "CDEMO-ADMIN-OPT-PGMNAME",
+    "picture_clause": "X(08)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

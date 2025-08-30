@@ -1,0 +1,256 @@
+{
+  "appname": "アプリ名",
+  "sign_in": "ログイン",
+  "password": "パスワード",
+  "your_name": "あなたの名前",
+  "your_email": "あなたのメールアドレス",
+  "your_password": "あなたのパスワード",
+  "re_enter_password": "パスワード再入力",
+  "create_account": "アカウントを作成する",
+  "email": "Eメール",
+  "reset": "リセット",
+  "back_home": "家に帰ります",
+  "notice": "知らせ",
+  "unknow_error": "不明なエラー",
+  "message": {
+    "back_home": "家に帰ります",
+    "agreee_term_policy": "すべての規約、プライバシーポリシー、および料金に同意します",
+    "not_found": "申し訳ありませんが、アクセスしたページは存在しません。",
+    "server_error": "サーバーで予期しない状況が発生したため、リクエストを実行できませんでした。",
+    "unsaved_changes": "未保存の変更があります。破棄しますか?",
+    "coming_soon": "近日公開",
+    "missing_url": "URLを入力してください",
+    "redirect": "リダイレクト中...",
+    "success_fetch": "Git からのデータ取得プロセスが正常に完了しました。必要なデータが取得され、指定されたツールを使用してさらに分析できるようになりました。"
+  },
+  "notification": {
+    "git_success": "Git からのデータの取得に成功しました。",
+    "git_in_progress": "Git からのデータの取得が進行中です。",
+    "network_in_progress": "ネットワーク図の初期化が進行中です。",
+    "all_done": "すべてのプロセスが正常に完了しました。",
+    "graph_in_progress": "グラフ クラスタリングの初期化が進行中です。",
+    "parsing_blobs": "すべての BLOB を解析中です。",
+    "success_parsing_blobs": "すべての BLOB を正常に解析しました."
+  },
+  "error": {
+    "unauthorized": "ユーザーは権限がありません"
+  },
+  "page": {
+    "signin": {
+      "title": "認証"
+    },
+    "repository": {},
+    "repositories": {
+      "no": "番号順",
+      "repo_name": "リポジトリ名",
+      "created_at": "で作成されました"
+    },
+    "create_repo": {},
+    "file_explorer": {
+      "cobol": {
+        "table": {
+          "project_name": "プロジェクト名",
+          "document_title": "ドキュメントのタイトル",
+          "creator": "クリエイター",
+          "created_at": "作成日",
+          "updated_by": "更新者",
+          "updated_at": "更新日"
+        },
+        "overview": {
+          "tab": "概要",
+          "title": "プログラム概要",
+          "program_name": "プログラム名",
+          "program_io_file": "I-Oファイル",
+          "program_db_access": "データベースアクセス",
+          "program_db_access_content": "プログラムは {{tb_nums}} つの DB2 テーブルにアクセスできます。",
+          "program_copy_using": "を使用してコピーする",
+          "program_related_pgm": "関連する PGM",
+          "program_related_pgm_content": "プログラムには次の呼び出しがあります。",
+          "program_summarization": "要約",
+          "io_data": "IOデータ",
+          "io_data_description": "次の表は、このプログラムで使用される IO データを示しています。",
+          "io_data_item_name": "項目名",
+          "io_data_physical_name": "物理名",
+          "io_data_type": "タイプ",
+          "io_data_crud": "CRUD オペレーション",
+          "io_data_access_mode": "アクセスモード",
+          "io_data_notes": "注記"
+        },
+        "io_params": {
+          "tab": "IOパラメータの定義",
+          "title": "入力パラメータの定義",
+          "input_description": "以下の表に、現在のプログラムの入力情報を示します。",
+          "output": "出力パラメータの定義",
+          "output_description": "以下の表に、現在のプログラムの入力情報を示します。",
+          "name": "項目名",
+          "level": "COBOLレベル",
+          "type": "COBOLデータ型",
+          "length": "長さ",
+          "mode": "アクセスモード",
+          "data_type": "データ・タイプ",
+          "default_value": "デフォルト値",
+          "remarks": "備考",
+          "note": "注記"
+        },
+        "process_logic": {
+          "tab": "処理ロジック",
+          "title": "プログラム処理ロジック"
+        },
+        "call_graph": {
+          "tab": "コールグラフ",
+          "title": "コールグラフ",
+          "related_programs": "関連番組一覧",
+          "job_based": "ジョブベースの処理",
+          "id": "プログラムID",
+          "type": "プログラムの種類",
+          "name": "番組名",
+          "call_type": "通話タイプ",
+          "notes": "注記",
+          "locations": "位置"
+        },
+        "reference": {
+          "tab": "参照"
+        }
+      },
+      "copybook": {
+        "overview": {
+          "tab": "概要",
+          "copy": "コピーの概要",
+          "name": "名前",
+          "subset": "Subset Copybook",
+          "superset": "スーパーセットコピーブック",
+          "related": "関連する PGM",
+          "data": "データ",
+          "data_description": "次の表では、コピーブックのデータについて説明します。",
+          "item_name": "項目名",
+          "item_level": "COBOLレベル",
+          "item_data_type": "COBOLデータ型",
+          "item_length": "長さ",
+          "item_default_value": "デフォルト値",
+          "item_comment": "コメント"
+        }
+      },
+      "database": {
+        "overview": {
+          "tab": "データベースの概要",
+          "title": "データベースの概要",
+          "name": "名前",
+          "file": "ファイル",
+          "related_pgms": "関連する PGM",
+          "data": "データ",
+          "data_description": "以下の表にファイルのデータを示します。",
+          "data_item_name": "データベース項目名",
+          "data_type": "データ・タイプ",
+          "data_nallable": "Null可能",
+          "data_cobol_item_name": "COBOL項目名",
+          "data_cobol_level": "COBOLレベル",
+          "data_cobol_data_type": "COBOLデータ型",
+          "data_length": "長さ",
+          "data_default_value": "デフォルト値",
+          "data_comment": "コメント"
+        },
+        "access": {
+          "tab": "データベースアクセス",
+          "title": "データベースアクセス",
+          "description": "以下の表は、現在のプログラムのデータを示しています。",
+          "file_name": "ファイル名",
+          "nallable": "Null可能"
+        }
+      },
+      "jcl": {
+        "overview": {
+          "tab": "概要"
+        }
+      },
+      "sql": {
+        "overview": {
+          "tab": "概要"
+        }
+      },
+      "screen": {
+        "overview": {
+          "tab": "概要"
+        }
+      },
+      "other": {
+        "overview": {
+          "tab": "概要"
+        }
+      }
+    },
+    "assessment": {
+      "complexity": "複雑",
+      "cobol_code": "COBOLコード",
+      "no_files": "ファイル数",
+      "code_complexity": "コードの複雑さ",
+      "avg_loc": "平均位置",
+      "max_loc": "最大ロック",
+      "avg_cyc_level": "平均循環レベル",
+      "max_cyc_level": "最大サイクロマティックレベル",
+      "avg_no_tokens": "平均トークン数",
+      "max_no_tokens": "トークンの最大数",
+      "avg_no_op": "オペレーターの平均数",
+      "max_no_op": "オペレータの最大数",
+      "cluster": "集まる"
+    }
+  },
+  "button": {
+    "login": "ログイン",
+    "edit": "編集",
+    "exploration": "探検",
+    "fetch": "フェッチ",
+    "export": "輸出",
+    "fetched": "フェッチされました",
+    "export_assessment": "輸出評価",
+    "export_deadcode": "デッドコードのエクスポート",
+    "export_all": "すべてエクスポート",
+    "download": "ダウンロード",
+    "running": "ランニング",
+    "cancel": "キャンセル",
+    "update": "アップデート"
+  },
+  "label": {
+    "fetched_time": "取得場所",
+    "url": "URL",
+    "repo_url": "リポジトリURL",
+    "repo_name": "リポジトリ名",
+    "token": "トークン",
+    "password": "パスワード",
+    "email": "Eメール"
+  },
+  "component": {
+    "breadcrumb": {
+      "cobol_repo": "現行の企画",
+      "cobol_list": "プロジェクトの一覧表示",
+      "cobol_migration": "新しいプロジェクト"
+    },
+    "menu": {
+      "cobol_repo": "現行の企画",
+      "cobol_list": "プロジェクトの一覧表示",
+      "cobol_migration": "新しいプロジェクト",
+      "migration_assessment": "移行の評価"
+    },
+    "repo_tab": {
+      "graph": "グラフ",
+      "exploration": "探索ファイルレベル",
+      "assessment": "評価"
+    },
+    "input": {
+      "search_blob": "ここに入力してください"
+    },
+    "dialog": {
+      "name": "名前",
+      "type": "タイプ",
+      "deadcode": "デッドコード"
+    },
+    "dialog_tab": {
+      "detail": "詳細",
+      "graph": "グラフ"
+    }
+  },
+  "level": {
+    "l": "低い",
+    "md": "中くらい",
+    "h": "高い"
+  }
+}

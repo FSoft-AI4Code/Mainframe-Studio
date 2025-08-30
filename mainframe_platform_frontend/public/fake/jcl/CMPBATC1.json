@@ -1,0 +1,37 @@
+{
+  "overview": {
+    "job_name": "CMPBATC1",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM allows definition and management of jobs through precise control over job execution and resource allocation."
+  },
+  "step_list": [
+    {
+      "step_name": "BAT0",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)\n"],
+      "property": "The JCL step BAT0 does not execute any program but defines a DD statement for the input file 'COBOL.SYSIN' pointing to 'FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)'."
+    }
+  ]
+}

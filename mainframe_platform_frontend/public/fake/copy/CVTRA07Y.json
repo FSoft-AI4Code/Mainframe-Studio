@@ -1,0 +1,407 @@
+[
+  {
+    "level": "01",
+    "name": "REPORT-NAME-HEADER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "REPT-SHORT-NAME",
+    "picture_clause": "X(38)",
+    "default_value": "'DALYREPT'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "REPT-LONG-NAME",
+    "picture_clause": "X(41)",
+    "default_value": "'Daily Transaction Report'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "REPT-DATE-HEADER",
+    "picture_clause": "X(12)",
+    "default_value": "'Date Range: '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "REPT-START-DATE",
+    "picture_clause": "X(10)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(04)",
+    "default_value": "' to '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "REPT-END-DATE",
+    "picture_clause": "X(10)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "01",
+    "name": "TRANSACTION-DETAIL-REPORT",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "TRAN-REPORT-TRANS-ID",
+    "picture_clause": "X(16)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-REPORT-ACCOUNT-ID",
+    "picture_clause": "X(11)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-REPORT-TYPE-CD",
+    "picture_clause": "X(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'-'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-REPORT-TYPE-DESC",
+    "picture_clause": "X(15)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-REPORT-CAT-CD",
+    "picture_clause": "9(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'-'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-REPORT-CAT-DESC",
+    "picture_clause": "X(29)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-REPORT-SOURCE",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(04)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-REPORT-AMT",
+    "picture_clause": "-ZZZ,ZZZ,ZZZ.ZZ",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(02)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "01",
+    "name": "TRANSACTION-HEADER-1",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(17)",
+    "default_value": "'Transaction ID'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(12)",
+    "default_value": "'Account ID'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(19)",
+    "default_value": "'Transaction Type'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Tran Category'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(14)",
+    "default_value": "'Tran Source'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(16)",
+    "default_value": "'        Amount'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "01",
+    "name": "TRANSACTION-HEADER-2",
+    "picture_clause": "X(133)",
+    "default_value": "ALL",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "01",
+    "name": "REPORT-PAGE-TOTALS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(11)",
+    "default_value": "'Page Total'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(86)",
+    "default_value": "ALL",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "REPT-PAGE-TOTAL",
+    "picture_clause": "+ZZZ,ZZZ,ZZZ.ZZ",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "01",
+    "name": "REPORT-ACCOUNT-TOTALS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(13)",
+    "default_value": "'Account Total'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(84)",
+    "default_value": "ALL",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "REPT-ACCOUNT-TOTAL",
+    "picture_clause": "+ZZZ,ZZZ,ZZZ.ZZ",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "01",
+    "name": "REPORT-GRAND-TOTALS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(11)",
+    "default_value": "'Grand Total'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(86)",
+    "default_value": "ALL",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "REPT-GRAND-TOTAL",
+    "picture_clause": "+ZZZ,ZZZ,ZZZ.ZZ",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  }
+]

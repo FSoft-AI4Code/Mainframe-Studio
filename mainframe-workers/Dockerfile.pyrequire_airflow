@@ -1,0 +1,19 @@
+FROM apache/airflow:2.10.5
+
+USER root
+
+# Install Java 17 and set permissions in a single layer
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    openjdk-17-jdk \
+    && apt-get clean;
+
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+RUN export JAVA_HOME
+
+# Switch to airflow user
+USER ${AIRFLOW_UID:-50000}
+
+# Install Python requirements
+COPY requirements.txt /
+RUN pip install --no-cache-dir -r /requirements.txt

@@ -1,0 +1,47 @@
+[
+  {
+    "level": "01",
+    "name": "WS-US-PHONE-AREA-CODE-TO-EDIT",
+    "picture_clause": "XXX",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "01",
+    "name": "US-STATE-CODE-TO-EDIT",
+    "picture_clause": "X(2)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "01",
+    "name": "US-STATE-ZIPCODE-TO-EDIT",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "02",
+    "name": "US-STATE-AND-FIRST-ZIP2",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "LAST-3-OF-ZIP",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

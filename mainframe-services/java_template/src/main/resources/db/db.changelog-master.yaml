@@ -1,0 +1,6 @@
+databaseChangeLog:
+  # include everything in the changelog folder (no recursion)
+  - includeAll:
+      path: changelog
+      relativeToChangelogFile: true
+      recursive: false

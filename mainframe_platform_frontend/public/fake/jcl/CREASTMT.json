@@ -1,0 +1,343 @@
+{
+  "overview": {
+    "job_name": "CREASTMT",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": "1440",
+    "description": "JCL IBM provides robust, flexible job control for executing programs and automating dataset operations, ensuring efficient data handling and job execution."
+  },
+  "step_list": [
+    {
+      "step_name": "DELDEF01",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "  DELETE    FPTLT01.DEMO.CARDDEMO.TRXFL.SEQ\r\n  DELETE    FPTLT01.DEMO.CARDDEMO.TRXFL.VSAM.KSDS                     -\r\n            CLUSTER\r\n  SET       MAXCC = 0\r\n  DEFINE    CLUSTER  (NAME(FPTLT01.DEMO.CARDDEMO.TRXFL.VSAM.KSDS)     -\r\n                      KEYS(32 0)                                -\r\n                      VOLUMES(TSU023)                           -\r\n                      RECORDSIZE(350 350)                       -\r\n                      SHAREOPTIONS(2 3)                         -\r\n                      ERASE                                     -\r\n                      INDEXED                                   -\r\n                      CYL(1 5))                                 -\r\n            DATA      (NAME(FPTLT01.DEMO.CARDDEMO.TRXFL.DATA)         -\r\n                      CISZ(4096))                               -\r\n            INDEX     (NAME(FPTLT01.DEMO.CARDDEMO.TRXFL.INDEX))\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP010",
+      "program_executed": "SORT",
+      "description": "Sorts and merges records in files",
+      "dd_statement": [
+        {
+          "ddname": "SORTIN",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "SORTIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SORTOUT",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.TRXFL.SEQ",
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "(NEW,CATLG,DELETE)",
+            "DCB": "350",
+            "LRECL": "350",
+            "BLKSIZE": "350",
+            "RECFM": "350",
+            "SPACE": "(CYL,(1,1),RLSE)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRXFL.SEQ",
+              "variable_name": "SORTOUT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRXFL.SEQ",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "  SORT FIELDS=(263,16,CH,A,1,16,CH,A)\r\n  OUTREC FIELDS=(1:263,16,17:1,262,279:279,50)\r\n"
+        }
+      ],
+      "io_statements": [
+        "SORTIN: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS\n",
+        "SORTOUT: DSN=FPTLT01.DEMO.CARDDEMO.TRXFL.SEQ\n"
+      ],
+      "property": "JCL IBM provides robust and flexible job control for executing programs like SORT, which efficiently sorts and merges records across input and output datasets."
+    },
+    {
+      "step_name": "STEP020",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "INFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "INFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRXFL.SEQ",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "OUTFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "OUTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRXFL.VSAM.KSDS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "  REPRO INFILE(INFILE) OUTFILE(OUTFILE)\r\n"
+        }
+      ],
+      "io_statements": [
+        "INFILE: DSN=FPTLT01.DEMO.CARDDEMO.TRXFL.SEQ\n",
+        "OUTFILE: DSN=FPTLT01.DEMO.CARDDEMO.TRXFL.VSAM.KSDS\n"
+      ],
+      "property": "JCL efficiently executes IDCAMS for copying data from a sequential file to a VSAM KSDS file using REPRO."
+    },
+    {
+      "step_name": "STEP030",
+      "program_executed": "IEFBR14",
+      "description": "Dummy program for dataset allocation or deletion",
+      "dd_statement": [
+        {
+          "ddname": "HTMLFILE",
+          "parameters_map": {
+            "DISP": "(MOD,DELETE,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "80",
+            "LRECL": "80",
+            "BLKSIZE": "80",
+            "RECFM": "80",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.STATEMNT.HTML"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.STATEMNT.HTML",
+              "variable_name": "HTMLFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.STATEMNT.HTML",
+              "program_id": "IEFBR14"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "STMTFILE",
+          "parameters_map": {
+            "DISP": "(MOD,DELETE,DELETE)",
+            "DCB": "80",
+            "LRECL": "80",
+            "BLKSIZE": "80",
+            "RECFM": "80",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.STATEMNT.PS"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.STATEMNT.PS",
+              "variable_name": "STMTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.STATEMNT.PS",
+              "program_id": "IEFBR14"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "HTMLFILE: DSN=FPTLT01.DEMO.CARDDEMO.STATEMNT.HTML\n",
+        "STMTFILE: DSN=FPTLT01.DEMO.CARDDEMO.STATEMNT.PS\n"
+      ],
+      "property": "JCL IBM's best property is its ability to automate dataset allocation or deletion using the IEFBR14 utility program with detailed control over dataset parameters."
+    },
+    {
+      "step_name": "STEP040",
+      "program_executed": "CBSTM03A",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "program_id": "CBSTM03A"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "TRNXFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "TRNXFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRXFL.VSAM.KSDS",
+              "program_id": "CBSTM03A"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "XREFFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "XREFFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "program_id": "CBSTM03A"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "ACCTFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "ACCTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS",
+              "program_id": "CBSTM03A"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "CUSTFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "CUSTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS",
+              "program_id": "CBSTM03A"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "STMTFILE",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "80",
+            "LRECL": "80",
+            "BLKSIZE": "80",
+            "RECFM": "(CYL,(1,1),RLSE)",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "UNNAMED_1": "(CYL,(1,1),RLSE)",
+            "UNNAMED_2": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.STATEMNT.PS"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.STATEMNT.PS",
+              "variable_name": "STMTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.STATEMNT.PS",
+              "program_id": "CBSTM03A"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "HTMLFILE",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "100",
+            "LRECL": "100",
+            "BLKSIZE": "100",
+            "RECFM": "100",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.STATEMNT.HTML"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.STATEMNT.HTML",
+              "variable_name": "HTMLFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.STATEMNT.HTML",
+              "program_id": "CBSTM03A"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB\n",
+        "TRNXFILE: DSN=FPTLT01.DEMO.CARDDEMO.TRXFL.VSAM.KSDS\n",
+        "XREFFILE: DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS\n",
+        "ACCTFILE: DSN=FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS\n",
+        "CUSTFILE: DSN=FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS\n",
+        "STMTFILE: DSN=FPTLT01.DEMO.CARDDEMO.STATEMNT.PS\n",
+        "HTMLFILE: DSN=FPTLT01.DEMO.CARDDEMO.STATEMNT.HTML\n"
+      ],
+      "property": "The JCL step 'STEP040' executes program 'CBSTM03A' with multiple input and output datasets, ensuring efficient data handling and job execution."
+    }
+  ]
+}

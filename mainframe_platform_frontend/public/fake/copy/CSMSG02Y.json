@@ -1,0 +1,83 @@
+[
+  {
+    "level": "000700",
+    "name": "**",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "000800",
+    "name": "*",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "000900",
+    "name": "*",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "001000",
+    "name": "*",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "001200",
+    "name": "01ABEND-DATA",
+    "picture_clause": null,
+    "default_value": "01",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "001300",
+    "name": "05ABEND-CODE",
+    "picture_clause": "X(4)001400",
+    "default_value": "05",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "001500",
+    "name": "05ABEND-CULPRIT",
+    "picture_clause": "X(8)001600",
+    "default_value": "05",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "001700",
+    "name": "05ABEND-REASON",
+    "picture_clause": "X(50)001800",
+    "default_value": "05",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "001900",
+    "name": "05ABEND-MSG",
+    "picture_clause": "X(72)002000",
+    "default_value": "05",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

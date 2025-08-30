@@ -1,0 +1,256 @@
+{
+  "appname": "App Name",
+  "sign_in": "Login",
+  "password": "Password",
+  "your_name": "Your Name",
+  "your_email": "Your Email",
+  "your_password": "Your Password",
+  "re_enter_password": "Re-Enter Password",
+  "create_account": "Create Account",
+  "email": "Email",
+  "reset": "Reset",
+  "back_home": "Back Home",
+  "notice": "Notice",
+  "unknow_error": "Unknow error",
+  "message": {
+    "back_home": "Back Home",
+    "agreee_term_policy": "I agree to all the Term, Privacy Policy and Fees",
+    "not_found": "Sorry, the page you visited does not exist.",
+    "server_error": "The server encountered an unexpected condition that prevented it from fulfilling the request.",
+    "unsaved_changes": "There are unsaved changes, do you wish to discard them",
+    "coming_soon": "Coming soon",
+    "missing_url": "Please enter a URL",
+    "redirect": "Redirecting...",
+    "success_fetch": "The data retrieval process from Git has been successfully completed. The necessary data has been fetched and is ready for further analysis using the designated tool."
+  },
+  "notification": {
+    "git_success": "Data Retrieval from Git Successful!",
+    "git_in_progress": "Data retrieval from Git in progress.",
+    "network_in_progress": "Network Diagram initialization in progress.",
+    "all_done": "All processes have been completed successfully.",
+    "graph_in_progress": "Graph Clustering initialization in progress.",
+    "parsing_blobs": "Parsing all blobs is in process.",
+    "success_parsing_blobs": "Successfully parsing all blobs."
+  },
+  "error": {
+    "unauthorized": "User is unauthorized"
+  },
+  "page": {
+    "signin": {
+      "title": "Authentication"
+    },
+    "repository": {},
+    "repositories": {
+      "no": "No.",
+      "repo_name": "Repo Name",
+      "created_at": "Date"
+    },
+    "create_repo": {},
+    "file_explorer": {
+      "cobol": {
+        "table": {
+          "project_name": "Project Name",
+          "document_title": "Document Title",
+          "creator": "Creator",
+          "created_at": "Created Date",
+          "updated_by": "Updated By",
+          "updated_at": "Updated Date"
+        },
+        "overview": {
+          "tab": "Overview",
+          "title": "Program overview",
+          "program_name": "Program Name",
+          "program_io_file": "I-O File",
+          "program_db_access": "Database access",
+          "program_db_access_content": "the program has access to {{tb_nums}} DB2 tables: ",
+          "program_copy_using": "Copy using",
+          "program_related_pgm": "Related PGM",
+          "program_related_pgm_content": "the program has call to",
+          "program_summarization": "Summarization",
+          "io_data": "IO data",
+          "io_data_description": "The table below describes the IO data used in this program",
+          "io_data_item_name": "Item name",
+          "io_data_physical_name": "Physical name",
+          "io_data_type": "Type",
+          "io_data_crud": "CRUD op",
+          "io_data_access_mode": "Access mode",
+          "io_data_notes": "Note"
+        },
+        "io_params": {
+          "tab": "IO Parameter Definition",
+          "title": "Input parameter definition",
+          "input_description": "The table below describes the input information of the current program:",
+          "output": "Output parameter definition",
+          "output_description": "The table below describes the input information of the current program:",
+          "name": "Item name",
+          "level": "Cobol level",
+          "type": "Cobol data type",
+          "length": "Length",
+          "mode": "Access mode",
+          "data_type": "Data type",
+          "default_value": "Default value",
+          "remarks": "Remarks",
+          "note": "Note"
+        },
+        "process_logic": {
+          "tab": "Processing Logic",
+          "title": "Program Processing Logic"
+        },
+        "call_graph": {
+          "tab": "Call Graph",
+          "title": "Call graph",
+          "related_programs": "List of related programs",
+          "job_based": "Job-based processing",
+          "id": "ProgramID",
+          "type": "Program type",
+          "name": "Program name",
+          "call_type": "Call type",
+          "notes": "Note",
+          "locations": "Locations"
+        },
+        "reference": {
+          "tab": "Reference"
+        }
+      },
+      "copybook": {
+        "overview": {
+          "tab": "Overview",
+          "copy": "Copy overview",
+          "name": "Name",
+          "subset": "Subset Copybook",
+          "superset": "Superset Copybook",
+          "related": "Related PGMs",
+          "data": "Data",
+          "data_description": "The table below describes the data of the copybook",
+          "item_name": "Item name",
+          "item_level": "Cobol level",
+          "item_data_type": "Cobol data type",
+          "item_length": "Length",
+          "item_default_value": "Default value",
+          "item_comment": "Comment"
+        }
+      },
+      "database": {
+        "overview": {
+          "tab": "Database Overview",
+          "title": "Database overview",
+          "name": "Name",
+          "file": "File",
+          "related_pgms": "Related PGMs",
+          "data": "Data",
+          "data_description": "The table below describes the data of the file:",
+          "data_item_name": "Database item name",
+          "data_type": "Data type",
+          "data_nallable": "Nallable",
+          "data_cobol_item_name": "Cobol item name",
+          "data_cobol_level": "Cobol level",
+          "data_cobol_data_type": "Cobol data type",
+          "data_length": "Length",
+          "data_default_value": "Default value",
+          "data_comment": "Comment"
+        },
+        "access": {
+          "tab": "Database Access",
+          "title": "Database access",
+          "description": "The table below describes the data of the current program",
+          "file_name": "File name",
+          "nallable": "Nallable"
+        }
+      },
+      "jcl": {
+        "overview": {
+          "tab": "Overview"
+        }
+      },
+      "sql": {
+        "overview": {
+          "tab": "Overview"
+        }
+      },
+      "screen": {
+        "overview": {
+          "tab": "Overview"
+        }
+      },
+      "other": {
+        "overview": {
+          "tab": "Overview"
+        }
+      }
+    },
+    "assessment": {
+      "complexity": "Complexity",
+      "cobol_code": "COBOL CODE",
+      "no_files": "Number of files",
+      "code_complexity": "Code complexity",
+      "avg_loc": "Avg. Loc",
+      "max_loc": "Max Loc",
+      "avg_cyc_level": "Avg. Cyclomatic Level",
+      "max_cyc_level": "Max Cyclomatic Level",
+      "avg_no_tokens": "Avg. Number of tokens",
+      "max_no_tokens": "Max number of token",
+      "avg_no_op": "Avg. Number of operators",
+      "max_no_op": "Max number of operators",
+      "cluster": "Cluster"
+    }
+  },
+  "button": {
+    "login": "Login",
+    "edit": "Edit",
+    "exploration": "Exploration",
+    "fetch": "Fetch",
+    "export": "Export",
+    "fetched": "Fetched",
+    "export_assessment": "Export Assessment",
+    "export_deadcode": "Export Deadcode",
+    "export_all": "Export All",
+    "download": "Download",
+    "running": "Running",
+    "cancel": "Cancel",
+    "update": "Update"
+  },
+  "label": {
+    "fetched_time": "Fetched at",
+    "url": "URL",
+    "repo_url": "Repository URL",
+    "repo_name": "Repo Name",
+    "token": "Token",
+    "password": "Password",
+    "email": "Email"
+  },
+  "component": {
+    "breadcrumb": {
+      "cobol_repo": "Current Project",
+      "cobol_list": "List Project",
+      "cobol_migration": "New Project"
+    },
+    "menu": {
+      "cobol_repo": "Current Project",
+      "cobol_list": "List Project",
+      "cobol_migration": "New Project",
+      "migration_assessment": "Migration Assessment"
+    },
+    "repo_tab": {
+      "graph": "Graph",
+      "exploration": "Exploration file level",
+      "assessment": "Assessment"
+    },
+    "input": {
+      "search_blob": "Input here"
+    },
+    "dialog": {
+      "name": "Name",
+      "type": "Type",
+      "deadcode": "Deadcode"
+    },
+    "dialog_tab": {
+      "detail": "Detail",
+      "graph": "Graph"
+    }
+  },
+  "level": {
+    "l": "Low",
+    "md": "Medium",
+    "h": "High"
+  }
+}

@@ -1,0 +1,1059 @@
+{
+  "id": "95518838f7af4e36a5905cd005334e51",
+  "name": "CBSTM03A",
+  "path": "DEMO.CARDDEMO.CBL/CBSTM03A",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBSTM03A",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": ["COSTM01", "CVACT03Y", "CUSTREC", "CVACT01Y"],
+    "call_files": [
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CBSTM03B'::static",
+      "'CEE3ABD'::static"
+    ],
+    "summarization": "This COBOL program performs a series of operations primarily centered around handling various files and related records, moving through stages of opening, processing, and closing files, while generating outputs in both statement files and HTML formats. Here's the step-by-step summary:\n\n1. **Initialization & Setup:**\n   - Set addresses for various blocks using pointers.\n   - Display the JCL job and step information.\n   - Adjust and check entries in the TIOT table.\n   \n2. **File Handling Operations:**\n   - **5000-CREATE-STATEMENT:** Initializes and prepares records to be written to statement files and HTML files.\n\n3. **Main Processing Loop (`1000-MAINLINE`):**\n   - **1000-XREFFILE-GET-NEXT:** Reads the next cross-reference file (XREFFILE) record.\n   - **2000-CUSTFILE-GET:** Fetches customer file (CUSTFILE) records using cross-reference custom ID.\n   - **3000-ACCTFILE-GET:** Fetches account file (ACCTFILE) records using cross-reference account ID.\n   - **4000-TRNXFILE-GET:** Handles the transaction file (TRNXFILE) by comparing and writing transaction details.\n   - **9100-TRNXFILE-CLOSE, 9200-XREFFILE-CLOSE, 9300-CUSTFILE-CLOSE, 9400-ACCTFILE-CLOSE:** Close the respective files and handle any potential errors.\n\n4. **File-specific Operations:**\n   - **8100-FILE-OPEN:** Based on `WS-FL-DD` set by an evaluate statement, it proceeds to the respective file open routines:\n     - **8100-TRNXFILE-OPEN:** Opens and reads transaction file (TRNXFILE).\n     - **8200-XREFFILE-OPEN:** Opens and reads cross-reference file (XREFFILE).\n     - **8300-CUSTFILE-OPEN:** Opens and reads customer file (CUSTFILE).\n     - **8400-ACCTFILE-OPEN:** Opens and reads account file (ACCTFILE).\n\n5. **Transaction Processing (`8500-READTRNX-READ`):**\n   - Reads transaction records, handles them, and processes accordingly using previously opened files.\n\n6. **Data Handling Subroutines:**\n   - **5100-WRITE-HTML-HEADER / 5200-WRITE-HTML-NMADBS:** Handles writing structured HTML output segments.\n   - **6000-WRITE-TRANS:** Writes individual transaction records to statement and HTML files respectively.\n\n7. **Exceptional Handling:**\n   - Error handling for file operations, with specific routines (`9999-ABEND-PROGRAM`) for program abend scenarios.\n\n8. **Termination (`9999-GOBACK`):**\n   - Final closure of the program, ensuring all files are correctly closed and the program exits gracefully.\n\nThis program essentially performs record reading, processing, and writing tasks while managing multiple files (TRNXFILE, XREFFILE, CUSTFILE, ACCTFILE) and integrating data from these files into structured output formats for statements and HTML reports.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "STMT-FILE",
+        "physical_name": "STMTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "HTML-FILE",
+        "physical_name": "HTMLFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "ALIGN-PSA",
+        "cobol_level": "01",
+        "cobol_dtype": "9",
+        "length": "16",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "PSA-BLOCK",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "536",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   TCB-POINT",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "TCB-BLOCK",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "12",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   TIOT-POINT",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "TIOT-BLOCK",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   TIOTNJOB",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   TIOTJSTP",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   TIOTPSTP",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "TIOT-ENTRY",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   TIOT-SEG",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "      TIO-LEN",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "      FILLER",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "03",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "      TIOCDDNM",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "      FILLER",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "05",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "      UCB-ADDR",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "03",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "         NULL-UCB",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "LOW-VALUES",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "04",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "         END-OF-TIOT",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "LOW-VALUES",
+        "remarks": "Java  data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "ALIGN-PSA",
+        "cobol_level": "01",
+        "cobol_dtype": "9",
+        "length": "16",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "PSA-BLOCK",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "536",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   TCB-POINT",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "TCB-BLOCK",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "12",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   TIOT-POINT",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "TIOT-BLOCK",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   TIOTNJOB",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   TIOTJSTP",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   TIOTPSTP",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "TIOT-ENTRY",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   TIOT-SEG",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "      TIO-LEN",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "      FILLER",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "03",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "      TIOCDDNM",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "      FILLER",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "05",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "      UCB-ADDR",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "03",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "         NULL-UCB",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "LOW-VALUES",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "04",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "         END-OF-TIOT",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "LOW-VALUES",
+        "remarks": "Java  data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "0000-START": {
+        "paragraph_name": "0000-START",
+        "section": "procedure division",
+        "paragraph_code": "0000-START.\n\n           EVALUATE WS-FL-DD\n             WHEN 'TRNXFILE'\n               ALTER 8100-FILE-OPEN TO PROCEED TO 8100-TRNXFILE-OPEN\n               GO TO 8100-FILE-OPEN\n             WHEN 'XREFFILE'\n               ALTER 8100-FILE-OPEN TO PROCEED TO 8200-XREFFILE-OPEN\n               GO TO 8100-FILE-OPEN\n             WHEN 'CUSTFILE'\n               ALTER 8100-FILE-OPEN TO PROCEED TO 8300-CUSTFILE-OPEN\n               GO TO 8100-FILE-OPEN\n             WHEN 'ACCTFILE'\n               ALTER 8100-FILE-OPEN TO PROCEED TO 8400-ACCTFILE-OPEN\n               GO TO 8100-FILE-OPEN\n             WHEN 'READTRNX'\n               GO TO 8500-READTRNX-READ\n             WHEN OTHER\n               GO TO 9999-GOBACK.\n\n",
+        "paragraph_lines": [296, 314],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Evaluates the value of WS-FL-DD to determine the appropriate file processing.",
+          "If WS-FL-DD is TRNXFILE, alters the flow to proceed to 8100-TRNXFILE-OPEN and branches to 8100-FILE-OPEN.",
+          "If WS-FL-DD is XREFFILE, alters the flow to proceed to 8200-XREFFILE-OPEN and branches to 8100-FILE-OPEN.",
+          "If WS-FL-DD is CUSTFILE, alters the flow to proceed to 8300-CUSTFILE-OPEN and branches to 8100-FILE-OPEN.",
+          "If WS-FL-DD is ACCTFILE, alters the flow to proceed to 8400-ACCTFILE-OPEN and branches to 8100-FILE-OPEN.",
+          "If WS-FL-DD is READTRNX, branches directly to 8500-READTRNX-READ.",
+          "In the default case, branches to 9999-GOBACK to exit the program."
+        ]
+      },
+      "1000-MAINLINE": {
+        "paragraph_name": "1000-MAINLINE",
+        "section": "procedure division",
+        "paragraph_code": "1000-MAINLINE.\n           PERFORM UNTIL END-OF-FILE = 'Y'\n               IF  END-OF-FILE = 'N'\n                   PERFORM 1000-XREFFILE-GET-NEXT\n                   IF  END-OF-FILE = 'N'\n                       PERFORM 2000-CUSTFILE-GET\n                       PERFORM 3000-ACCTFILE-GET\n                       PERFORM 5000-CREATE-STATEMENT\n                       MOVE 1 TO CR-JMP\n                       MOVE ZERO TO WS-TOTAL-AMT\n                       PERFORM 4000-TRNXFILE-GET\n                   END-IF\n               END-IF\n           END-PERFORM.\n\n           PERFORM 9100-TRNXFILE-CLOSE.\n\n           PERFORM 9200-XREFFILE-CLOSE.\n\n           PERFORM 9300-CUSTFILE-CLOSE.\n\n           PERFORM 9400-ACCTFILE-CLOSE.\n\n           CLOSE STMT-FILE HTML-FILE.\n\n",
+        "paragraph_lines": [316, 339],
+        "ref_paragraphs": [
+          "1000-XREFFILE-GET-NEXT",
+          "2000-CUSTFILE-GET",
+          "3000-ACCTFILE-GET",
+          "5000-CREATE-STATEMENT",
+          "4000-TRNXFILE-GET",
+          "9100-TRNXFILE-CLOSE",
+          "9200-XREFFILE-CLOSE",
+          "9300-CUSTFILE-CLOSE",
+          "9400-ACCTFILE-CLOSE"
+        ],
+        "paragraph_logic": [
+          "Iterates through records until the end-of-file marker is set to Y.",
+          "Calls the [cross-reference file fetch process]<1000-XREFFILE-GET-NEXT> to get the next record from the cross-reference file.",
+          "If not at the end of the file, calls the [customer file fetch process]<2000-CUSTFILE-GET> to fetch customer details.",
+          "Calls the [account file fetch process]<3000-ACCTFILE-GET> to fetch account details.",
+          "Calls the [statement creation process]<5000-CREATE-STATEMENT> to create statements based on fetched data.",
+          "Calls the [transaction file fetch process]<4000-TRNXFILE-GET> to fetch transactions and prepare for further processing.",
+          "Performs closing operations for transaction, cross-reference, customer, and account files respectively with <9100-TRNXFILE-CLOSE>, <9200-XREFFILE-CLOSE>, <9300-CUSTFILE-CLOSE>, and <9400-ACCTFILE-CLOSE>."
+        ]
+      },
+      "9999-GOBACK": {
+        "paragraph_name": "9999-GOBACK",
+        "section": "procedure division",
+        "paragraph_code": "9999-GOBACK.\n           GOBACK.\n\n",
+        "paragraph_lines": [341, 342],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the GOBACK statement to return control to the calling program or the operating system."
+        ]
+      },
+      "1000-XREFFILE-GET-NEXT": {
+        "paragraph_name": "1000-XREFFILE-GET-NEXT",
+        "section": "procedure division",
+        "paragraph_code": "1000-XREFFILE-GET-NEXT.\n\n           MOVE 'XREFFILE' TO WS-M03B-DD.\n           SET M03B-READ TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           MOVE SPACES TO WS-M03B-FLDT.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           EVALUATE WS-M03B-RC\n             WHEN '00'\n               CONTINUE\n             WHEN '10'\n               MOVE 'Y' TO END-OF-FILE\n             WHEN OTHER\n               DISPLAY 'ERROR READING XREFFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-EVALUATE.\n\n           MOVE WS-M03B-FLDT TO CARD-XREF-RECORD.\n\n           EXIT.\n\n",
+        "paragraph_lines": [345, 366],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Initializes the DD name for the XREFFILE and sets the read flag to true.",
+          "Clears the return code and field description table for the M03B area.",
+          "Calls the CBSTM03B program to read the next record from the XREFFILE.",
+          "Evaluates the return code WS-M03B-RC to handle different scenarios: continue on 00, end-of-file on 10, and display an error message for other return codes.",
+          "Calls the [error handling routine]<9999-ABEND-PROGRAM> if an unexpected error occurs.",
+          "Moves the field description table to CARD-XREF-RECORD for further processing."
+        ]
+      },
+      "2000-CUSTFILE-GET": {
+        "paragraph_name": "2000-CUSTFILE-GET",
+        "section": "procedure division",
+        "paragraph_code": "2000-CUSTFILE-GET.\n\n           MOVE 'CUSTFILE' TO WS-M03B-DD.\n           SET M03B-READ-K TO TRUE.\n           MOVE XREF-CUST-ID TO WS-M03B-KEY.\n           MOVE ZERO TO WS-M03B-KEY-LN.\n           COMPUTE WS-M03B-KEY-LN = LENGTH OF XREF-CUST-ID.\n           MOVE ZERO TO WS-M03B-RC.\n           MOVE SPACES TO WS-M03B-FLDT.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           EVALUATE WS-M03B-RC\n             WHEN '00'\n               CONTINUE\n             WHEN OTHER\n               DISPLAY 'ERROR READING CUSTFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-EVALUATE.\n\n           MOVE WS-M03B-FLDT TO CUSTOMER-RECORD.\n\n           EXIT.\n\n",
+        "paragraph_lines": [368, 390],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves the value CUSTFILE into the working storage data definition field and sets read flag to true.",
+          "Copies the customer ID to the working storage key field and calculates its length.",
+          "Initiates the call to read the customer file through the CBSTM03B subroutine using the working storage area.",
+          "Evaluates the return code; performs an abend routine to handle any errors if the return code is not 00.",
+          "Moves the retrieved field data from the working storage area to the customer record field for further processing."
+        ]
+      },
+      "3000-ACCTFILE-GET": {
+        "paragraph_name": "3000-ACCTFILE-GET",
+        "section": "procedure division",
+        "paragraph_code": "3000-ACCTFILE-GET.\n\n           MOVE 'ACCTFILE' TO WS-M03B-DD.\n           SET M03B-READ-K TO TRUE.\n           MOVE XREF-ACCT-ID TO WS-M03B-KEY.\n           MOVE ZERO TO WS-M03B-KEY-LN.\n           COMPUTE WS-M03B-KEY-LN = LENGTH OF XREF-ACCT-ID.\n           MOVE ZERO TO WS-M03B-RC.\n           MOVE SPACES TO WS-M03B-FLDT.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           EVALUATE WS-M03B-RC\n             WHEN '00'\n               CONTINUE\n             WHEN OTHER\n               DISPLAY 'ERROR READING ACCTFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-EVALUATE.\n\n           MOVE WS-M03B-FLDT TO ACCOUNT-RECORD.\n\n           EXIT.\n\n",
+        "paragraph_lines": [392, 414],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves ACCTFILE into a working storage variable to specify the file to read.",
+          "Sets the read key flag to true and assigns the account ID as the key to search in the file.",
+          "Prepares the length and resets control variables needed for the file read operation.",
+          "Calls the CBSTM03B program to read the account file using the prepared keys and lengths.",
+          "Evaluates the return code from the read operation; continues if successful, otherwise displays an error and calls the [abnormal termination process]<9999-ABEND-PROGRAM>.",
+          "Moves the fetched data into the account record field for further processing."
+        ]
+      },
+      "4000-TRNXFILE-GET": {
+        "paragraph_name": "4000-TRNXFILE-GET",
+        "section": "procedure division",
+        "paragraph_code": "4000-TRNXFILE-GET.\n           PERFORM VARYING CR-JMP FROM 1 BY 1\n             UNTIL CR-JMP > CR-CNT\n             OR (WS-CARD-NUM (CR-JMP) > XREF-CARD-NUM)\n               IF XREF-CARD-NUM = WS-CARD-NUM (CR-JMP)\n                   MOVE WS-CARD-NUM (CR-JMP) TO TRNX-CARD-NUM\n                   PERFORM VARYING TR-JMP FROM 1 BY 1\n                     UNTIL (TR-JMP > WS-TRCT (CR-JMP))\n                       MOVE WS-TRAN-NUM (CR-JMP, TR-JMP)\n                         TO TRNX-ID\n                       MOVE WS-TRAN-REST (CR-JMP, TR-JMP)\n                         TO TRNX-REST\n                       PERFORM 6000-WRITE-TRANS\n                       ADD TRNX-AMT TO WS-TOTAL-AMT\n                   END-PERFORM\n               END-IF\n           END-PERFORM.\n           MOVE WS-TOTAL-AMT TO WS-TRN-AMT.\n           MOVE WS-TRN-AMT TO ST-TOTAL-TRAMT.\n           WRITE FD-STMTFILE-REC FROM ST-LINE12.\n           WRITE FD-STMTFILE-REC FROM ST-LINE14A.\n           WRITE FD-STMTFILE-REC FROM ST-LINE15.\n\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L10 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L75 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L78 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L79 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L80 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n           EXIT.\n",
+        "paragraph_lines": [416, 456],
+        "ref_paragraphs": ["6000-WRITE-TRANS"],
+        "paragraph_logic": [
+          "Loops through card records to find matching card numbers and transaction details.",
+          "For each matching card number, moves card number and transaction IDs and details to transaction variables.",
+          "Calls the [transaction writing process]<6000-WRITE-TRANS> for each transaction within the matching card record.",
+          "Updates total transaction amount and writes it to the statement file records.",
+          "Sets various flags and writes corresponding fixed HTML lines to an HTML file to update the HTML output accordingly."
+        ]
+      },
+      "5000-CREATE-STATEMENT": {
+        "paragraph_name": "5000-CREATE-STATEMENT",
+        "section": "procedure division",
+        "paragraph_code": "5000-CREATE-STATEMENT.\n           INITIALIZE STATEMENT-LINES.\n           WRITE FD-STMTFILE-REC FROM ST-LINE0.\n           PERFORM 5100-WRITE-HTML-HEADER THRU 5100-EXIT.\n           STRING CUST-FIRST-NAME DELIMITED BY ' '\n                  ' ' DELIMITED BY SIZE\n                  CUST-MIDDLE-NAME DELIMITED BY ' '\n                  ' ' DELIMITED BY SIZE\n                  CUST-LAST-NAME DELIMITED BY ' '\n                  ' ' DELIMITED BY SIZE\n                  INTO ST-NAME\n           END-STRING.\n           MOVE CUST-ADDR-LINE-1 TO ST-ADD1.\n           MOVE CUST-ADDR-LINE-2 TO ST-ADD2.\n           STRING CUST-ADDR-LINE-3 DELIMITED BY ' '\n                  ' ' DELIMITED BY SIZE\n                  CUST-ADDR-STATE-CD DELIMITED BY ' '\n                  ' ' DELIMITED BY SIZE\n                  CUST-ADDR-COUNTRY-CD DELIMITED BY ' '\n                  ' ' DELIMITED BY SIZE\n                  CUST-ADDR-ZIP DELIMITED BY ' '\n                  ' ' DELIMITED BY SIZE\n                  INTO ST-ADD3\n           END-STRING.\n\n           MOVE ACCT-ID TO ST-ACCT-ID.\n           MOVE ACCT-CURR-BAL TO ST-CURR-BAL.\n           MOVE CUST-FICO-CREDIT-SCORE TO ST-FICO-SCORE.\n           PERFORM 5200-WRITE-HTML-NMADBS THRU 5200-EXIT.\n\n           WRITE FD-STMTFILE-REC FROM ST-LINE1.\n           WRITE FD-STMTFILE-REC FROM ST-LINE2.\n           WRITE FD-STMTFILE-REC FROM ST-LINE3.\n           WRITE FD-STMTFILE-REC FROM ST-LINE4.\n           WRITE FD-STMTFILE-REC FROM ST-LINE5.\n           WRITE FD-STMTFILE-REC FROM ST-LINE6.\n           WRITE FD-STMTFILE-REC FROM ST-LINE5.\n           WRITE FD-STMTFILE-REC FROM ST-LINE7.\n           WRITE FD-STMTFILE-REC FROM ST-LINE8.\n           WRITE FD-STMTFILE-REC FROM ST-LINE9.\n           WRITE FD-STMTFILE-REC FROM ST-LINE10.\n           WRITE FD-STMTFILE-REC FROM ST-LINE11.\n           WRITE FD-STMTFILE-REC FROM ST-LINE12.\n           WRITE FD-STMTFILE-REC FROM ST-LINE13.\n           WRITE FD-STMTFILE-REC FROM ST-LINE12.\n\n           EXIT.\n\n",
+        "paragraph_lines": [458, 504],
+        "ref_paragraphs": [
+          "5100-WRITE-HTML-HEADER",
+          "5100-EXIT",
+          "5200-WRITE-HTML-NMADBS",
+          "5200-EXIT"
+        ],
+        "paragraph_logic": [
+          "Initializes the statement lines and sets up the file record for writing.",
+          "Calls the [HTML header writing process]<5100-WRITE-HTML-HEADER> to include the necessary HTML header.",
+          "Formats and concatenates customer name fields into a single string.",
+          "Moves various customer and account data into their respective statement fields.",
+          "Calls the [HTML NMADBS writing process]<5200-WRITE-HTML-NMADBS> to include specific HTML content.",
+          "Writes multiple lines of the formatted statement data to the file record."
+        ]
+      },
+      "5100-WRITE-HTML-HEADER": {
+        "paragraph_name": "5100-WRITE-HTML-HEADER",
+        "section": "procedure division",
+        "paragraph_code": "5100-WRITE-HTML-HEADER.\n\n           SET HTML-L01 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L02 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L03 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L04 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L05 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L06 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L07 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L08 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L10 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n           MOVE ACCT-ID TO L11-ACCT.\n           WRITE FD-HTMLFILE-REC FROM HTML-L11.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L15 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L16 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L17 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L18 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L22-35 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n",
+        "paragraph_lines": [506, 552],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets HTML line 1 as true and writes it to the HTML file.",
+          "Sets HTML lines 2 through 7 as true and writes each line to the HTML file.",
+          "Moves account ID to line 11 and writes it to the HTML file.",
+          "Sets HTML lines 12 through 18 as true and writes each line to the HTML file.",
+          "Sets HTML line 22 to 35 as true and writes it to the HTML file."
+        ]
+      },
+      "5100-EXIT": {
+        "paragraph_name": "5100-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "5100-EXIT.\n           EXIT.\n\n",
+        "paragraph_lines": [554, 555],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Ends the execution of the given paragraph and returns control to the calling procedure."
+        ]
+      },
+      "5200-WRITE-HTML-NMADBS": {
+        "paragraph_name": "5200-WRITE-HTML-NMADBS",
+        "section": "procedure division",
+        "paragraph_code": "5200-WRITE-HTML-NMADBS.\n\n           MOVE ST-NAME TO L23-NAME.\n           MOVE SPACES TO FD-HTMLFILE-REC\n           STRING '<p style=\"font-size:16px\">' DELIMITED BY '*'\n                  L23-NAME DELIMITED BY '  '\n                  '  ' DELIMITED BY SIZE\n                  '</p>' DELIMITED BY '*'\n                  INTO FD-HTMLFILE-REC\n           END-STRING.\n           WRITE FD-HTMLFILE-REC.\n           MOVE SPACES TO HTML-ADDR-LN.\n           STRING '<p>' DELIMITED BY '*'\n                  ST-ADD1 DELIMITED BY '  '\n                  '  ' DELIMITED BY SIZE\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-ADDR-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-ADDR-LN.\n           MOVE SPACES TO HTML-ADDR-LN.\n           STRING '<p>' DELIMITED BY '*'\n                  ST-ADD2 DELIMITED BY '  '\n                  '  ' DELIMITED BY SIZE\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-ADDR-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-ADDR-LN.\n           MOVE SPACES TO HTML-ADDR-LN.\n           STRING '<p>' DELIMITED BY '*'\n                  ST-ADD3 DELIMITED BY '  '\n                  '  ' DELIMITED BY SIZE\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-ADDR-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-ADDR-LN.\n\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L30-42 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L31 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L22-35 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n           MOVE SPACES TO HTML-BSIC-LN.\n           STRING '<p>Account ID         : ' DELIMITED BY '*'\n                  ST-ACCT-ID DELIMITED BY '*'\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-BSIC-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-BSIC-LN.\n           MOVE SPACES TO HTML-BSIC-LN.\n           STRING '<p>Current Balance    : ' DELIMITED BY '*'\n                  ST-CURR-BAL DELIMITED BY '*'\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-BSIC-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-BSIC-LN.\n           MOVE SPACES TO HTML-BSIC-LN.\n           STRING '<p>FICO Score         : ' DELIMITED BY '*'\n                  ST-FICO-SCORE DELIMITED BY '*'\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-BSIC-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-BSIC-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L30-42 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L43 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L47 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L48 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L50 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L51 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L53 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-L54 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n",
+        "paragraph_lines": [558, 669],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves name string to HTML record and writes HTML paragraph.",
+          "Writes address lines (ST-ADD1, ST-ADD2, ST-ADD3) as separate HTML paragraphs.",
+          "Sets various HTML flags to true and writes fixed HTML lines multiple times.",
+          "Writes account details (Account ID, Current Balance, FICO Score) as HTML paragraphs.",
+          "Repeats setting different HTML flags to true and writes more fixed HTML lines.",
+          "Ensures final HTML structure by writing fixed HTML lines with appropriate flags."
+        ]
+      },
+      "5200-EXIT": {
+        "paragraph_name": "5200-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "5200-EXIT.\n           EXIT.\n\n",
+        "paragraph_lines": [671, 672],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Exits the current paragraph without performing any further actions."]
+      },
+      "6000-WRITE-TRANS": {
+        "paragraph_name": "6000-WRITE-TRANS",
+        "section": "procedure division",
+        "paragraph_code": "6000-WRITE-TRANS.\n           MOVE TRNX-ID TO ST-TRANID.\n           MOVE TRNX-DESC TO ST-TRANDT.\n           MOVE TRNX-AMT TO ST-TRANAMT.\n           WRITE FD-STMTFILE-REC FROM ST-LINE14.\n\n           SET HTML-LTRS TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n           SET HTML-L58 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           MOVE SPACES TO HTML-TRAN-LN.\n           STRING '<p>' DELIMITED BY '*'\n                  ST-TRANID DELIMITED BY '*'\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-TRAN-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-TRAN-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n           SET HTML-L61 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           MOVE SPACES TO HTML-TRAN-LN.\n           STRING '<p>' DELIMITED BY '*'\n                  ST-TRANDT DELIMITED BY '*'\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-TRAN-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-TRAN-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n           SET HTML-L64 TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n           MOVE SPACES TO HTML-TRAN-LN.\n           STRING '<p>' DELIMITED BY '*'\n                  ST-TRANAMT DELIMITED BY '*'\n                  '</p>' DELIMITED BY '*'\n                  INTO HTML-TRAN-LN\n           END-STRING.\n           WRITE FD-HTMLFILE-REC FROM HTML-TRAN-LN.\n           SET HTML-LTDE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n           SET HTML-LTRE TO TRUE.\n           WRITE FD-HTMLFILE-REC FROM HTML-FIXED-LN.\n\n           EXIT.\n\n",
+        "paragraph_lines": [675, 723],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the transaction ID, description, and amount to their respective storage fields and writes them to the statement file.",
+          "Sets the HTML flag for new transaction and writes a fixed line HTML record.",
+          "Sets multiple HTML flags and writes corresponding fixed line HTML records.",
+          "Uses STRING statements to format HTML lines with transaction ID, description, and amount, then writes these lines to the HTML file.",
+          "Continues writing the formatted HTML lines, setting appropriate HTML flags after each write operation.",
+          "Finalizes the writing process by setting the last HTML flag and writing the closing fixed line HTML record."
+        ]
+      },
+      "8100-FILE-OPEN": {
+        "paragraph_name": "8100-FILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "8100-FILE-OPEN.\n           GO TO 8100-TRNXFILE-OPEN\n           .\n\n",
+        "paragraph_lines": [726, 728],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Transfers control to the transaction file open process<8100-TRNXFILE-OPEN> to initiate the opening of the required file."
+        ]
+      },
+      "8100-TRNXFILE-OPEN": {
+        "paragraph_name": "8100-TRNXFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "8100-TRNXFILE-OPEN.\n           MOVE 'TRNXFILE' TO WS-M03B-DD.\n           SET M03B-OPEN TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING TRNXFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           SET M03B-READ TO TRUE.\n           MOVE SPACES TO WS-M03B-FLDT.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR READING TRNXFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           MOVE WS-M03B-FLDT TO TRNX-RECORD.\n           MOVE TRNX-CARD-NUM TO WS-SAVE-CARD.\n           MOVE 1 TO CR-CNT.\n           MOVE 0 TO TR-CNT.\n           MOVE 'READTRNX' TO WS-FL-DD.\n           GO TO 0000-START.\n           EXIT.\n\n",
+        "paragraph_lines": [730, 762],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves TRNXFILE to the working storage variable WS-M03B-DD and sets the file open flag to true.",
+          "Calls the CBSTM03B subroutine using the area defined in WS-M03B-AREA to open the transaction file.",
+          "Checks the return code after attempting to open the file; if it is not 00 or 04, an error message is displayed and the abend program is called <9999-ABEND-PROGRAM>.",
+          "Sets the file read flag to true, clears WS-M03B-FLDT, and calls CBSTM03B again to read the transaction file.",
+          "Checks the return code after attempting to read the file; if it is not 00 or 04, an error message is displayed and the abend program is called <9999-ABEND-PROGRAM>.",
+          "Moves various fields from the transaction file to working storage and sets initial counters before jumping to the 0000-START paragraph."
+        ]
+      },
+      "8200-XREFFILE-OPEN": {
+        "paragraph_name": "8200-XREFFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "8200-XREFFILE-OPEN.\n           MOVE 'XREFFILE' TO WS-M03B-DD.\n           SET M03B-OPEN TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING XREFFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           MOVE 'CUSTFILE' TO WS-FL-DD.\n           GO TO 0000-START.\n           EXIT.\n",
+        "paragraph_lines": [765, 781],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves XREFFILE to the working-storage variable used for the DD name.",
+          "Sets the open flag for the file to TRUE, indicating the file should be open.",
+          "Initializes the return code field to zero before the file operation.",
+          "Calls the CBSTM03B subroutine using the specified working-storage area.",
+          "Checks if the return code is 00 or 04; if not, displays an error message and performs the [abend program process]<9999-ABEND-PROGRAM>.",
+          "Moves CUSTFILE to the variable used for the next files DD name and then jumps to the [program start label]<0000-START>."
+        ]
+      },
+      "8300-CUSTFILE-OPEN": {
+        "paragraph_name": "8300-CUSTFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "8300-CUSTFILE-OPEN.\n           MOVE 'CUSTFILE' TO WS-M03B-DD.\n           SET M03B-OPEN TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING CUSTFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           MOVE 'ACCTFILE' TO WS-FL-DD.\n           GO TO 0000-START.\n           EXIT.\n",
+        "paragraph_lines": [783, 799],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves CUSTFILE to the working storage data name.",
+          "Sets the open flag for the file and initializes the return code to zero.",
+          "Calls the subroutine CBSTM03B to attempt opening the file.",
+          "Checks the return code and, on success, continues processing; on failure, displays an error and performs the abend process<9999-ABEND-PROGRAM>.",
+          "Moves ACCTFILE to the working storage data name and transfers control to the start paragraph<0000-START>."
+        ]
+      },
+      "8400-ACCTFILE-OPEN": {
+        "paragraph_name": "8400-ACCTFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "8400-ACCTFILE-OPEN.\n           MOVE 'ACCTFILE' TO WS-M03B-DD.\n           SET M03B-OPEN TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING ACCTFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           GO TO 1000-MAINLINE.\n           EXIT.\n",
+        "paragraph_lines": [801, 816],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves ACCTFILE to the working storage data section for file DD name and sets the file open switch to TRUE.",
+          "Initializes the return code to ZERO and calls the external subroutine CBSTM03B to open the file using the provided area.",
+          "Checks the return code; if its 00 or 04, continues processing without errors.",
+          "If an error occurs (indicated by a return code other than 00 or 04), displays an error message with the specific return code and performs the <9999-ABEND-PROGRAM> to handle the abend (abnormal end).",
+          "Jumps to <1000-MAINLINE> to continue with the main processing and exits the paragraph."
+        ]
+      },
+      "8500-READTRNX-READ": {
+        "paragraph_name": "8500-READTRNX-READ",
+        "section": "procedure division",
+        "paragraph_code": "8500-READTRNX-READ.\n           IF WS-SAVE-CARD = TRNX-CARD-NUM\n               ADD 1 TO TR-CNT\n           ELSE\n               MOVE TR-CNT TO WS-TRCT (CR-CNT)\n               ADD 1 TO CR-CNT\n               MOVE 1 TO TR-CNT\n           END-IF.\n\n           MOVE TRNX-CARD-NUM TO WS-CARD-NUM (CR-CNT).\n           MOVE TRNX-ID TO WS-TRAN-NUM (CR-CNT, TR-CNT).\n           MOVE TRNX-REST TO WS-TRAN-REST (CR-CNT, TR-CNT).\n           MOVE TRNX-CARD-NUM TO WS-SAVE-CARD.\n\n           MOVE 'TRNXFILE' TO WS-M03B-DD.\n           SET M03B-READ TO TRUE.\n           MOVE SPACES TO WS-M03B-FLDT.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           EVALUATE WS-M03B-RC\n             WHEN '00'\n               MOVE WS-M03B-FLDT TO TRNX-RECORD\n               GO TO 8500-READTRNX-READ\n             WHEN '10'\n               GO TO 8599-EXIT\n             WHEN OTHER\n               DISPLAY 'ERROR READING TRNXFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [818, 847],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Checks if the saved card number matches the transaction card number. Increments the transaction count if they match; otherwise, updates the count fields and resets the transaction count.",
+          "Moves transaction card number and other transaction-related data to the working storage fields for the current count.",
+          "Sets up the necessary data for reading the transaction file and performs the read operation via a COBOL subroutine call.",
+          "Evaluates the return code from the read operation: continues reading if successful, exits if end-of-file is reached, or performs an abend (abnormal end) if an error occurs.",
+          "Calls the [abend program]<9999-ABEND-PROGRAM> subroutine in case of errors to handle proper termination procedures."
+        ]
+      },
+      "8599-EXIT": {
+        "paragraph_name": "8599-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "8599-EXIT.\n           MOVE TR-CNT TO WS-TRCT (CR-CNT).\n           MOVE 'XREFFILE' TO WS-FL-DD.\n           GO TO 0000-START.\n           EXIT.\n\n",
+        "paragraph_lines": [849, 853],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the transaction count from TR-CNT to the working storage array WS-TRCT at the position specified by CR-CNT.",
+          "Updates the working storage file descriptor WS-FL-DD with the value XREFFILE.",
+          "Branches to the [start process]<0000-START> using the GO TO statement.",
+          "Exits the current paragraph using the EXIT statement."
+        ]
+      },
+      "9100-TRNXFILE-CLOSE": {
+        "paragraph_name": "9100-TRNXFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9100-TRNXFILE-CLOSE.\n           MOVE 'TRNXFILE' TO WS-M03B-DD.\n           SET M03B-CLOSE TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING TRNXFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           EXIT.\n\n",
+        "paragraph_lines": [856, 870],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves the literal TRNXFILE to the variable WS-M03B-DD.",
+          "Sets the M03B-CLOSE flag to TRUE, indicating that the TRNXFILE needs to be closed.",
+          "Moves zero to WS-M03B-RC to initialize the return code.",
+          "Calls the program CBSTM03B using WS-M03B-AREA, which handles the file closure.",
+          "Checks the return code WS-M03B-RC; if 00 or 04, continues normal operation; otherwise, displays an error message and the return code.",
+          "If an error occurs, calls the [program abend routine]<9999-ABEND-PROGRAM> for error handling."
+        ]
+      },
+      "9200-XREFFILE-CLOSE": {
+        "paragraph_name": "9200-XREFFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9200-XREFFILE-CLOSE.\n           MOVE 'XREFFILE' TO WS-M03B-DD.\n           SET M03B-CLOSE TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING XREFFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           EXIT.\n",
+        "paragraph_lines": [873, 887],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets up the DD name for the cross-reference file to XREFFILE.",
+          "Flags the cross-reference file to be closed using the program switch.",
+          "Resets the return code field to zero before the call.",
+          "Calls the CBSTM03B program to perform the actual close operation on the cross-reference file.",
+          "Checks the return code and, if not 00 or 04, displays an error message and performs the abend routine <9999-ABEND-PROGRAM>."
+        ]
+      },
+      "9300-CUSTFILE-CLOSE": {
+        "paragraph_name": "9300-CUSTFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9300-CUSTFILE-CLOSE.\n           MOVE 'CUSTFILE' TO WS-M03B-DD.\n           SET M03B-CLOSE TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CUSTFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           EXIT.\n",
+        "paragraph_lines": [889, 903],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves CUSTFILE to the file control area (WS-M03B-DD) and sets the close flag (M03B-CLOSE) to true.",
+          "Sets the return code (WS-M03B-RC) to zero as an initial state before the close operation.",
+          "Calls the CBSTM03B subroutine to perform the actual file close operation using the workspace area (WS-M03B-AREA).",
+          "Checks if the return code (WS-M03B-RC) is 00 or 04 to confirm successful file closure; otherwise, processes the error.",
+          "If an error occurs, displays error messages and performs an abend by calling the paragraph <9999-ABEND-PROGRAM>."
+        ]
+      },
+      "9400-ACCTFILE-CLOSE": {
+        "paragraph_name": "9400-ACCTFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9400-ACCTFILE-CLOSE.\n           MOVE 'ACCTFILE' TO WS-M03B-DD.\n           SET M03B-CLOSE TO TRUE.\n           MOVE ZERO TO WS-M03B-RC.\n           CALL 'CBSTM03B' USING WS-M03B-AREA.\n\n           IF WS-M03B-RC = '00' OR '04'\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING ACCTFILE'\n               DISPLAY 'RETURN CODE: ' WS-M03B-RC\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           EXIT.\n\n",
+        "paragraph_lines": [905, 919],
+        "ref_paragraphs": ["9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves the literal ACCTFILE into the working storage variable WS-M03B-DD to specify the file name.",
+          "Sets the M03B-CLOSE indicator to TRUE, signaling that the file should be closed.",
+          "Moves a zero value to WS-M03B-RC, initializing the return code.",
+          "Calls the subprogram CBSTM03B to perform the file close operation using the WS-M03B-AREA.",
+          "Checks the return code in WS-M03B-RC. If it is 00 or 04, continues processing; otherwise, displays an error message and performs the abend procedure <9999-ABEND-PROGRAM>."
+        ]
+      },
+      "9999-ABEND-PROGRAM": {
+        "paragraph_name": "9999-ABEND-PROGRAM",
+        "section": "procedure division",
+        "paragraph_code": "9999-ABEND-PROGRAM.\n           DISPLAY 'ABENDING PROGRAM'\n           CALL 'CEE3ABD'.\n",
+        "paragraph_lines": [921, 923],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays an abend message ABENDING PROGRAM.",
+          "Calls the CEE3ABD routine to terminate the program abnormally."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 8,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 9,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 10,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 11,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 12,
+        "program_id": "CBSTM03B",
+        "program_type": "Cobol",
+        "program_name": "CBSTM03B",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 13,
+        "program_id": "CEE3ABD",
+        "program_type": "Cobol",
+        "program_name": "CEE3ABD",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "9999-ABEND-PROGRAM",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "COSTM01",
+        "program_type": "Copy",
+        "program_name": "COSTM01",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "CVACT03Y",
+        "program_type": "Copy",
+        "program_name": "CVACT03Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "CUSTREC",
+        "program_type": "Copy",
+        "program_name": "CUSTREC",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CVACT01Y",
+        "program_type": "Copy",
+        "program_name": "CVACT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

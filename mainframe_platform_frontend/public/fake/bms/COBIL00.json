@@ -1,0 +1,274 @@
+{
+  "overview": {
+    "name": "COBIL00",
+    "file_name": "COBIL00",
+    "related_pgms": ["COBIL00C"]
+  },
+  "data": [
+    {
+      "name": "COBIL00",
+      "item_type": "DFHMSD",
+      "position": null,
+      "size": null,
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "COBIL0A",
+      "item_type": "DFHMDI",
+      "position": null,
+      "size": [24, 80],
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [1, 1],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Tran:",
+      "comment": ""
+    },
+    {
+      "name": "TRNNAME",
+      "item_type": "DFHMDF",
+      "position": [1, 21],
+      "size": null,
+      "length": 40,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [1, 65],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Date:",
+      "comment": ""
+    },
+    {
+      "name": "CURDATE",
+      "item_type": "DFHMDF",
+      "position": [1, 71],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "mm/dd/yy",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [2, 1],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Prog:",
+      "comment": ""
+    },
+    {
+      "name": "PGMNAME",
+      "item_type": "DFHMDF",
+      "position": [2, 21],
+      "size": null,
+      "length": 40,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [2, 65],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Time:",
+      "comment": ""
+    },
+    {
+      "name": "CURTIME",
+      "item_type": "DFHMDF",
+      "position": [2, 71],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "hh:mm:ss",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [4, 35],
+      "size": null,
+      "length": 12,
+      "attribute": "(ASKIP,BRT)",
+      "color": "NEUTRAL",
+      "initial_value": "Bill Payment",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [6, 6],
+      "size": null,
+      "length": 14,
+      "attribute": "(ASKIP,NORM)",
+      "color": "GREEN",
+      "initial_value": "Enter Acct ID:",
+      "comment": ""
+    },
+    {
+      "name": "ACTIDIN",
+      "item_type": "DFHMDF",
+      "position": [6, 21],
+      "size": null,
+      "length": 11,
+      "attribute": "(FSET,IC,NORM,UNPROT)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [6, 33],
+      "size": null,
+      "length": 0,
+      "attribute": "(ASKIP,NORM)",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [8, 6],
+      "size": null,
+      "length": 70,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "------------------------------------------------\r\n               -----------------------",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [11, 6],
+      "size": null,
+      "length": 25,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "Your current balance is: ",
+      "comment": ""
+    },
+    {
+      "name": "CURBAL",
+      "item_type": "DFHMDF",
+      "position": [11, 32],
+      "size": null,
+      "length": 14,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [11, 47],
+      "size": null,
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [15, 6],
+      "size": null,
+      "length": 53,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "Do you want to pay your balance now. Please con-\r\n               firm: ",
+      "comment": ""
+    },
+    {
+      "name": "CONFIRM",
+      "item_type": "DFHMDF",
+      "position": [15, 60],
+      "size": null,
+      "length": 1,
+      "attribute": "(FSET,NORM,UNPROT)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [15, 62],
+      "size": null,
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [15, 63],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "NEUTRAL",
+      "initial_value": "(Y/N)",
+      "comment": ""
+    },
+    {
+      "name": "ERRMSG",
+      "item_type": "DFHMDF",
+      "position": [23, 1],
+      "size": null,
+      "length": 78,
+      "attribute": "(ASKIP,BRT,FSET)",
+      "color": "RED",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [24, 1],
+      "size": null,
+      "length": 33,
+      "attribute": "(ASKIP,NORM)",
+      "color": "YELLOW",
+      "initial_value": "ENTER=Continue  F3=Back  F4=Clear",
+      "comment": ""
+    }
+  ],
+  "screen_string": "Tran:               XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Date: mm/dd/yy  \nProg:               XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Time: hh:mm:ss  \n                                                                                \n                                  Bill Payment                                  \n                                                                                \n     Enter Acct ID: XXXXXXXXXXX                                                 \n                                                                                \n     ------------------------------------------------\r\n               -----     \n                                                                                \n                                                                                \n     Your current balance is:  XXXXXXXXXXXXXX                                   \n                                                                                \n                                                                                \n                                                                                \n     Do you want to pay your balance now. Please con-\r\n    X  (Y/N)             \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \nENTER=Continue  F3=Back  F4=Clear                                               "
+}

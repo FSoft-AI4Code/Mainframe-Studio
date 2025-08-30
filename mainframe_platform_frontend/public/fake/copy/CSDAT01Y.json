@@ -1,0 +1,353 @@
+[
+  {
+    "level": "01",
+    "name": "WS-DATE-TIME",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "WS-CURDATE-DATA",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "WS-CURDATE",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "15",
+    "name": "WS-CURDATE-YEAR",
+    "picture_clause": "9(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "15",
+    "name": "WS-CURDATE-MONTH",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "15",
+    "name": "WS-CURDATE-DAY",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "WS-CURDATE-N",
+    "picture_clause": "9(08)",
+    "default_value": null,
+    "redefine": "WS-CURDATE",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "WS-CURTIME",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "15",
+    "name": "WS-CURTIME-HOURS",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "15",
+    "name": "WS-CURTIME-MINUTE",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "15",
+    "name": "WS-CURTIME-SECOND",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "15",
+    "name": "WS-CURTIME-MILSEC",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "WS-CURTIME-N",
+    "picture_clause": "9(08)",
+    "default_value": null,
+    "redefine": "WS-CURTIME",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "WS-CURDATE-MM-DD-YY",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "WS-CURDATE-MM",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'/'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-CURDATE-DD",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'/'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-CURDATE-YY",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "WS-CURTIME-HH-MM-SS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "WS-CURTIME-HH",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "':'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-CURTIME-MM",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "':'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-CURTIME-SS",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "WS-TIMESTAMP",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "WS-TIMESTAMP-DT-YYYY",
+    "picture_clause": "9(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'-'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-TIMESTAMP-DT-MM",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'-'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-TIMESTAMP-DT-DD",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "' '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-TIMESTAMP-TM-HH",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "':'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-TIMESTAMP-TM-MM",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "':'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-TIMESTAMP-TM-SS",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'.'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-TIMESTAMP-TM-MS6",
+    "picture_clause": "9(06)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  }
+]

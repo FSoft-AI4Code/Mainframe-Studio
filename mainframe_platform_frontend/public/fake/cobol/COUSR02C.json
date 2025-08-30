@@ -1,0 +1,344 @@
+{
+  "id": "26410ab055ed4ca48eeb9cef2695f691",
+  "name": "COUSR02C",
+  "path": "DEMO.CARDDEMO.CBL/COUSR02C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COUSR02C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "COCOM01Y",
+      "COUSR02",
+      "COTTL01Y",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CSUSR01Y",
+      "DFHAID",
+      "DFHBMSCA"
+    ],
+    "call_files": [],
+    "summarization": "This COBOL code handles user updates within a CICS environment. Here's a concise summary of its main flow and functionality:\n\n1. **MAIN-PARA**:\n   - Initializes flags and clears error messages.\n   - Checks if transaction is a new entry or a re-entry.\n   - If new, routes back to a previous screen (COSGN00C).\n   - If re-entry, processes user input by examining the communication area (DFHCOMMAREA) and updating screen fields.\n\n2. **Process User Actions**:\n   - **PROCESS-ENTER-KEY**: Validates user ID input. If valid, reads user security file (READ-USER-SEC-FILE) and updates screen with user details.\n   - **UPDATE-USER-INFO**: Validates and updates user information fields if non-empty. If any input fields changed, updates the user security file (UPDATE-USER-SEC-FILE).\n\n3. **Screen Management**:\n   - **SEND-USRUPD-SCREEN**: Sends the user update (USRUPD) screen back to the user.\n   - **RECEIVE-USRUPD-SCREEN**: Receives updated inputs from the USRUPD screen.\n   - **RETURN-TO-PREV-SCREEN**: Transfers control back to the previous program (usually screens).\n   - **CLEAR-CURRENT-SCREEN**: Clears all fields on the screen before sending it back.\n\n4. **Supporting Operations**:\n   - **POPULATE-HEADER-INFO**: Populates header information with current date and time.\n   - **READ-USER-SEC-FILE**: Reads user details from the security file. Provides feedback based on the outcome (e.g., user not found, unable to lookup).\n   - **UPDATE-USER-SEC-FILE**: Writes updated user details back to the security file, providing feedback on success or failure.\n   - **INITIALIZE-ALL-FIELDS**: Resets user input fields to initial state.\n\n5. **CICS Communication**:\n   - Throughout, EXEC CICS commands are used to handle screen sending, receiving, and file operations.\n\nThis flow ensures that user inputs are validated and processed appropriately, user details are fetched and displayed, and any updates are committed to the user security file with proper feedback.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n\n           SET ERR-FLG-OFF     TO TRUE\n           SET USR-MODIFIED-NO TO TRUE\n\n           MOVE SPACES TO WS-MESSAGE\n                          ERRMSGO OF COUSR2AO\n\n           IF EIBCALEN = 0\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n               PERFORM RETURN-TO-PREV-SCREEN\n           ELSE\n               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA\n               IF NOT CDEMO-PGM-REENTER\n                   SET CDEMO-PGM-REENTER    TO TRUE\n                   MOVE LOW-VALUES          TO COUSR2AO\n                   MOVE -1       TO USRIDINL OF COUSR2AI\n                   IF CDEMO-CU02-USR-SELECTED NOT =\n                                              SPACES AND LOW-VALUES\n                       MOVE CDEMO-CU02-USR-SELECTED TO\n                            USRIDINI OF COUSR2AI\n                       PERFORM PROCESS-ENTER-KEY\n                   END-IF\n                   PERFORM SEND-USRUPD-SCREEN\n               ELSE\n                   PERFORM RECEIVE-USRUPD-SCREEN\n                   EVALUATE EIBAID\n                       WHEN DFHENTER\n                           PERFORM PROCESS-ENTER-KEY\n                       WHEN DFHPF3\n                           PERFORM UPDATE-USER-INFO\n                           IF CDEMO-FROM-PROGRAM = SPACES OR LOW-VALUES\n                               MOVE 'COADM01C' TO CDEMO-TO-PROGRAM\n                           ELSE\n                               MOVE CDEMO-FROM-PROGRAM TO\n                               CDEMO-TO-PROGRAM\n                           END-IF\n                           PERFORM RETURN-TO-PREV-SCREEN\n                       WHEN DFHPF4\n                           PERFORM CLEAR-CURRENT-SCREEN\n                       WHEN DFHPF5\n                           PERFORM UPDATE-USER-INFO\n                       WHEN DFHPF12\n                           MOVE 'COADM01C' TO CDEMO-TO-PROGRAM\n                           PERFORM RETURN-TO-PREV-SCREEN\n                       WHEN OTHER\n                           MOVE 'Y'                       TO WS-ERR-FLG\n                           MOVE CCDA-MSG-INVALID-KEY      TO WS-MESSAGE\n                           PERFORM SEND-USRUPD-SCREEN\n                   END-EVALUATE\n               END-IF\n           END-IF\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [82, 138],
+        "ref_paragraphs": [
+          "RETURN-TO-PREV-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "SEND-USRUPD-SCREEN",
+          "RECEIVE-USRUPD-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "UPDATE-USER-INFO",
+          "RETURN-TO-PREV-SCREEN",
+          "CLEAR-CURRENT-SCREEN",
+          "UPDATE-USER-INFO",
+          "RETURN-TO-PREV-SCREEN",
+          "SEND-USRUPD-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Initializes the error flag and user modified flag to true.",
+          "Clears the workspace message and error message field.",
+          "Checks if the EIBCALEN is zero; if true, redirects to RETURN-TO-PREV-SCREEN.",
+          "If EIBCALEN is not zero, moves the data to the commarea and reinitializes fields, then performs PROCESS-ENTER-KEY and SEND-USRUPD-SCREEN.",
+          "Uses EVALUATE to map key presses to specific actions and performs corresponding actions like PROCESS-ENTER-KEY, UPDATE-USER-INFO, and screen navigation.",
+          "Ends by returning control to CICS with the updated transaction ID and commarea."
+        ]
+      },
+      "PROCESS-ENTER-KEY": {
+        "paragraph_name": "PROCESS-ENTER-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-ENTER-KEY.\n\n           EVALUATE TRUE\n               WHEN USRIDINI OF COUSR2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'User ID can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN OTHER\n                   MOVE -1       TO USRIDINL OF COUSR2AI\n                   CONTINUE\n           END-EVALUATE\n\n           IF NOT ERR-FLG-ON\n               MOVE SPACES      TO FNAMEI   OF COUSR2AI\n                                   LNAMEI   OF COUSR2AI\n                                   PASSWDI  OF COUSR2AI\n                                   USRTYPEI OF COUSR2AI\n               MOVE USRIDINI  OF COUSR2AI TO SEC-USR-ID\n               PERFORM READ-USER-SEC-FILE\n           END-IF.\n\n           IF NOT ERR-FLG-ON\n               MOVE SEC-USR-FNAME      TO FNAMEI    OF COUSR2AI\n               MOVE SEC-USR-LNAME      TO LNAMEI    OF COUSR2AI\n               MOVE SEC-USR-PWD        TO PASSWDI   OF COUSR2AI\n               MOVE SEC-USR-TYPE       TO USRTYPEI  OF COUSR2AI\n               PERFORM SEND-USRUPD-SCREEN\n           END-IF.\n\n",
+        "paragraph_lines": [143, 172],
+        "ref_paragraphs": ["SEND-USRUPD-SCREEN", "READ-USER-SEC-FILE", "SEND-USRUPD-SCREEN"],
+        "paragraph_logic": [
+          "Checks if the user ID is valid and not empty; if invalid, sets the error flag and prepares an error message.",
+          "Calls <SEND-USRUPD-SCREEN> to display the error message and user update screen.",
+          "Continues processing if the user ID is valid but does not need further action.",
+          "If no error flag is set, clears personal information fields on the screen, then copies the user ID to a secure field and calls <READ-USER-SEC-FILE> to fetch user security details.",
+          "If the security details are successfully fetched, populates the screen with the user\u2019s first name, last name, password, and type, then calls <SEND-USRUPD-SCREEN> again to display the updated data."
+        ]
+      },
+      "UPDATE-USER-INFO": {
+        "paragraph_name": "UPDATE-USER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "UPDATE-USER-INFO.\n\n           EVALUATE TRUE\n               WHEN USRIDINI OF COUSR2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'User ID can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN FNAMEI OF COUSR2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'First Name can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO FNAMEL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN LNAMEI OF COUSR2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Last Name can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO LNAMEL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN PASSWDI OF COUSR2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Password can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO PASSWDL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN USRTYPEI OF COUSR2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'User Type can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRTYPEL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN OTHER\n                   MOVE -1       TO FNAMEL OF COUSR2AI\n                   CONTINUE\n           END-EVALUATE\n\n           IF NOT ERR-FLG-ON\n               MOVE USRIDINI  OF COUSR2AI TO SEC-USR-ID\n               PERFORM READ-USER-SEC-FILE\n\n               IF FNAMEI  OF COUSR2AI NOT = SEC-USR-FNAME\n                   MOVE FNAMEI   OF COUSR2AI TO SEC-USR-FNAME\n                   SET USR-MODIFIED-YES TO TRUE\n               END-IF\n               IF LNAMEI  OF COUSR2AI NOT = SEC-USR-LNAME\n                   MOVE LNAMEI   OF COUSR2AI TO SEC-USR-LNAME\n                   SET USR-MODIFIED-YES TO TRUE\n               END-IF\n               IF PASSWDI  OF COUSR2AI NOT = SEC-USR-PWD\n                   MOVE PASSWDI  OF COUSR2AI TO SEC-USR-PWD\n                   SET USR-MODIFIED-YES TO TRUE\n               END-IF\n               IF USRTYPEI  OF COUSR2AI NOT = SEC-USR-TYPE\n                   MOVE USRTYPEI OF COUSR2AI TO SEC-USR-TYPE\n                   SET USR-MODIFIED-YES TO TRUE\n               END-IF\n\n               IF USR-MODIFIED-YES\n                   PERFORM UPDATE-USER-SEC-FILE\n               ELSE\n                   MOVE 'Please modify to update ...' TO\n                                   WS-MESSAGE\n                   MOVE DFHRED       TO ERRMSGC  OF COUSR2AO\n                   PERFORM SEND-USRUPD-SCREEN\n               END-IF\n\n           END-IF.\n\n",
+        "paragraph_lines": [177, 245],
+        "ref_paragraphs": [
+          "SEND-USRUPD-SCREEN",
+          "SEND-USRUPD-SCREEN",
+          "SEND-USRUPD-SCREEN",
+          "SEND-USRUPD-SCREEN",
+          "SEND-USRUPD-SCREEN",
+          "READ-USER-SEC-FILE",
+          "UPDATE-USER-SEC-FILE",
+          "SEND-USRUPD-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Checks if user ID is empty and sets an error flag with an appropriate message if true, then performs [SEND-USRUPD-SCREEN]<SEND-USRUPD-SCREEN>.",
+          "Validates that the first name is not empty and updates the error flag and message if it is, then performs [SEND-USRUPD-SCREEN]<SEND-USRUPD-SCREEN>.",
+          "Validates that the last name is not empty and updates the error flag and message if it is, then performs [SEND-USRUPD-SCREEN]<SEND-USRUPD-SCREEN>.",
+          "Validates that the password is not empty and updates the error flag and message if it is, then performs [SEND-USRUPD-SCREEN]<SEND-USRUPD-SCREEN>.",
+          "Validates that the user type is not empty and updates the error flag and message if it is, then performs [SEND-USRUPD-SCREEN]<SEND-USRUPD-SCREEN>.",
+          "If no error flags are set, the user attributes are compared to the corresponding fields; if any differ, they are updated, and the [UPDATE-USER-SEC-FILE]<UPDATE-USER-SEC-FILE> is performed to save changes."
+        ]
+      },
+      "RETURN-TO-PREV-SCREEN": {
+        "paragraph_name": "RETURN-TO-PREV-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RETURN-TO-PREV-SCREEN.\n\n           IF CDEMO-TO-PROGRAM = LOW-VALUES OR SPACES\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n           END-IF\n           MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n           MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n           MOVE ZEROS        TO CDEMO-PGM-CONTEXT\n           EXEC CICS\n               XCTL PROGRAM(CDEMO-TO-PROGRAM)\n               COMMAREA(CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [250, 261],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the target program name is missing or empty and sets it to COSGN00C if needed.",
+          "Moves the current transaction ID to the communication area field CDEMO-FROM-TRANID.",
+          "Moves the program name to the field CDEMO-FROM-PROGRAM in the communication area.",
+          "Resets the program context to zeros in the communication area.",
+          "Executes a CICS XCTL command to transfer control to the target program specified in CDEMO-TO-PROGRAM, passing the CARDDEMO-COMMAREA."
+        ]
+      },
+      "SEND-USRUPD-SCREEN": {
+        "paragraph_name": "SEND-USRUPD-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "SEND-USRUPD-SCREEN.\n\n           PERFORM POPULATE-HEADER-INFO\n\n           MOVE WS-MESSAGE TO ERRMSGO OF COUSR2AO\n\n           EXEC CICS SEND\n                     MAP('COUSR2A')\n                     MAPSET('COUSR02')\n                     FROM(COUSR2AO)\n                     ERASE\n                     CURSOR\n           END-EXEC.\n\n",
+        "paragraph_lines": [266, 278],
+        "ref_paragraphs": ["POPULATE-HEADER-INFO"],
+        "paragraph_logic": [
+          "Calls the [header information population process]<POPULATE-HEADER-INFO> to add header info to the screen.",
+          "Moves the workspace message to the error message field of the screen output area.",
+          "Sends the COUSR2A map from the COUSR02 mapset to the user, using CICS.",
+          "Erases the previous screen content and places the cursor at the appropriate position."
+        ]
+      },
+      "RECEIVE-USRUPD-SCREEN": {
+        "paragraph_name": "RECEIVE-USRUPD-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RECEIVE-USRUPD-SCREEN.\n\n           EXEC CICS RECEIVE\n                     MAP('COUSR2A')\n                     MAPSET('COUSR02')\n                     INTO(COUSR2AI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC.\n\n",
+        "paragraph_lines": [283, 291],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the CICS RECEIVE command to wait for user input on the COUSR2A map.",
+          "Receives data from the screen map under the COUSR02 mapset.",
+          "Stores the received data into the variable COUSR2AI.",
+          "Handles possible responses and their reasons, storing them in WS-RESP-CD and WS-REAS-CD respectively."
+        ]
+      },
+      "POPULATE-HEADER-INFO": {
+        "paragraph_name": "POPULATE-HEADER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-HEADER-INFO.\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF COUSR2AO\n           MOVE CCDA-TITLE02           TO TITLE02O OF COUSR2AO\n           MOVE WS-TRANID              TO TRNNAMEO OF COUSR2AO\n           MOVE WS-PGMNAME             TO PGMNAMEO OF COUSR2AO\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF COUSR2AO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF COUSR2AO.\n\n",
+        "paragraph_lines": [296, 315],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets the current date into working storage for future use or display.",
+          "Moves the first title to the output structures title field 1.",
+          "Moves the second title to the output structures title field 2.",
+          "Populates transaction ID and program name into the respective fields in the output structure.",
+          "Formats the current date into MM/DD/YY format and moves it to the corresponding field for display.",
+          "Formats the current time into HH:MM:SS format and moves it to the corresponding field for display."
+        ]
+      },
+      "READ-USER-SEC-FILE": {
+        "paragraph_name": "READ-USER-SEC-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READ-USER-SEC-FILE.\n\n           EXEC CICS READ\n                DATASET   (WS-USRSEC-FILE)\n                INTO      (SEC-USER-DATA)\n                LENGTH    (LENGTH OF SEC-USER-DATA)\n                RIDFLD    (SEC-USR-ID)\n                KEYLENGTH (LENGTH OF SEC-USR-ID)\n                UPDATE\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n                   MOVE 'Press PF5 key to save your updates ...' TO\n                                   WS-MESSAGE\n                   MOVE DFHNEUTR       TO ERRMSGC  OF COUSR2AO\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'User ID NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup User...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO FNAMEL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [320, 353],
+        "ref_paragraphs": ["SEND-USRUPD-SCREEN", "SEND-USRUPD-SCREEN", "SEND-USRUPD-SCREEN"],
+        "paragraph_logic": [
+          "Reads user security data from the dataset corresponding to the given user ID<READ-USER-SEC-FILE>.",
+          "Evaluates the response code to determine the outcome of the read operation<EVALUATE WS-RESP-CD>.",
+          "If the read is successful, displays a message to prompt the user to save updates and sends the user update screen<DFHRESP(NORMAL) and PERFORM SEND-USRUPD-SCREEN>.",
+          "If the user ID is not found, sets an error flag, updates the message, and sends the user update screen<DFHRESP(NOTFND) and PERFORM SEND-USRUPD-SCREEN>.",
+          "For other responses, logs the response and reason codes, sets an error flag, updates the message, and sends the user update screen<WHEN OTHER and PERFORM SEND-USRUPD-SCREEN>."
+        ]
+      },
+      "UPDATE-USER-SEC-FILE": {
+        "paragraph_name": "UPDATE-USER-SEC-FILE",
+        "section": "procedure division",
+        "paragraph_code": "UPDATE-USER-SEC-FILE.\n\n           EXEC CICS REWRITE\n                DATASET   (WS-USRSEC-FILE)\n                FROM      (SEC-USER-DATA)\n                LENGTH    (LENGTH OF SEC-USER-DATA)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   MOVE SPACES             TO WS-MESSAGE\n                   MOVE DFHGREEN           TO ERRMSGC  OF COUSR2AO\n                   STRING 'User '     DELIMITED BY SIZE\n                          SEC-USR-ID  DELIMITED BY SPACE\n                          ' has been updated ...' DELIMITED BY SIZE\n                     INTO WS-MESSAGE\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'User ID NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to Update User...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO FNAMEL OF COUSR2AI\n                   PERFORM SEND-USRUPD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [358, 390],
+        "ref_paragraphs": ["SEND-USRUPD-SCREEN", "SEND-USRUPD-SCREEN", "SEND-USRUPD-SCREEN"],
+        "paragraph_logic": [
+          "Executes the [REWRITE command] to update the user security file in CICS with the provided security user data.",
+          "Evaluates the response code to determine the outcome of the REWRITE command.",
+          "When the response is normal, it clears any existing messages, sets the message color to green, forms a success message indicating the user has been updated, and calls the [user update screen sending process]<SEND-USRUPD-SCREEN>.",
+          "When the user ID is not found, it sets an error flag, forms an error message about the user ID not being found, updates the user ID length to -1, and calls the [user update screen sending process]<SEND-USRUPD-SCREEN>.",
+          "For any other response, it displays the response code and reason code, sets an error flag, forms an error message indicating the update was unsuccessful, updates the name length to -1, and calls the [user update screen sending process]<SEND-USRUPD-SCREEN>."
+        ]
+      },
+      "CLEAR-CURRENT-SCREEN": {
+        "paragraph_name": "CLEAR-CURRENT-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "CLEAR-CURRENT-SCREEN.\n\n           PERFORM INITIALIZE-ALL-FIELDS.\n           PERFORM SEND-USRUPD-SCREEN.\n\n",
+        "paragraph_lines": [395, 398],
+        "ref_paragraphs": ["INITIALIZE-ALL-FIELDS", "SEND-USRUPD-SCREEN"],
+        "paragraph_logic": [
+          "Calls the [initialization process]<INITIALIZE-ALL-FIELDS> to clear and prepare all fields on the current screen for new data.",
+          "Calls the [screen update sending process]<SEND-USRUPD-SCREEN> to send the updated screen map to the user, showing cleared fields."
+        ]
+      },
+      "INITIALIZE-ALL-FIELDS": {
+        "paragraph_name": "INITIALIZE-ALL-FIELDS",
+        "section": "procedure division",
+        "paragraph_code": "INITIALIZE-ALL-FIELDS.\n\n           MOVE -1              TO USRIDINL OF COUSR2AI\n           MOVE SPACES          TO USRIDINI OF COUSR2AI\n                                   FNAMEI   OF COUSR2AI\n                                   LNAMEI   OF COUSR2AI\n                                   PASSWDI  OF COUSR2AI\n                                   USRTYPEI OF COUSR2AI\n                                   WS-MESSAGE.\n",
+        "paragraph_lines": [403, 411],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves -1 to the USRIDINL field of COUSR2AI to initialize the user ID index.",
+          "Moves spaces to the USRIDINI field of COUSR2AI to clear the user ID input.",
+          "Moves spaces to the FNAMEI field of COUSR2AI to clear the first name input.",
+          "Moves spaces to the LNAMEI field of COUSR2AI to clear the last name input.",
+          "Moves spaces to the PASSWDI field of COUSR2AI to clear the password input.",
+          "Moves spaces to the USRTYPEI field of COUSR2AI to clear the user type input.",
+          "Moves spaces to WS-MESSAGE to clear any existing messages."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COUSR02",
+        "program_type": "Copy",
+        "program_name": "COUSR02",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CSUSR01Y",
+        "program_type": "Copy",
+        "program_name": "CSUSR01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

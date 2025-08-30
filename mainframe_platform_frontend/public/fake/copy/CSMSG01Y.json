@@ -1,0 +1,29 @@
+[
+  {
+    "level": "01",
+    "name": "CCDA-COMMON-MESSAGES",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "CCDA-MSG-THANK-YOU",
+    "picture_clause": "X(50)",
+    "default_value": "'Thank you for using CardDemo application...      '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "CCDA-MSG-INVALID-KEY",
+    "picture_clause": "X(50)",
+    "default_value": "'Invalid key pressed. Please see below...         '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

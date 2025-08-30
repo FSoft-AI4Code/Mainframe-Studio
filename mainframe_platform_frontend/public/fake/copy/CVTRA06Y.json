@@ -1,0 +1,137 @@
+[
+  {
+    "level": "01",
+    "name": "DALYTRAN-RECORD",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-ID",
+    "picture_clause": "X(16)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-TYPE-CD",
+    "picture_clause": "X(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-CAT-CD",
+    "picture_clause": "9(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-SOURCE",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-DESC",
+    "picture_clause": "X(100)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-AMT",
+    "picture_clause": "S9(09)V99",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-MERCHANT-ID",
+    "picture_clause": "9(09)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-MERCHANT-NAME",
+    "picture_clause": "X(50)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-MERCHANT-CITY",
+    "picture_clause": "X(50)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-MERCHANT-ZIP",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-CARD-NUM",
+    "picture_clause": "X(16)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-ORIG-TS",
+    "picture_clause": "X(26)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "DALYTRAN-PROC-TS",
+    "picture_clause": "X(26)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(20)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

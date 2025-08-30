@@ -1,0 +1,65 @@
+[
+  {
+    "level": "01",
+    "name": "UNUSED-DATA",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "UNUSED-ID",
+    "picture_clause": "X(08)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "UNUSED-FNAME",
+    "picture_clause": "X(20)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "UNUSED-LNAME",
+    "picture_clause": "X(20)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "UNUSED-PWD",
+    "picture_clause": "X(08)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "UNUSED-TYPE",
+    "picture_clause": "X(01)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "UNUSED-FILLER",
+    "picture_clause": "X(23)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

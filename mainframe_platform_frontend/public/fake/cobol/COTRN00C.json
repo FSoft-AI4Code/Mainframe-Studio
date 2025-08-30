@@ -1,0 +1,424 @@
+{
+  "id": "d857b40d0d2f4dc8a6649fb8f46a61e5",
+  "name": "COTRN00C",
+  "path": "DEMO.CARDDEMO.CBL/COTRN00C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COTRN00C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "COCOM01Y",
+      "COTRN00",
+      "COTTL01Y",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CVTRA05Y",
+      "DFHAID",
+      "DFHBMSCA"
+    ],
+    "call_files": [],
+    "summarization": "### Summary of COBOL Code Flow\n\nThe given COBOL code consists of several sections within the `PROCEDURE DIVISION`, each responsible for handling different aspects of a CICS transaction processing system. Here\u2019s a concise summary of the main flow:\n\n1. **MAIN-PARA**\n   - Initializes various flags and fields.\n   - Checks if the transaction is a re-entry. If not, it sets up the program and performs the initial processing.\n   - Different behaviors based on the terminal input (keys like ENTER, PF3, PF7, PF8) are evaluated, leading to specific sections being called:\n     - **RETURN-TO-PREV-SCREEN**\n     - **RECEIVE-TRNLST-SCREEN**\n     - **PROCESS-ENTER-KEY**\n     - **PROCESS-PF7-KEY**\n     - **PROCESS-PF8-KEY**\n   - After handling the input, CICS transaction control is returned.\n\n2. **PROCESS-ENTER-KEY**\n   - Evaluates which transaction ID has been selected from a set of input fields (`SEL0001I` to `SEL0010I` from `COTRN0AI`).\n   - If a valid selection is made, the program control is transferred to another program equivalent to the selection (`COTRN01C`).\n   - Handles invalid selections by setting an error flag and message.\n\n3. **PROCESS-PF7-KEY**\n   - Handles the function key PF7 to navigate backward in a paginated list.\n   - Ensures the user cannot navigate beyond the first page and updates flags/messages appropriately.\n\n4. **PROCESS-PF8-KEY**\n   - Handles the function key PF8 to navigate forward in a paginated list.\n   - Ensures the user cannot navigate beyond the last page and updates flags/messages appropriately.\n\n5. **PROCESS-PAGE-FORWARD**\n   - Initiates and performs forward navigation of transaction records, updating display data in a 10-record page format.\n   - Determines whether there are more pages to display and sets appropriate navigation flags.\n\n6. **PROCESS-PAGE-BACKWARD**\n   - Similar to the forward navigation but for backward navigation.\n   - Updates the pagination and display of transaction data appropriately.\n\n7. **POPULATE-TRAN-DATA**\n   - Populates displayable transaction data fields for each record in the transaction list from the currently read record.\n\n8. **INITIALIZE-TRAN-DATA**\n   - Resets the transaction data fields for new data population.\n\n9. **RETURN-TO-PREV-SCREEN**\n   - Returns program control to a previous screen or program based on specific conditions.\n\n10. **SEND-TRNLST-SCREEN**\n    - Sends the current transaction list to the terminal. Options for the erase screen are determined by flags.\n\n11. **RECEIVE-TRNLST-SCREEN**\n    - Receives user input from the terminal for further processing.\n\n12. **POPULATE-HEADER-INFO**\n    - Populates header information like current date and time, transaction name, and program name for display.\n\n13. **STARTBR-TRANSACT-FILE**\n    - Begins a browse operation on the transaction file, preparing for reading data based on a given key.\n\n14. **READNEXT-TRANSACT-FILE & READPREV-TRANSACT-FILE**\n    - Handles reading the next/previous record from the transaction file as part of navigation.\n\n15. **ENDBR-TRANSACT-FILE**\n    - Ends the browse operation on the transaction file.\n\nThis COBOL code module facilitates a paginated display interface for transaction records, allowing users to navigate through records using function keys, while managing re-entry and error handling efficiently. Key data structure interactions involve `COTRN0AO`, `COTRN0AI`, and various fields like `TRAN-ID`.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n\n           SET ERR-FLG-OFF TO TRUE\n           SET TRANSACT-NOT-EOF TO TRUE\n           SET NEXT-PAGE-NO TO TRUE\n           SET SEND-ERASE-YES TO TRUE\n\n           MOVE SPACES TO WS-MESSAGE\n                          ERRMSGO OF COTRN0AO\n\n           MOVE -1       TO TRNIDINL OF COTRN0AI\n\n           IF EIBCALEN = 0\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n               PERFORM RETURN-TO-PREV-SCREEN\n           ELSE\n               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA\n               IF NOT CDEMO-PGM-REENTER\n                   SET CDEMO-PGM-REENTER    TO TRUE\n                   MOVE LOW-VALUES          TO COTRN0AO\n                   PERFORM PROCESS-ENTER-KEY\n                   PERFORM SEND-TRNLST-SCREEN\n               ELSE\n                   PERFORM RECEIVE-TRNLST-SCREEN\n                   EVALUATE EIBAID\n                       WHEN DFHENTER\n                           PERFORM PROCESS-ENTER-KEY\n                       WHEN DFHPF3\n                           MOVE 'COMEN01C' TO CDEMO-TO-PROGRAM\n                           PERFORM RETURN-TO-PREV-SCREEN\n                       WHEN DFHPF7\n                           PERFORM PROCESS-PF7-KEY\n                       WHEN DFHPF8\n                           PERFORM PROCESS-PF8-KEY\n                       WHEN OTHER\n                           MOVE 'Y'                       TO WS-ERR-FLG\n                           MOVE -1       TO TRNIDINL OF COTRN0AI\n                           MOVE CCDA-MSG-INVALID-KEY      TO WS-MESSAGE\n                           PERFORM SEND-TRNLST-SCREEN\n                   END-EVALUATE\n               END-IF\n           END-IF\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [95, 141],
+        "ref_paragraphs": [
+          "RETURN-TO-PREV-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "SEND-TRNLST-SCREEN",
+          "RECEIVE-TRNLST-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "RETURN-TO-PREV-SCREEN",
+          "PROCESS-PF7-KEY",
+          "PROCESS-PF8-KEY",
+          "SEND-TRNLST-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Sets various control flags to their initial states for the processing logic.",
+          "Moves spaces to the message field and initializes transaction input length.",
+          "Checks if this is the first call to the program by evaluating EIBCALEN and performs corresponding actions.",
+          "If its a re-entry call, moves the data from COMMAREA and performs subsequent transaction handling logic based on keys pressed.",
+          "Based on the key pressed (Enter, PF3, PF7, PF8, or others), calls the corresponding paragraph to handle the specific input.",
+          "Returns to CICS with the updated transaction ID and COMMAREA data."
+        ]
+      },
+      "PROCESS-ENTER-KEY": {
+        "paragraph_name": "PROCESS-ENTER-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-ENTER-KEY.\n\n           EVALUATE TRUE\n               WHEN SEL0001I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0001I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID01I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0002I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0002I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID02I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0003I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0003I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID03I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0004I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0004I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID04I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0005I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0005I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID05I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0006I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0006I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID06I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0007I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0007I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID07I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0008I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0008I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID08I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0009I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0009I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID09I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN SEL0010I OF COTRN0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0010I OF COTRN0AI TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE TRNID10I OF COTRN0AI TO CDEMO-CT00-TRN-SELECTED\n               WHEN OTHER\n                   MOVE SPACES   TO CDEMO-CT00-TRN-SEL-FLG\n                   MOVE SPACES   TO CDEMO-CT00-TRN-SELECTED\n           END-EVALUATE\n           IF (CDEMO-CT00-TRN-SEL-FLG NOT = SPACES AND LOW-VALUES) AND\n              (CDEMO-CT00-TRN-SELECTED NOT = SPACES AND LOW-VALUES)\n               EVALUATE CDEMO-CT00-TRN-SEL-FLG\n                   WHEN 'S'\n                   WHEN 's'\n                        MOVE 'COTRN01C'   TO CDEMO-TO-PROGRAM\n                        MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n                        MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n                        MOVE 0        TO CDEMO-PGM-CONTEXT\n                        EXEC CICS\n                            XCTL PROGRAM(CDEMO-TO-PROGRAM)\n                            COMMAREA(CARDDEMO-COMMAREA)\n                        END-EXEC\n                   WHEN OTHER\n      *                SET TRANSACT-EOF TO TRUE\n                       MOVE\n                       'Invalid selection. Valid value is S' TO\n                                       WS-MESSAGE\n                       MOVE -1       TO TRNIDINL OF COTRN0AI\n      *                PERFORM SEND-TRNLST-SCREEN\n               END-EVALUATE\n           END-IF\n\n           IF TRNIDINI OF COTRN0AI = SPACES OR LOW-VALUES\n               MOVE LOW-VALUES TO TRAN-ID\n           ELSE\n               IF TRNIDINI  OF COTRN0AI IS NUMERIC\n                   MOVE TRNIDINI  OF COTRN0AI    TO TRAN-ID\n               ELSE\n                   MOVE 'Y'                       TO WS-ERR-FLG\n                   MOVE\n                   'Tran ID must be Numeric ...' TO\n                                   WS-MESSAGE\n                   MOVE -1                 TO TRNIDINL OF COTRN0AI\n                   PERFORM SEND-TRNLST-SCREEN\n               END-IF\n           END-IF\n\n           MOVE -1       TO TRNIDINL OF COTRN0AI\n\n\n           MOVE 0       TO CDEMO-CT00-PAGE-NUM\n           PERFORM PROCESS-PAGE-FORWARD\n\n           IF NOT ERR-FLG-ON\n               MOVE SPACE   TO TRNIDINO  OF COTRN0AO\n           END-IF.\n\n",
+        "paragraph_lines": [146, 229],
+        "ref_paragraphs": ["SEND-TRNLST-SCREEN", "PROCESS-PAGE-FORWARD"],
+        "paragraph_logic": [
+          "Evaluates the selection options provided by the user, setting the transaction selection flag and selected transaction ID accordingly.",
+          "If a valid selection is made and corresponds to S or s, prepares to transfer control to COTRN01C program using XCTL.",
+          "If an invalid selection is made, sets an error message and calls the screen send process to display the error.",
+          "Checks the initial transaction ID provided by the user, ensuring it is numeric, and sets an error message if not. Calls the screen send process in case of an error.",
+          "Performs the process of moving the pages forward and checks for any errors, clearing relevant fields if none exist."
+        ]
+      },
+      "PROCESS-PF7-KEY": {
+        "paragraph_name": "PROCESS-PF7-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-PF7-KEY.\n\n           IF CDEMO-CT00-TRNID-FIRST = SPACES OR LOW-VALUES\n               MOVE LOW-VALUES TO TRAN-ID\n           ELSE\n               MOVE CDEMO-CT00-TRNID-FIRST TO TRAN-ID\n           END-IF\n\n           SET NEXT-PAGE-YES TO TRUE\n           MOVE -1       TO TRNIDINL OF COTRN0AI\n\n           IF CDEMO-CT00-PAGE-NUM > 1\n               PERFORM PROCESS-PAGE-BACKWARD\n           ELSE\n               MOVE 'You are already at the top of the page...' TO\n                               WS-MESSAGE\n               SET SEND-ERASE-NO TO TRUE\n               PERFORM SEND-TRNLST-SCREEN\n           END-IF.\n\n",
+        "paragraph_lines": [234, 252],
+        "ref_paragraphs": ["PROCESS-PAGE-BACKWARD", "SEND-TRNLST-SCREEN"],
+        "paragraph_logic": [
+          "Checks if the transaction ID is blank or contains low values, and assigns the appropriate value to TRAN-ID.",
+          "Flags that the next page should be shown by setting NEXT-PAGE-YES to TRUE.",
+          "Initializes the transaction ID length to -1 to prepare for the new page request.",
+          "If the current page number is greater than 1, calls the [process to go to the previous page]<PROCESS-PAGE-BACKWARD>.",
+          "Otherwise, displays a message that the user is already at the top of the page and flags that the screen should not erase by setting SEND-ERASE-NO to TRUE, then calls the [screen sending process for the transaction list]<SEND-TRNLST-SCREEN>."
+        ]
+      },
+      "PROCESS-PF8-KEY": {
+        "paragraph_name": "PROCESS-PF8-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-PF8-KEY.\n\n           IF CDEMO-CT00-TRNID-LAST = SPACES OR LOW-VALUES\n               MOVE HIGH-VALUES TO TRAN-ID\n           ELSE\n               MOVE CDEMO-CT00-TRNID-LAST TO TRAN-ID\n           END-IF\n\n           MOVE -1       TO TRNIDINL OF COTRN0AI\n\n           IF NEXT-PAGE-YES\n               PERFORM PROCESS-PAGE-FORWARD\n           ELSE\n               MOVE 'You are already at the bottom of the page...' TO\n                               WS-MESSAGE\n               SET SEND-ERASE-NO TO TRUE\n               PERFORM SEND-TRNLST-SCREEN\n           END-IF.\n\n",
+        "paragraph_lines": [257, 274],
+        "ref_paragraphs": ["PROCESS-PAGE-FORWARD", "SEND-TRNLST-SCREEN"],
+        "paragraph_logic": [
+          "Calls the [transaction ID preparation check] to determine whether the last transaction ID is empty or low values and adjusts accordingly.",
+          "Moves a value of -1 to the TRNIDINL field in the transaction control area.",
+          "Checks if the next page is available, and if so, calls the [process forward page action]<PROCESS-PAGE-FORWARD>.",
+          "If the next page is not available, sets an appropriate message indicating the user is already at the bottom of the page.",
+          "Sets the send erase flag to true and calls the [send transaction list screen action]<SEND-TRNLST-SCREEN>."
+        ]
+      },
+      "PROCESS-PAGE-FORWARD": {
+        "paragraph_name": "PROCESS-PAGE-FORWARD",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-PAGE-FORWARD.\n\n           PERFORM STARTBR-TRANSACT-FILE\n\n           IF NOT ERR-FLG-ON\n\n               IF EIBAID NOT = DFHENTER AND DFHPF7 AND DFHPF3\n                   PERFORM READNEXT-TRANSACT-FILE\n               END-IF\n\n               IF TRANSACT-NOT-EOF AND ERR-FLG-OFF\n                  PERFORM VARYING WS-IDX FROM 1 BY 1 UNTIL WS-IDX > 10\n                      PERFORM INITIALIZE-TRAN-DATA\n                  END-PERFORM\n               END-IF\n\n               MOVE 1             TO  WS-IDX\n\n               PERFORM UNTIL WS-IDX >= 11 OR TRANSACT-EOF OR ERR-FLG-ON\n                   PERFORM READNEXT-TRANSACT-FILE\n                   IF TRANSACT-NOT-EOF AND ERR-FLG-OFF\n                       PERFORM POPULATE-TRAN-DATA\n                       COMPUTE WS-IDX = WS-IDX + 1\n                   END-IF\n               END-PERFORM\n\n               IF TRANSACT-NOT-EOF AND ERR-FLG-OFF\n                   COMPUTE CDEMO-CT00-PAGE-NUM =\n                           CDEMO-CT00-PAGE-NUM + 1\n                   PERFORM READNEXT-TRANSACT-FILE\n                   IF TRANSACT-NOT-EOF AND ERR-FLG-OFF\n                       SET NEXT-PAGE-YES TO TRUE\n                   ELSE\n                       SET NEXT-PAGE-NO TO TRUE\n                   END-IF\n               ELSE\n                   SET NEXT-PAGE-NO TO TRUE\n                   IF WS-IDX > 1\n                       COMPUTE CDEMO-CT00-PAGE-NUM = CDEMO-CT00-PAGE-NUM\n                        + 1\n                   END-IF\n               END-IF\n\n               PERFORM ENDBR-TRANSACT-FILE\n\n               MOVE CDEMO-CT00-PAGE-NUM TO PAGENUMI  OF COTRN0AI\n               MOVE SPACE   TO TRNIDINO  OF COTRN0AO\n               PERFORM SEND-TRNLST-SCREEN\n\n           END-IF.\n\n",
+        "paragraph_lines": [279, 328],
+        "ref_paragraphs": [
+          "STARTBR-TRANSACT-FILE",
+          "READNEXT-TRANSACT-FILE",
+          "INITIALIZE-TRAN-DATA",
+          "READNEXT-TRANSACT-FILE",
+          "POPULATE-TRAN-DATA",
+          "READNEXT-TRANSACT-FILE",
+          "ENDBR-TRANSACT-FILE",
+          "SEND-TRNLST-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Calls the [start browse process]<STARTBR-TRANSACT-FILE> to begin browsing through the transaction file.",
+          "Executes the [read next transaction file process]<READNEXT-TRANSACT-FILE> to read the next record if the conditions are met.",
+          "Calls the [initialize transaction data process]<INITIALIZE-TRAN-DATA> to initialize transaction data for each record in a loop.",
+          "Performs the [populate transaction data process]<POPULATE-TRAN-DATA> to fill in transaction information until the end of file or error condition.",
+          "Calls the [end browse process]<ENDBR-TRANSACT-FILE> to end the browsing session for the transaction file.",
+          "Calls the [send transaction list screen process]<SEND-TRNLST-SCREEN> to display the list of transactions on the screen."
+        ]
+      },
+      "PROCESS-PAGE-BACKWARD": {
+        "paragraph_name": "PROCESS-PAGE-BACKWARD",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-PAGE-BACKWARD.\n\n           PERFORM STARTBR-TRANSACT-FILE\n\n           IF NOT ERR-FLG-ON\n\n               IF EIBAID NOT = DFHENTER AND DFHPF8\n                   PERFORM READPREV-TRANSACT-FILE\n               END-IF\n\n               IF TRANSACT-NOT-EOF AND ERR-FLG-OFF\n                  PERFORM VARYING WS-IDX FROM 1 BY 1 UNTIL WS-IDX > 10\n                     PERFORM INITIALIZE-TRAN-DATA\n                  END-PERFORM\n               END-IF\n\n               MOVE 10          TO  WS-IDX\n\n               PERFORM UNTIL WS-IDX <= 0 OR TRANSACT-EOF OR ERR-FLG-ON\n                   PERFORM READPREV-TRANSACT-FILE\n                   IF TRANSACT-NOT-EOF AND ERR-FLG-OFF\n                       PERFORM POPULATE-TRAN-DATA\n                       COMPUTE WS-IDX = WS-IDX - 1\n                   END-IF\n               END-PERFORM\n\n               IF TRANSACT-NOT-EOF AND ERR-FLG-OFF\n                  PERFORM READPREV-TRANSACT-FILE\n                  IF NEXT-PAGE-YES\n                     IF TRANSACT-NOT-EOF AND ERR-FLG-OFF AND\n                        CDEMO-CT00-PAGE-NUM > 1\n                        SUBTRACT 1 FROM CDEMO-CT00-PAGE-NUM\n                     ELSE\n                        MOVE 1 TO CDEMO-CT00-PAGE-NUM\n                     END-IF\n                  END-IF\n               END-IF\n\n               PERFORM ENDBR-TRANSACT-FILE\n\n               MOVE CDEMO-CT00-PAGE-NUM TO PAGENUMI  OF COTRN0AI\n               PERFORM SEND-TRNLST-SCREEN\n\n           END-IF.\n\n",
+        "paragraph_lines": [333, 376],
+        "ref_paragraphs": [
+          "STARTBR-TRANSACT-FILE",
+          "READPREV-TRANSACT-FILE",
+          "INITIALIZE-TRAN-DATA",
+          "READPREV-TRANSACT-FILE",
+          "POPULATE-TRAN-DATA",
+          "READPREV-TRANSACT-FILE",
+          "ENDBR-TRANSACT-FILE",
+          "SEND-TRNLST-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Starts the [transaction file browse process]<STARTBR-TRANSACT-FILE> to begin accessing the transaction file.",
+          "If eligible, performs the [read previous transaction file process]<READPREV-TRANSACT-FILE> to navigate backwards through the file.",
+          "For each valid record, calls the [transaction data initialization process]<INITIALIZE-TRAN-DATA> to set up initial values for transaction data.",
+          "Continuously reads previous transaction records and populates the transaction data with [populate transaction data process]<POPULATE-TRAN-DATA>, decrementing the index.",
+          "After browsing, ends the [transaction file browse process]<ENDBR-TRANSACT-FILE> to close the file.",
+          "Sets the current page number and performs the [send transaction list screen process]<SEND-TRNLST-SCREEN> to display the updated screen."
+        ]
+      },
+      "POPULATE-TRAN-DATA": {
+        "paragraph_name": "POPULATE-TRAN-DATA",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-TRAN-DATA.\n\n           MOVE TRAN-AMT                  TO WS-TRAN-AMT\n           MOVE TRAN-ORIG-TS              TO WS-TIMESTAMP\n           MOVE WS-TIMESTAMP-DT-YYYY(3:2) TO WS-CURDATE-YY\n           MOVE WS-TIMESTAMP-DT-MM        TO WS-CURDATE-MM\n           MOVE WS-TIMESTAMP-DT-DD        TO WS-CURDATE-DD\n           MOVE WS-CURDATE-MM-DD-YY       TO WS-TRAN-DATE\n\n           EVALUATE WS-IDX\n               WHEN 1\n                   MOVE TRAN-ID    TO TRNID01I OF COTRN0AI\n                                         CDEMO-CT00-TRNID-FIRST\n                   MOVE WS-TRAN-DATE TO TDATE01I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC01I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT001I OF COTRN0AI\n               WHEN 2\n                   MOVE TRAN-ID    TO TRNID02I OF COTRN0AI\n                   MOVE WS-TRAN-DATE TO TDATE02I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC02I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT002I OF COTRN0AI\n               WHEN 3\n                   MOVE TRAN-ID    TO TRNID03I OF COTRN0AI\n                   MOVE WS-TRAN-DATE TO TDATE03I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC03I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT003I OF COTRN0AI\n               WHEN 4\n                   MOVE TRAN-ID    TO TRNID04I OF COTRN0AI\n                   MOVE WS-TRAN-DATE TO TDATE04I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC04I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT004I OF COTRN0AI\n               WHEN 5\n                   MOVE TRAN-ID    TO TRNID05I OF COTRN0AI\n                   MOVE WS-TRAN-DATE TO TDATE05I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC05I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT005I OF COTRN0AI\n               WHEN 6\n                   MOVE TRAN-ID    TO TRNID06I OF COTRN0AI\n                   MOVE WS-TRAN-DATE TO TDATE06I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC06I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT006I OF COTRN0AI\n               WHEN 7\n                   MOVE TRAN-ID    TO TRNID07I OF COTRN0AI\n                   MOVE WS-TRAN-DATE TO TDATE07I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC07I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT007I OF COTRN0AI\n               WHEN 8\n                   MOVE TRAN-ID    TO TRNID08I OF COTRN0AI\n                   MOVE WS-TRAN-DATE TO TDATE08I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC08I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT008I OF COTRN0AI\n               WHEN 9\n                   MOVE TRAN-ID    TO TRNID09I OF COTRN0AI\n                   MOVE WS-TRAN-DATE TO TDATE09I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC09I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT009I OF COTRN0AI\n               WHEN 10\n                   MOVE TRAN-ID    TO TRNID10I OF COTRN0AI\n                                         CDEMO-CT00-TRNID-LAST\n                   MOVE WS-TRAN-DATE TO TDATE10I OF COTRN0AI\n                   MOVE TRAN-DESC TO TDESC10I OF COTRN0AI\n                   MOVE WS-TRAN-AMT  TO TAMT010I OF COTRN0AI\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [381, 445],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Populates transaction amount and timestamp into working storage fields for further processing.",
+          "Transforms timestamp components into date fields for current date representation.",
+          "Evaluates the index to determine which specific transaction record to populate.",
+          "Based on the evaluated index, maps transaction data (ID, date, description, amount) to the corresponding fields in the transaction array.",
+          "Handles up to 10 specified transaction records by moving data into their respective fields.",
+          "Executes a continue operation for any index value outside the specified range (1-10)."
+        ]
+      },
+      "INITIALIZE-TRAN-DATA": {
+        "paragraph_name": "INITIALIZE-TRAN-DATA",
+        "section": "procedure division",
+        "paragraph_code": "INITIALIZE-TRAN-DATA.\n\n           EVALUATE WS-IDX\n               WHEN 1\n                   MOVE SPACES TO TRNID01I OF COTRN0AI\n                   MOVE SPACES TO TDATE01I OF COTRN0AI\n                   MOVE SPACES TO TDESC01I OF COTRN0AI\n                   MOVE SPACES TO TAMT001I OF COTRN0AI\n               WHEN 2\n                   MOVE SPACES TO TRNID02I OF COTRN0AI\n                   MOVE SPACES TO TDATE02I OF COTRN0AI\n                   MOVE SPACES TO TDESC02I OF COTRN0AI\n                   MOVE SPACES TO TAMT002I OF COTRN0AI\n               WHEN 3\n                   MOVE SPACES TO TRNID03I OF COTRN0AI\n                   MOVE SPACES TO TDATE03I OF COTRN0AI\n                   MOVE SPACES TO TDESC03I OF COTRN0AI\n                   MOVE SPACES TO TAMT003I OF COTRN0AI\n               WHEN 4\n                   MOVE SPACES TO TRNID04I OF COTRN0AI\n                   MOVE SPACES TO TDATE04I OF COTRN0AI\n                   MOVE SPACES TO TDESC04I OF COTRN0AI\n                   MOVE SPACES TO TAMT004I OF COTRN0AI\n               WHEN 5\n                   MOVE SPACES TO TRNID05I OF COTRN0AI\n                   MOVE SPACES TO TDATE05I OF COTRN0AI\n                   MOVE SPACES TO TDESC05I OF COTRN0AI\n                   MOVE SPACES TO TAMT005I OF COTRN0AI\n               WHEN 6\n                   MOVE SPACES TO TRNID06I OF COTRN0AI\n                   MOVE SPACES TO TDATE06I OF COTRN0AI\n                   MOVE SPACES TO TDESC06I OF COTRN0AI\n                   MOVE SPACES TO TAMT006I OF COTRN0AI\n               WHEN 7\n                   MOVE SPACES TO TRNID07I OF COTRN0AI\n                   MOVE SPACES TO TDATE07I OF COTRN0AI\n                   MOVE SPACES TO TDESC07I OF COTRN0AI\n                   MOVE SPACES TO TAMT007I OF COTRN0AI\n               WHEN 8\n                   MOVE SPACES TO TRNID08I OF COTRN0AI\n                   MOVE SPACES TO TDATE08I OF COTRN0AI\n                   MOVE SPACES TO TDESC08I OF COTRN0AI\n                   MOVE SPACES TO TAMT008I OF COTRN0AI\n               WHEN 9\n                   MOVE SPACES TO TRNID09I OF COTRN0AI\n                   MOVE SPACES TO TDATE09I OF COTRN0AI\n                   MOVE SPACES TO TDESC09I OF COTRN0AI\n                   MOVE SPACES TO TAMT009I OF COTRN0AI\n               WHEN 10\n                   MOVE SPACES TO TRNID10I OF COTRN0AI\n                   MOVE SPACES TO TDATE10I OF COTRN0AI\n                   MOVE SPACES TO TDESC10I OF COTRN0AI\n                   MOVE SPACES TO TAMT010I OF COTRN0AI\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [450, 505],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Evaluates the index (WS-IDX) to determine which transaction data fields to clear.",
+          "If WS-IDX is 1, moves spaces to TRNID01I, TDATE01I, TDESC01I, and TAMT001I.",
+          "If WS-IDX is 2, moves spaces to TRNID02I, TDATE02I, TDESC02I, and TAMT002I.",
+          "If WS-IDX is from 3 to 10, applies similar moves to clear respective transaction data fields in COTRN0AI.",
+          "Executes the CONTINUE statement for any other value of WS-IDX."
+        ]
+      },
+      "RETURN-TO-PREV-SCREEN": {
+        "paragraph_name": "RETURN-TO-PREV-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RETURN-TO-PREV-SCREEN.\n\n           IF CDEMO-TO-PROGRAM = LOW-VALUES OR SPACES\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n           END-IF\n           MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n           MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n           MOVE ZEROS        TO CDEMO-PGM-CONTEXT\n           EXEC CICS\n               XCTL PROGRAM(CDEMO-TO-PROGRAM)\n               COMMAREA(CARDDEMO-COMMAREA)\n           END-EXEC.\n\n\n",
+        "paragraph_lines": [510, 521],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the next program to call is not specified, assigning a default value if necessary.",
+          "Transfers the transaction ID from working storage to the communication area for the next program.",
+          "Transfers the current program name from working storage to the communication area for the next program.",
+          "Resets the program context field to zeros.",
+          "Executes a CICS XCTL command to pass control to the specified program along with the communication area."
+        ]
+      },
+      "SEND-TRNLST-SCREEN": {
+        "paragraph_name": "SEND-TRNLST-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "SEND-TRNLST-SCREEN.\n\n           PERFORM POPULATE-HEADER-INFO\n\n           MOVE WS-MESSAGE TO ERRMSGO OF COTRN0AO\n\n           IF SEND-ERASE-YES\n               EXEC CICS SEND\n                         MAP('COTRN0A')\n                         MAPSET('COTRN00')\n                         FROM(COTRN0AO)\n                         ERASE\n                         CURSOR\n               END-EXEC\n           ELSE\n               EXEC CICS SEND\n                         MAP('COTRN0A')\n                         MAPSET('COTRN00')\n                         FROM(COTRN0AO)\n      *                  ERASE\n                         CURSOR\n               END-EXEC\n           END-IF.\n\n",
+        "paragraph_lines": [527, 549],
+        "ref_paragraphs": ["POPULATE-HEADER-INFO"],
+        "paragraph_logic": [
+          "Calls the [header information population process]<POPULATE-HEADER-INFO> to populate the header data for the screen.",
+          "Moves the message stored in WS-MESSAGE to ERRMSGO of COTRN0AO to display any relevant errors.",
+          "Checks if the screen should be erased before sending. If yes, executes a CICS SEND command with ERASE.",
+          "Otherwise, executes a CICS SEND command without erasing the existing screen content.",
+          "The CICS SEND command sends the map COTRN0A from the mapset COTRN00 and places the cursor at the beginning."
+        ]
+      },
+      "RECEIVE-TRNLST-SCREEN": {
+        "paragraph_name": "RECEIVE-TRNLST-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RECEIVE-TRNLST-SCREEN.\n\n           EXEC CICS RECEIVE\n                     MAP('COTRN0A')\n                     MAPSET('COTRN00')\n                     INTO(COTRN0AI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC.\n\n",
+        "paragraph_lines": [554, 562],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Calls the CICS RECEIVE command to receive the screen data from the map named COTRN0A in the mapset COTRN00.",
+          "Stores the received screen data into the COTRN0AI data area.",
+          "Captures the response codes WS-RESP-CD for primary and WS-REAS-CD for secondary to handle any potential errors or conditions."
+        ]
+      },
+      "POPULATE-HEADER-INFO": {
+        "paragraph_name": "POPULATE-HEADER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-HEADER-INFO.\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF COTRN0AO\n           MOVE CCDA-TITLE02           TO TITLE02O OF COTRN0AO\n           MOVE WS-TRANID              TO TRNNAMEO OF COTRN0AO\n           MOVE WS-PGMNAME             TO PGMNAMEO OF COTRN0AO\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF COTRN0AO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF COTRN0AO.\n\n",
+        "paragraph_lines": [567, 586],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the current date to the working storage for date data.",
+          "Populates the header title fields for the transaction with title values from the data area.",
+          "Assigns the transaction ID and program name to their respective header fields.",
+          "Formats and moves the current date into the required month, day, and year fields.",
+          "Combines and moves the formatted date into the headers current date field.",
+          "Converts and moves the current time into the designated hours, minutes, and seconds fields.",
+          "Combines and moves the formatted time into the headers current time field."
+        ]
+      },
+      "STARTBR-TRANSACT-FILE": {
+        "paragraph_name": "STARTBR-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "STARTBR-TRANSACT-FILE.\n\n           EXEC CICS STARTBR\n                DATASET   (WS-TRANSACT-FILE)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n      *         GTEQ\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   CONTINUE\n                   SET TRANSACT-EOF TO TRUE\n                   MOVE 'You are at the top of the page...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNIDINL OF COTRN0AI\n                   PERFORM SEND-TRNLST-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNIDINL OF COTRN0AI\n                   PERFORM SEND-TRNLST-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [591, 619],
+        "ref_paragraphs": ["SEND-TRNLST-SCREEN", "SEND-TRNLST-SCREEN"],
+        "paragraph_logic": [
+          "Starts browsing the transaction file using CICS with the given transaction ID.",
+          "Evaluates the response code to determine the next action.",
+          "If the response is NORMAL, continues execution without error handling.",
+          "If the response is NOTFND, sets the end-of-file flag, updates the message, and performs SEND-TRNLST-SCREEN to notify the user.",
+          "For any other response, displays the error, sets the error flag, updates the message, and performs SEND-TRNLST-SCREEN to notify the user."
+        ]
+      },
+      "READNEXT-TRANSACT-FILE": {
+        "paragraph_name": "READNEXT-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READNEXT-TRANSACT-FILE.\n\n           EXEC CICS READNEXT\n                DATASET   (WS-TRANSACT-FILE)\n                INTO      (TRAN-RECORD)\n                LENGTH    (LENGTH OF TRAN-RECORD)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(ENDFILE)\n                   CONTINUE\n                   SET TRANSACT-EOF TO TRUE\n                   MOVE 'You have reached the bottom of the page...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNIDINL OF COTRN0AI\n                   PERFORM SEND-TRNLST-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNIDINL OF COTRN0AI\n                   PERFORM SEND-TRNLST-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [624, 653],
+        "ref_paragraphs": ["SEND-TRNLST-SCREEN", "SEND-TRNLST-SCREEN"],
+        "paragraph_logic": [
+          "Starts reading the next transaction record from the dataset using the CICS READNEXT command.",
+          "Checks the response code after trying to read the next transaction record.",
+          "If the response is normal, continues to the next instruction.",
+          "If the response indicates the end of the file, sets the end-of-file flag and prepares an end-of-file message.",
+          "Displays an error message and sets an error flag if any response other than normal or end-of-file occurs.",
+          "Calls the [transaction list screen sending process]<SEND-TRNLST-SCREEN> to show the relevant messages."
+        ]
+      },
+      "READPREV-TRANSACT-FILE": {
+        "paragraph_name": "READPREV-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READPREV-TRANSACT-FILE.\n\n           EXEC CICS READPREV\n                DATASET   (WS-TRANSACT-FILE)\n                INTO      (TRAN-RECORD)\n                LENGTH    (LENGTH OF TRAN-RECORD)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(ENDFILE)\n                   CONTINUE\n                   SET TRANSACT-EOF TO TRUE\n                   MOVE 'You have reached the top of the page...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNIDINL OF COTRN0AI\n                   PERFORM SEND-TRNLST-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNIDINL OF COTRN0AI\n                   PERFORM SEND-TRNLST-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [658, 687],
+        "ref_paragraphs": ["SEND-TRNLST-SCREEN", "SEND-TRNLST-SCREEN"],
+        "paragraph_logic": [
+          "Executes the [previous record read process]<READPREV-TRANSACT-FILE> to fetch the preceding record from the transaction file.",
+          "Evaluates the response code returned from the read operation.",
+          "If the response is normal (DFHRESP(NORMAL)), the process continues without any issue.",
+          "If the end of file is reached (DFHRESP(ENDFILE)), sets the end-of-file flag, updates the message, adjusts the transaction ID, and calls the [send transaction list screen process]<SEND-TRNLST-SCREEN>.",
+          "If any other response is encountered, displays the response code, flags an error, updates an error message, adjusts the transaction ID, and calls the [send transaction list screen process]<SEND-TRNLST-SCREEN>."
+        ]
+      },
+      "ENDBR-TRANSACT-FILE": {
+        "paragraph_name": "ENDBR-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "ENDBR-TRANSACT-FILE.\n\n           EXEC CICS ENDBR\n                DATASET   (WS-TRANSACT-FILE)\n           END-EXEC.\n",
+        "paragraph_lines": [692, 696],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Ends the browsing of the transaction file in the CICS environment.",
+          "Marks the data browsing context as closed for the dataset named WS-TRANSACT-FILE.",
+          "Ensures that resources associated with the browse are released properly."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COTRN00",
+        "program_type": "Copy",
+        "program_name": "COTRN00",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CVTRA05Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA05Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

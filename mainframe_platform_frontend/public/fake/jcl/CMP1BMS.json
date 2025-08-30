@@ -1,0 +1,47 @@
+{
+  "overview": {
+    "job_name": "CMP1BMS",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": "1440",
+    "description": "The best property of the JCL IBM job CMP1BMS is its flexibility in managing job steps and handling system output efficiently, such as the use of SYSOUT and dynamic commands in step SDSF1."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP1",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "SDSF1",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSCICS,'CEMT SET PROG(COSGN00) NEWCOPY'\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

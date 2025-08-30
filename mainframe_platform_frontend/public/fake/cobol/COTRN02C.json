@@ -1,0 +1,525 @@
+{
+  "id": "1f053e171b774ba8b2b18e61016a5d05",
+  "name": "COTRN02C",
+  "path": "DEMO.CARDDEMO.CBL/COTRN02C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COTRN02C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "COCOM01Y",
+      "COTRN02",
+      "COTTL01Y",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CVTRA05Y",
+      "CVACT01Y",
+      "CVACT03Y",
+      "DFHAID",
+      "DFHBMSCA"
+    ],
+    "call_files": ["'CSUTLDTC'::static", "'CSUTLDTC'::static"],
+    "summarization": "### COBOL Code Summary\n\nThis COBOL code involves handling a transaction add process within a CICS environment. It sets up an interactive screen (COTRN2A) for input, performs multiple validations on user input, and interacts with multiple datasets to manage transactions.\n\n#### Main Operations\n\n1. **Initializing Flags and Clearing Messages**:\n   - Sets error flag (`ERR-FLG-OFF`) and user-modified flag (`USR-MODIFIED-NO`) to TRUE.\n   - Clears working storage message (`WS-MESSAGE`) and error message object (`ERRMSGO`).\n\n2. **Initial Handling Based on Data Availability (`EIBCALEN`)**:\n   - If no data is passed (`EIBCALEN = 0`), it sets program name (`CDEMO-TO-PROGRAM`) and performs a screen return (`RETURN-TO-PREV-SCREEN`).\n   - Otherwise, moves `DFHCOMMAREA` to internal communication area `CARDDEMO-COMMAREA` and checks if the program is in re-enter mode (`CDEMO-PGM-REENTER`).\n\n3. **Handling Data Entry and Screen Operations**:\n   - If not in re-enter mode, sets flag (`CDEMO-PGM-REENTER`), clears certain fields, and processes selected transaction.\n   - If re-enter mode is true, receives input from the screen and handles key actions (`EIBAID`), including:\n     - Processing Enter (`DFHENTER`).\n     - Returning to previous screen (`DFHPF3`).\n     - Clearing screen (`DFHPF4`).\n     - Copying last transaction data (`DFHPF5`).\n     - Handling invalid keys.\n\n4. **Processing ENTER Key**:\n   - Validates key and data fields.\n   - Checks `CONFIRMI` flag for transaction confirmation and adds a transaction if confirmed (`ADD-TRANSACTION`), otherwise prompts for confirmation.\n\n5. **Field Validations**:\n   - Key fields (`ACTIDINI`, `CARDNINI`) and data fields (`TTYPCDI`, `TCATCDI`, `TRNSRCI`, `TDESCI`, `TRNAMTI`, `TORIGDTI`, `TPROCDTI`, `MIDI`, `MNAMEI`, `MCITYI`, `MZIPI`) are validated for content and format.\n   - If fields are invalid, appropriate error messages are set and the user is prompted to correct them.\n\n6. **Adding the Transaction**:\n   - Generates a new transaction ID.\n   - Initializes and populates the transaction record.\n   - Writes the transaction to the dataset (`WRITE-TRANSACT-FILE`).\n\n7. **Copy Last Transaction Data**:\n   - Validates input key fields.\n   - Reads the previous transaction data and copies it to the current input fields.\n\n### Auxiliary Operations\n\n- **File Operations**:\n  - `READ-CXACAIX-FILE`: Reads account cross-reference file.\n  - `READ-CCXREF-FILE`: Reads card cross-reference file.\n  - `STARTBR-TRANSACT-FILE`: Starts a browse operation on the transaction file.\n  - `READPREV-TRANSACT-FILE`: Reads the previous record in the transaction file.\n  - `ENDBR-TRANSACT-FILE`: Ends the browse operation.\n  - `WRITE-TRANSACT-FILE`: Writes new transaction data to the file.\n\n- **Populating Screen Header Info**:\n  - Populates the screen with current date and time, and other header information.\n\n- **Returning to Previous Screen**:\n  - Transfers control to a specified program, passing along the communication area data.\n\n- **Screen Sending and Receiving**:\n  - `SEND-TRNADD-SCREEN`: Sends the screen data, including messages.\n  - `RECEIVE-TRNADD-SCREEN`: Receives input data from the screen.\n\n- **Initialization and Cleanup**:\n  - `INITIALIZE-ALL-FIELDS`: Resets fields to their default states.\n\n### Key Data Tables\n- **Tables/File Names**:\n  - **COTRN2AO**: Output map for error messaging.\n  - **COTRN2AI**: Input map for transaction data.\n  - **CARDDEMO-COMMAREA**: Communication area for passing data.\n  - **TRAN-RECORD**: Holds transaction data.\n  - **CARD-XREF-RECORD**: Holds cross-reference data for cards.\n  - **CSUTLDTC**: Date validation routine. \n\nThis comprehensive flow handles input validation, transaction processing, and screen management seamlessly within COBOL's structured programming paradigm.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n\n           SET ERR-FLG-OFF     TO TRUE\n           SET USR-MODIFIED-NO TO TRUE\n\n           MOVE SPACES TO WS-MESSAGE\n                          ERRMSGO OF COTRN2AO\n\n           IF EIBCALEN = 0\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n               PERFORM RETURN-TO-PREV-SCREEN\n           ELSE\n               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA\n               IF NOT CDEMO-PGM-REENTER\n                   SET CDEMO-PGM-REENTER    TO TRUE\n                   MOVE LOW-VALUES          TO COTRN2AO\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   IF CDEMO-CT02-TRN-SELECTED NOT =\n                                              SPACES AND LOW-VALUES\n                       MOVE CDEMO-CT02-TRN-SELECTED TO\n                            CARDNINI OF COTRN2AI\n                       PERFORM PROCESS-ENTER-KEY\n                   END-IF\n                   PERFORM SEND-TRNADD-SCREEN\n               ELSE\n                   PERFORM RECEIVE-TRNADD-SCREEN\n                   EVALUATE EIBAID\n                       WHEN DFHENTER\n                           PERFORM PROCESS-ENTER-KEY\n                       WHEN DFHPF3\n                           IF CDEMO-FROM-PROGRAM = SPACES OR LOW-VALUES\n                               MOVE 'COMEN01C' TO CDEMO-TO-PROGRAM\n                           ELSE\n                               MOVE CDEMO-FROM-PROGRAM TO\n                               CDEMO-TO-PROGRAM\n                           END-IF\n                           PERFORM RETURN-TO-PREV-SCREEN\n                       WHEN DFHPF4\n                           PERFORM CLEAR-CURRENT-SCREEN\n                       WHEN DFHPF5\n                           PERFORM COPY-LAST-TRAN-DATA\n                       WHEN OTHER\n                           MOVE 'Y'                       TO WS-ERR-FLG\n                           MOVE CCDA-MSG-INVALID-KEY      TO WS-MESSAGE\n                           PERFORM SEND-TRNADD-SCREEN\n                   END-EVALUATE\n               END-IF\n           END-IF\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [107, 159],
+        "ref_paragraphs": [
+          "RETURN-TO-PREV-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "SEND-TRNADD-SCREEN",
+          "RECEIVE-TRNADD-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "RETURN-TO-PREV-SCREEN",
+          "CLEAR-CURRENT-SCREEN",
+          "COPY-LAST-TRAN-DATA",
+          "SEND-TRNADD-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Initializes error flag and user-modified flag to indicate initial states of no errors and no user modifications.",
+          "Clears the working storage message and screen error message fields to prepare for new messages.",
+          "Checks if no data was passed on transaction start and returns to the previous screen, setting the appropriate program for the return.",
+          "Loads communication area data if it exists and processes values, setting necessary flags and data.",
+          "Handles different function key inputs by performing actions like processing enter key, returning to the previous screen, clearing the screen, copying transaction data, or displaying error messages.",
+          "Returns control to CICS with the current transaction ID and communication area data for the next interaction step."
+        ]
+      },
+      "PROCESS-ENTER-KEY": {
+        "paragraph_name": "PROCESS-ENTER-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-ENTER-KEY.\n\n           PERFORM VALIDATE-INPUT-KEY-FIELDS\n           PERFORM VALIDATE-INPUT-DATA-FIELDS.\n\n           EVALUATE CONFIRMI OF COTRN2AI\n               WHEN 'Y'\n               WHEN 'y'\n                   PERFORM ADD-TRANSACTION\n               WHEN 'N'\n               WHEN 'n'\n               WHEN SPACES\n               WHEN LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Confirm to add this transaction...'\n                                TO WS-MESSAGE\n                   MOVE -1      TO CONFIRML OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Invalid value. Valid values are (Y/N)...'\n                                TO WS-MESSAGE\n                   MOVE -1      TO CONFIRML OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [164, 188],
+        "ref_paragraphs": [
+          "VALIDATE-INPUT-KEY-FIELDS",
+          "VALIDATE-INPUT-DATA-FIELDS",
+          "ADD-TRANSACTION",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Calls the [input key fields validation process]<VALIDATE-INPUT-KEY-FIELDS> to check if the key fields are correctly provided.",
+          "Calls the [input data fields validation process]<VALIDATE-INPUT-DATA-FIELDS> to ensure the remaining data fields are valid.",
+          "Evaluates the confirmation flag (CONFIRMI) from the input to determine the next action.",
+          "If the confirmation is Y or y, performs the [add transaction process]<ADD-TRANSACTION> to add the transaction.",
+          "If the confirmation is N, n, spaces, or low-values, sets the error flag and prepares a message, then calls the [send transaction add screen process]<SEND-TRNADD-SCREEN>.",
+          "If the confirmation value is invalid, sets the error flag and prepares an error message, then calls the [send transaction add screen process]<SEND-TRNADD-SCREEN>."
+        ]
+      },
+      "VALIDATE-INPUT-KEY-FIELDS": {
+        "paragraph_name": "VALIDATE-INPUT-KEY-FIELDS",
+        "section": "procedure division",
+        "paragraph_code": "VALIDATE-INPUT-KEY-FIELDS.\n\n           EVALUATE TRUE\n               WHEN ACTIDINI OF COTRN2AI NOT = SPACES AND LOW-VALUES\n                   IF ACTIDINI OF COTRN2AI IS NOT NUMERIC\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE 'Account ID must be Numeric...' TO\n                                       WS-MESSAGE\n                       MOVE -1       TO ACTIDINL OF COTRN2AI\n                       PERFORM SEND-TRNADD-SCREEN\n                   END-IF\n                   COMPUTE WS-ACCT-ID-N = FUNCTION NUMVAL(ACTIDINI OF\n                   COTRN2AI)\n                   MOVE WS-ACCT-ID-N            TO XREF-ACCT-ID\n                                                ACTIDINI OF COTRN2AI\n                   PERFORM READ-CXACAIX-FILE\n                   MOVE XREF-CARD-NUM         TO CARDNINI OF COTRN2AI\n               WHEN CARDNINI OF COTRN2AI NOT = SPACES AND LOW-VALUES\n                   IF CARDNINI OF COTRN2AI IS NOT NUMERIC\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE 'Card Number must be Numeric...' TO\n                                       WS-MESSAGE\n                       MOVE -1       TO CARDNINL OF COTRN2AI\n                       PERFORM SEND-TRNADD-SCREEN\n                   END-IF\n                   COMPUTE WS-CARD-NUM-N = FUNCTION NUMVAL(CARDNINI OF\n                   COTRN2AI)\n                   MOVE WS-CARD-NUM-N        TO XREF-CARD-NUM\n                                                CARDNINI OF COTRN2AI\n                   PERFORM READ-CCXREF-FILE\n                   MOVE XREF-ACCT-ID         TO ACTIDINI OF COTRN2AI\n               WHEN OTHER\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Account or Card Number must be entered...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [193, 230],
+        "ref_paragraphs": [
+          "SEND-TRNADD-SCREEN",
+          "READ-CXACAIX-FILE",
+          "SEND-TRNADD-SCREEN",
+          "READ-CCXREF-FILE",
+          "SEND-TRNADD-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Evaluates input key fields to ensure they are neither empty nor contain low-values.",
+          "Checks if the account ID field is numeric; if not, sets an error flag, displays an error message, and calls [SEND-TRNADD-SCREEN].",
+          "Converts the account ID to a numeric value, moves it to relevant variables, and calls [READ-CXACAIX-FILE] to retrieve associated card number.",
+          "Checks if the card number field is numeric; if not, sets an error flag, displays an error message, and calls [SEND-TRNADD-SCREEN].",
+          "Converts the card number to a numeric value, moves it to relevant variables, and calls [READ-CCXREF-FILE] to retrieve associated account ID.",
+          "If neither account ID nor card number is provided, sets an error flag, displays an error message, and calls [SEND-TRNADD-SCREEN]."
+        ]
+      },
+      "VALIDATE-INPUT-DATA-FIELDS": {
+        "paragraph_name": "VALIDATE-INPUT-DATA-FIELDS",
+        "section": "procedure division",
+        "paragraph_code": "VALIDATE-INPUT-DATA-FIELDS.\n\n           IF ERR-FLG-ON\n               MOVE SPACES      TO TTYPCDI  OF COTRN2AI\n                                   TCATCDI  OF COTRN2AI\n                                   TRNSRCI  OF COTRN2AI\n                                   TRNAMTI  OF COTRN2AI\n                                   TDESCI   OF COTRN2AI\n                                   TORIGDTI OF COTRN2AI\n                                   TPROCDTI OF COTRN2AI\n                                   MIDI     OF COTRN2AI\n                                   MNAMEI   OF COTRN2AI\n                                   MCITYI   OF COTRN2AI\n                                   MZIPI    OF COTRN2AI\n           END-IF.\n\n           EVALUATE TRUE\n               WHEN TTYPCDI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Type CD can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TTYPCDL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN TCATCDI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Category CD can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TCATCDL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN TRNSRCI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Source can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNSRCL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN TDESCI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Description can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TDESCL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN TRNAMTI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Amount can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNAMTL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN TORIGDTI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Orig Date can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TORIGDTL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN TPROCDTI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Proc Date can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TPROCDTL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN MIDI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Merchant ID can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO MIDL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN MNAMEI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Merchant Name can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO MNAMEL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN MCITYI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Merchant City can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO MCITYL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN MZIPI OF COTRN2AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Merchant Zip can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO MZIPL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE.\n\n           EVALUATE TRUE\n               WHEN TTYPCDI OF COTRN2AI NOT NUMERIC\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Type CD must be Numeric...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TTYPCDL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN TCATCDI OF COTRN2AI NOT NUMERIC\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Category CD must be Numeric...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TCATCDL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE\n\n           EVALUATE TRUE\n               WHEN TRNAMTI OF COTRN2AI(1:1) NOT EQUAL '-' AND '+'\n               WHEN TRNAMTI OF COTRN2AI(2:8) NOT NUMERIC\n               WHEN TRNAMTI OF COTRN2AI(10:1) NOT = '.'\n               WHEN TRNAMTI OF COTRN2AI(11:2) IS NOT NUMERIC\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Amount should be in format -99999999.99' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TRNAMTL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE\n\n           EVALUATE TRUE\n               WHEN TORIGDTI OF COTRN2AI(1:4) IS NOT NUMERIC\n               WHEN TORIGDTI OF COTRN2AI(5:1) NOT EQUAL '-'\n               WHEN TORIGDTI OF COTRN2AI(6:2) NOT NUMERIC\n               WHEN TORIGDTI OF COTRN2AI(8:1) NOT EQUAL '-'\n               WHEN TORIGDTI OF COTRN2AI(9:2) NOT NUMERIC\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Orig Date should be in format YYYY-MM-DD' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TORIGDTL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE\n\n           EVALUATE TRUE\n               WHEN TPROCDTI OF COTRN2AI(1:4) IS NOT NUMERIC\n               WHEN TPROCDTI OF COTRN2AI(5:1) NOT EQUAL '-'\n               WHEN TPROCDTI OF COTRN2AI(6:2) NOT NUMERIC\n               WHEN TPROCDTI OF COTRN2AI(8:1) NOT EQUAL '-'\n               WHEN TPROCDTI OF COTRN2AI(9:2) NOT NUMERIC\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Proc Date should be in format YYYY-MM-DD' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO TPROCDTL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE\n\n           COMPUTE WS-TRAN-AMT-N = FUNCTION NUMVAL-C(TRNAMTI OF\n           COTRN2AI)\n           MOVE WS-TRAN-AMT-N TO WS-TRAN-AMT-E\n           MOVE WS-TRAN-AMT-E TO TRNAMTI OF COTRN2AI\n\n\n           MOVE TORIGDTI OF COTRN2AI TO CSUTLDTC-DATE\n           MOVE WS-DATE-FORMAT       TO CSUTLDTC-DATE-FORMAT\n           MOVE SPACES               TO CSUTLDTC-RESULT\n\n           CALL 'CSUTLDTC' USING   CSUTLDTC-DATE\n                                   CSUTLDTC-DATE-FORMAT\n                                   CSUTLDTC-RESULT\n\n           IF CSUTLDTC-RESULT-SEV-CD = '0000'\n               CONTINUE\n           ELSE\n               IF CSUTLDTC-RESULT-MSG-NUM NOT = '2513'\n                   MOVE 'Orig Date - Not a valid date...'\n                     TO WS-MESSAGE\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE -1       TO TORIGDTL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               END-IF\n           END-IF\n\n           MOVE TPROCDTI OF COTRN2AI TO CSUTLDTC-DATE\n           MOVE WS-DATE-FORMAT       TO CSUTLDTC-DATE-FORMAT\n           MOVE SPACES               TO CSUTLDTC-RESULT\n\n           CALL 'CSUTLDTC' USING   CSUTLDTC-DATE\n                                   CSUTLDTC-DATE-FORMAT\n                                   CSUTLDTC-RESULT\n\n           IF CSUTLDTC-RESULT-SEV-CD = '0000'\n               CONTINUE\n           ELSE\n               IF CSUTLDTC-RESULT-MSG-NUM NOT = '2513'\n                   MOVE 'Proc Date - Not a valid date...'\n                     TO WS-MESSAGE\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE -1       TO TPROCDTL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               END-IF\n           END-IF\n\n\n           IF MIDI OF COTRN2AI IS NOT NUMERIC\n               MOVE 'Y'     TO WS-ERR-FLG\n               MOVE 'Merchant ID must be Numeric...' TO\n                               WS-MESSAGE\n               MOVE -1       TO MIDL OF COTRN2AI\n               PERFORM SEND-TRNADD-SCREEN\n           END-IF\n           .\n\n",
+        "paragraph_lines": [235, 437],
+        "ref_paragraphs": [
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Checks if theres an error flag set and, if so, clears specific fields in the data structure.",
+          "Evaluates each data field and moves an error flag and message if the field is empty or contains low-values, then calls the [send transaction add screen process]<SEND-TRNADD-SCREEN>.",
+          "Performs additional validations to ensure fields are numeric as required, and calls the [send transaction add screen process]<SEND-TRNADD-SCREEN> for each error.",
+          "Computes transaction amount using numeric value function and updates corresponding fields.",
+          "Calls a date conversion subroutine to validate and format original and processing dates.",
+          "Validates Merchant ID to ensure it is numeric, and calls the [send transaction add screen process]<SEND-TRNADD-SCREEN> upon validation failure."
+        ]
+      },
+      "ADD-TRANSACTION": {
+        "paragraph_name": "ADD-TRANSACTION",
+        "section": "procedure division",
+        "paragraph_code": "ADD-TRANSACTION.\n\n           MOVE HIGH-VALUES TO TRAN-ID\n           PERFORM STARTBR-TRANSACT-FILE\n           PERFORM READPREV-TRANSACT-FILE\n           PERFORM ENDBR-TRANSACT-FILE\n           MOVE TRAN-ID     TO WS-TRAN-ID-N\n           ADD 1 TO WS-TRAN-ID-N\n           INITIALIZE TRAN-RECORD\n           MOVE WS-TRAN-ID-N         TO TRAN-ID\n           MOVE TTYPCDI  OF COTRN2AI TO TRAN-TYPE-CD\n           MOVE TCATCDI  OF COTRN2AI TO TRAN-CAT-CD\n           MOVE TRNSRCI  OF COTRN2AI TO TRAN-SOURCE\n           MOVE TDESCI   OF COTRN2AI TO TRAN-DESC\n           COMPUTE WS-TRAN-AMT-N = FUNCTION NUMVAL-C(TRNAMTI OF\n           COTRN2AI)\n           MOVE WS-TRAN-AMT-N TO TRAN-AMT\n           MOVE CARDNINI OF COTRN2AI TO TRAN-CARD-NUM\n           MOVE MIDI     OF COTRN2AI TO TRAN-MERCHANT-ID\n           MOVE MNAMEI   OF COTRN2AI TO TRAN-MERCHANT-NAME\n           MOVE MCITYI   OF COTRN2AI TO TRAN-MERCHANT-CITY\n           MOVE MZIPI    OF COTRN2AI TO TRAN-MERCHANT-ZIP\n           MOVE TORIGDTI OF COTRN2AI TO TRAN-ORIG-TS\n           MOVE TPROCDTI OF COTRN2AI TO TRAN-PROC-TS\n           PERFORM WRITE-TRANSACT-FILE.\n\n",
+        "paragraph_lines": [442, 466],
+        "ref_paragraphs": [
+          "STARTBR-TRANSACT-FILE",
+          "READPREV-TRANSACT-FILE",
+          "ENDBR-TRANSACT-FILE",
+          "WRITE-TRANSACT-FILE"
+        ],
+        "paragraph_logic": [
+          "Initializes a new transaction by setting the transaction ID to a high value marker.",
+          "Calls the [start browse transaction file]<STARTBR-TRANSACT-FILE> to begin browsing the transaction file.",
+          "Calls the [read previous transaction file]<READPREV-TRANSACT-FILE> to read the previous transaction record.",
+          "Calls the [end browse transaction file]<ENDBR-TRANSACT-FILE> to end browsing the transaction file.",
+          "Updates the transaction ID and initializes the transaction record with provided values such as type, category, and amount.",
+          "Calls the [write transaction file]<WRITE-TRANSACT-FILE> to write the new transaction record to the file."
+        ]
+      },
+      "COPY-LAST-TRAN-DATA": {
+        "paragraph_name": "COPY-LAST-TRAN-DATA",
+        "section": "procedure division",
+        "paragraph_code": "COPY-LAST-TRAN-DATA.\n\n           PERFORM VALIDATE-INPUT-KEY-FIELDS\n\n           MOVE HIGH-VALUES TO TRAN-ID\n           PERFORM STARTBR-TRANSACT-FILE\n           PERFORM READPREV-TRANSACT-FILE\n           PERFORM ENDBR-TRANSACT-FILE\n\n           IF NOT ERR-FLG-ON\n               MOVE TRAN-AMT TO WS-TRAN-AMT-E\n               MOVE TRAN-TYPE-CD        TO TTYPCDI  OF COTRN2AI\n               MOVE TRAN-CAT-CD         TO TCATCDI  OF COTRN2AI\n               MOVE TRAN-SOURCE         TO TRNSRCI  OF COTRN2AI\n               MOVE WS-TRAN-AMT-E       TO TRNAMTI  OF COTRN2AI\n               MOVE TRAN-DESC           TO TDESCI   OF COTRN2AI\n               MOVE TRAN-ORIG-TS        TO TORIGDTI OF COTRN2AI\n               MOVE TRAN-PROC-TS        TO TPROCDTI OF COTRN2AI\n               MOVE TRAN-MERCHANT-ID    TO MIDI     OF COTRN2AI\n               MOVE TRAN-MERCHANT-NAME  TO MNAMEI   OF COTRN2AI\n               MOVE TRAN-MERCHANT-CITY  TO MCITYI   OF COTRN2AI\n               MOVE TRAN-MERCHANT-ZIP   TO MZIPI    OF COTRN2AI\n           END-IF\n\n           PERFORM PROCESS-ENTER-KEY.\n\n",
+        "paragraph_lines": [471, 495],
+        "ref_paragraphs": [
+          "VALIDATE-INPUT-KEY-FIELDS",
+          "STARTBR-TRANSACT-FILE",
+          "READPREV-TRANSACT-FILE",
+          "ENDBR-TRANSACT-FILE",
+          "PROCESS-ENTER-KEY"
+        ],
+        "paragraph_logic": [
+          "Validates the input key fields to ensure they are correct through <VALIDATE-INPUT-KEY-FIELDS>.",
+          "Moves high-values to transaction ID, initializing it to the highest possible value.",
+          "Starts browsing through the transaction file from the end with <STARTBR-TRANSACT-FILE>.",
+          "Reads the previous record in the transaction file with <READPREV-TRANSACT-FILE>.",
+          "Ends the browse operation on the transaction file with <ENDBR-TRANSACT-FILE>.",
+          "If no error flag is set, moves transaction details (amount, type, category, source, and other merchant details) to working storage fields.",
+          "Calls the process for handling the enter key event with <PROCESS-ENTER-KEY>."
+        ]
+      },
+      "RETURN-TO-PREV-SCREEN": {
+        "paragraph_name": "RETURN-TO-PREV-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RETURN-TO-PREV-SCREEN.\n\n           IF CDEMO-TO-PROGRAM = LOW-VALUES OR SPACES\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n           END-IF\n           MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n           MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n           MOVE ZEROS        TO CDEMO-PGM-CONTEXT\n           EXEC CICS\n               XCTL PROGRAM(CDEMO-TO-PROGRAM)\n               COMMAREA(CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [500, 511],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the target program variable (CDEMO-TO-PROGRAM) is set to its initial state or contains spaces.",
+          "Sets the program variable (CDEMO-TO-PROGRAM) to COSGN00C if it is in its initial state.",
+          "Moves the transaction ID (WS-TRANID) to the FROM transaction ID variable (CDEMO-FROM-TRANID).",
+          "Moves the program name (WS-PGMNAME) to the FROM program variable (CDEMO-FROM-PROGRAM).",
+          "Sets the program context field (CDEMO-PGM-CONTEXT) to zeroes.",
+          "Calls the CICS XCTL command to transfer control to the target program (CDEMO-TO-PROGRAM), passing the communication area (CARDDEMO-COMMAREA)."
+        ]
+      },
+      "SEND-TRNADD-SCREEN": {
+        "paragraph_name": "SEND-TRNADD-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "SEND-TRNADD-SCREEN.\n\n           PERFORM POPULATE-HEADER-INFO\n\n           MOVE WS-MESSAGE TO ERRMSGO OF COTRN2AO\n\n           EXEC CICS SEND\n                     MAP('COTRN2A')\n                     MAPSET('COTRN02')\n                     FROM(COTRN2AO)\n                     ERASE\n                     CURSOR\n           END-EXEC.\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n      *              LENGTH(LENGTH OF CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [516, 534],
+        "ref_paragraphs": ["POPULATE-HEADER-INFO"],
+        "paragraph_logic": [
+          "Calls the [header information population process]<POPULATE-HEADER-INFO> to fill in essential header fields.",
+          "Moves the message from the working storage to the error message field of the map.",
+          "Sends the map COTRN2A from mapset COTRN02 to the user, erasing the screen and setting the cursor.",
+          "Returns control to the CICS with the specified transaction ID and communication area."
+        ]
+      },
+      "RECEIVE-TRNADD-SCREEN": {
+        "paragraph_name": "RECEIVE-TRNADD-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RECEIVE-TRNADD-SCREEN.\n\n           EXEC CICS RECEIVE\n                     MAP('COTRN2A')\n                     MAPSET('COTRN02')\n                     INTO(COTRN2AI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC.\n\n",
+        "paragraph_lines": [539, 547],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Receives screen data from the CICS transactional system for processing.",
+          "Uses the COTRN2A map and COTRN02 mapset to determine how the screen data should be interpreted.",
+          "Stores the received screen data into the COTRN2AI data structure.",
+          "Handles the primary response code in WS-RESP-CD and the secondary response code in WS-REAS-CD to check for any errors."
+        ]
+      },
+      "POPULATE-HEADER-INFO": {
+        "paragraph_name": "POPULATE-HEADER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-HEADER-INFO.\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF COTRN2AO\n           MOVE CCDA-TITLE02           TO TITLE02O OF COTRN2AO\n           MOVE WS-TRANID              TO TRNNAMEO OF COTRN2AO\n           MOVE WS-PGMNAME             TO PGMNAMEO OF COTRN2AO\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF COTRN2AO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF COTRN2AO.\n\n",
+        "paragraph_lines": [552, 571],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Populates the current date into WS-CURDATE-DATA.",
+          "Moves static titles and transaction information into the header fields (COTRN2AO).",
+          "Formats current date components (month, day, year) into separate workspace fields (WS-CURDATE-MM, WS-CURDATE-DD, WS-CURDATE-YY).",
+          "Combines formatted date into a single field (WS-CURDATE-MM-DD-YY) and moves it to CURDATEO.",
+          "Formats current time components (hours, minutes, seconds) into separate workspace fields (WS-CURTIME-HH, WS-CURTIME-MM, WS-CURTIME-SS).",
+          "Combines formatted time into a single field (WS-CURTIME-HH-MM-SS) and moves it to CURTIMEO."
+        ]
+      },
+      "READ-CXACAIX-FILE": {
+        "paragraph_name": "READ-CXACAIX-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READ-CXACAIX-FILE.\n\n           EXEC CICS READ\n                DATASET   (WS-CXACAIX-FILE)\n                INTO      (CARD-XREF-RECORD)\n                LENGTH    (LENGTH OF CARD-XREF-RECORD)\n                RIDFLD    (XREF-ACCT-ID)\n                KEYLENGTH (LENGTH OF XREF-ACCT-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Account ID NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup Acct in XREF AIX file...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [576, 604],
+        "ref_paragraphs": ["SEND-TRNADD-SCREEN", "SEND-TRNADD-SCREEN"],
+        "paragraph_logic": [
+          "Reads the [CXACAIX file]<READ-CXACAIX-FILE> to fetch the account cross-reference record based on the account ID.",
+          "Evaluates the response code [WS-RESP-CD] to determine the success or failure of the file read operation.",
+          "If successful, continues with the processing.",
+          "If the account ID is not found, sets an error flag, updates the error message, moves -1 to the indicator field, and performs the screen display process <SEND-TRNADD-SCREEN>.",
+          "If an error other than not found occurs, displays the response and reason codes, sets an error flag, updates the error message, moves -1 to the indicator field, and performs the screen display process <SEND-TRNADD-SCREEN>."
+        ]
+      },
+      "READ-CCXREF-FILE": {
+        "paragraph_name": "READ-CCXREF-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READ-CCXREF-FILE.\n\n           EXEC CICS READ\n                DATASET   (WS-CCXREF-FILE)\n                INTO      (CARD-XREF-RECORD)\n                LENGTH    (LENGTH OF CARD-XREF-RECORD)\n                RIDFLD    (XREF-CARD-NUM)\n                KEYLENGTH (LENGTH OF XREF-CARD-NUM)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Card Number NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO CARDNINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup Card # in XREF file...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO CARDNINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [609, 637],
+        "ref_paragraphs": ["SEND-TRNADD-SCREEN", "SEND-TRNADD-SCREEN"],
+        "paragraph_logic": [
+          "Reads the cross-reference file for card data.",
+          "Evaluates the response code to determine the status of the read operation.",
+          "If the read operation is successful, continues processing.",
+          "If the card number is not found, sets an error flag, logs a message, and calls the [send transaction add screen process]<SEND-TRNADD-SCREEN>.",
+          "For other errors, displays the response code, sets an error flag, logs a message, and calls the [send transaction add screen process]<SEND-TRNADD-SCREEN>."
+        ]
+      },
+      "STARTBR-TRANSACT-FILE": {
+        "paragraph_name": "STARTBR-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "STARTBR-TRANSACT-FILE.\n\n           EXEC CICS STARTBR\n                DATASET   (WS-TRANSACT-FILE)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Transaction ID NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup Transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [642, 668],
+        "ref_paragraphs": ["SEND-TRNADD-SCREEN", "SEND-TRNADD-SCREEN"],
+        "paragraph_logic": [
+          "Starts browsing through the transactions dataset using the provided transaction ID.",
+          "Evaluates the response code from the STARTBR command.",
+          "If the response is normal, continues with the next process.",
+          "If the transaction ID is not found, sets an error flag, updates a message, and performs <SEND-TRNADD-SCREEN> to notify the user.",
+          "For any other response, displays the response and reason codes, sets an error flag, updates a message, and performs <SEND-TRNADD-SCREEN> to notify the user."
+        ]
+      },
+      "READPREV-TRANSACT-FILE": {
+        "paragraph_name": "READPREV-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READPREV-TRANSACT-FILE.\n\n           EXEC CICS READPREV\n                DATASET   (WS-TRANSACT-FILE)\n                INTO      (TRAN-RECORD)\n                LENGTH    (LENGTH OF TRAN-RECORD)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(ENDFILE)\n                   MOVE ZEROS TO TRAN-ID\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup Transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [673, 697],
+        "ref_paragraphs": ["SEND-TRNADD-SCREEN"],
+        "paragraph_logic": [
+          "Initiates a READPREV command on the WS-TRANSACT-FILE to read the previous transaction record into TRAN-RECORD.",
+          "Evaluates the response code (WS-RESP-CD) to determine the outcome of the READPREV command.",
+          "Continues processing if the response is normal (DFHRESP(NORMAL)).",
+          "Resets the transaction ID (TRAN-ID) if the end of file (DFHRESP(ENDFILE)) is reached.",
+          "Displays error information and sets error flag if any other response code is encountered.",
+          "Calls the [send transaction screen process]<SEND-TRNADD-SCREEN> to display an error message on the screen when an error occurs."
+        ]
+      },
+      "ENDBR-TRANSACT-FILE": {
+        "paragraph_name": "ENDBR-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "ENDBR-TRANSACT-FILE.\n\n           EXEC CICS ENDBR\n                DATASET   (WS-TRANSACT-FILE)\n           END-EXEC.\n\n",
+        "paragraph_lines": [702, 706],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Closes the browse operation on the transaction dataset in CICS after completing read or update operations."
+        ]
+      },
+      "WRITE-TRANSACT-FILE": {
+        "paragraph_name": "WRITE-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "WRITE-TRANSACT-FILE.\n\n           EXEC CICS WRITE\n                DATASET   (WS-TRANSACT-FILE)\n                FROM      (TRAN-RECORD)\n                LENGTH    (LENGTH OF TRAN-RECORD)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   PERFORM INITIALIZE-ALL-FIELDS\n                   MOVE SPACES             TO WS-MESSAGE\n                   MOVE DFHGREEN           TO ERRMSGC  OF COTRN2AO\n                   STRING 'Transaction added successfully. '\n                                               DELIMITED BY SIZE\n                     ' Your Tran ID is ' DELIMITED BY SIZE\n                          TRAN-ID  DELIMITED BY SPACE\n                          '.' DELIMITED BY SIZE\n                     INTO WS-MESSAGE\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN DFHRESP(DUPKEY)\n               WHEN DFHRESP(DUPREC)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Tran ID already exist...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to Add Transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COTRN2AI\n                   PERFORM SEND-TRNADD-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [711, 749],
+        "ref_paragraphs": [
+          "INITIALIZE-ALL-FIELDS",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN",
+          "SEND-TRNADD-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Executes the CICS WRITE command to store a transaction record in the WS-TRANSACT-FILE dataset.",
+          "Evaluates the response code (WS-RESP-CD) to determine the outcome of the write operation.",
+          "On successful write, performs field initialization<INITIALIZE-ALL-FIELDS> and sets up a success message for display.",
+          "If the response indicates a duplicate key (DFHRESP(DUPKEY)) or duplicate record (DFHRESP(DUPREC)), sets error flag and prepares an error message.",
+          "For other response codes, logs the response details, sets error flag, and prepares an error message before sending the screen update<SEND-TRNADD-SCREEN>."
+        ]
+      },
+      "CLEAR-CURRENT-SCREEN": {
+        "paragraph_name": "CLEAR-CURRENT-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "CLEAR-CURRENT-SCREEN.\n\n           PERFORM INITIALIZE-ALL-FIELDS.\n           PERFORM SEND-TRNADD-SCREEN.\n\n",
+        "paragraph_lines": [754, 757],
+        "ref_paragraphs": ["INITIALIZE-ALL-FIELDS", "SEND-TRNADD-SCREEN"],
+        "paragraph_logic": [
+          "Performs [field initialization process]<INITIALIZE-ALL-FIELDS> to reset all screen fields to their default values.",
+          "Calls the [transaction addition screen process]<SEND-TRNADD-SCREEN> to display the transaction add screen for user interaction."
+        ]
+      },
+      "INITIALIZE-ALL-FIELDS": {
+        "paragraph_name": "INITIALIZE-ALL-FIELDS",
+        "section": "procedure division",
+        "paragraph_code": "INITIALIZE-ALL-FIELDS.\n\n           MOVE -1              TO ACTIDINL OF COTRN2AI\n           MOVE SPACES          TO ACTIDINI OF COTRN2AI\n                                   CARDNINI OF COTRN2AI\n                                   TTYPCDI  OF COTRN2AI\n                                   TCATCDI  OF COTRN2AI\n                                   TRNSRCI  OF COTRN2AI\n                                   TRNAMTI  OF COTRN2AI\n                                   TDESCI   OF COTRN2AI\n                                   TORIGDTI OF COTRN2AI\n                                   TPROCDTI OF COTRN2AI\n                                   MIDI     OF COTRN2AI\n                                   MNAMEI   OF COTRN2AI\n                                   MCITYI   OF COTRN2AI\n                                   MZIPI    OF COTRN2AI\n                                   CONFIRMI OF COTRN2AI\n                                   WS-MESSAGE.\n\n",
+        "paragraph_lines": [762, 779],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initializes all fields by moving a sentinel value -1 to the ACTIDINL of COTRN2AI to denote an uninitialized state.",
+          "Sets multiple fields like ACTIDINI, CARDNINI, TTYPCDI, etc., to spaces, effectively clearing them.",
+          "Initializes the WS-MESSAGE field to spaces for message handling.",
+          "Ensures that the COTRN2AI data structure is reset to a default state, making it ready for new data."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CSUTLDTC",
+        "program_type": "Cobol",
+        "program_name": "CSUTLDTC",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "VALIDATE-INPUT-DATA-FIELDS",
+        "identifier": ["CSUTLDTC-DATE", "CSUTLDTC-DATE-FORMAT", "CSUTLDTC-RESULT"]
+      },
+      {
+        "index": 1,
+        "program_id": "CSUTLDTC",
+        "program_type": "Cobol",
+        "program_name": "CSUTLDTC",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "VALIDATE-INPUT-DATA-FIELDS",
+        "identifier": ["CSUTLDTC-DATE", "CSUTLDTC-DATE-FORMAT", "CSUTLDTC-RESULT"]
+      },
+      {
+        "index": 0,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COTRN02",
+        "program_type": "Copy",
+        "program_name": "COTRN02",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CVTRA05Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA05Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "CVACT01Y",
+        "program_type": "Copy",
+        "program_name": "CVACT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "CVACT03Y",
+        "program_type": "Copy",
+        "program_name": "CVACT03Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 8,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 9,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

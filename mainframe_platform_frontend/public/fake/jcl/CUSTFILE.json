@@ -1,0 +1,158 @@
+{
+  "overview": {
+    "job_name": "CUSTFILE",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM allows for the automation of job execution on mainframe systems through a structured sequence of steps, with each step capable of performing specific tasks such as file manipulation and program execution."
+  },
+  "step_list": [
+    {
+      "step_name": "CLCIFIL",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /F CICSA,'CEMT SET FIL(CUSTDAT ) CLO'\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP05",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DELETE FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS -\r\n          CLUSTER\r\n   IF MAXCC LE 08 THEN SET MAXCC = 0\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP10",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DEFINE CLUSTER (NAME(FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS) -\r\n          CYLINDERS(1 5) -\r\n          VOLUMES(USER04 -\r\n          ) -\r\n          KEYS(9 0) -\r\n          RECORDSIZE(500 500) -\r\n          SHAREOPTIONS(2 3) -\r\n          ERASE -\r\n          INDEXED -\r\n          ) -\r\n          DATA (NAME(FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS.DAT) -\r\n          ) -\r\n          INDEX (NAME(FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS.IDX) -\r\n          )\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP15",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CUSTDATA",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CUSTDATA.PS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CUSTDATA.PS",
+              "variable_name": "CUSTDATA",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CUSTDATA.PS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "CUSTVSAM",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS",
+              "variable_name": "CUSTVSAM",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   REPRO INFILE(CUSTDATA) OUTFILE(CUSTVSAM)\r\n"
+        }
+      ],
+      "io_statements": [
+        "CUSTDATA: DSN=FPTLT01.DEMO.CARDDEMO.CUSTDATA.PS\n",
+        "CUSTVSAM: DSN=FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS\n"
+      ],
+      "property": "STEP15 uses IDCAMS to copy data from a sequential file (CUSTDATA) to a VSAM KSDS file (CUSTVSAM)."
+    },
+    {
+      "step_name": "OPCIFIL",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /F CICSA,'CEMT SET FIL(CUSTDAT ) OPE'\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

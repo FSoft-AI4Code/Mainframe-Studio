@@ -1,0 +1,108 @@
+from enum import Enum
+
+from pydantic import BaseModel, Field
+from typing import List, Optional
+
+class LLMProvider(str, Enum):
+    AZURE_OPENAI = "azure_openai"
+
+
+IBM_MAINFRAME_UTILITIES = {
+    # Dataset Utilities
+    "IDCAMS": "Access Method Services",
+    "IEBCOMPR": "Compares records in sequential or partitioned data sets",
+    "IEBCOPY": "Copies, compresses, and merges partitioned data sets",
+    "IEBDG": "Data Generator",
+    "IEBEDIT": "Selectively copies portions of JCL",
+    "IEBGENER": "Copies records from a sequential dataset",
+    "IEBIMAGE": "Manipulates images for IBM printers",
+    "IEBISAM": "Unloads, loads, copies ISAM datasets (obsolete)",
+    "IEBPTPCH": "Prints or punches records from sequential or partitioned datasets",
+    "IEBUPDTE": "Incorporates changes to sequential or partitioned datasets",
+
+    # Scheduler Utilities
+    "IEFBR14": "Dummy program for dataset allocation or deletion",
+
+    # System Utilities
+    "ICKDSF": "Device Support Facility",
+    "IEHDASDR": "Direct Access Storage Dump and Restore (obsolete)",
+    "IEHINITT": "Initializes tapes with labels",
+    "IEHLIST": "Lists entries in PDS directories or VTOC",
+    "IEHMOVE": "Moves or copies collections of datasets",
+    "IEHPROGM": "Builds and maintains system control data",
+    "HEWL": "Linkage Editor/Binder",
+    "IEWL": "Linkage Editor/Binder",
+    "IGYCOMP": "COBOL Compiler (older version)",
+    "EDCMPROC": "COBOL Compile Procedure",
+    "ASMA90": "Assembler Compiler",
+
+    # Supporting Programs
+    "SORT": "Sorts and merges records in files",
+    "IGYCRCTL": "Common compilers for languages like COBOL",
+    "DFSMS": "Storage Management System",
+    
+    # Other Utilities
+    "CEEDAYS": "",
+    "DFHCSDUP": "",
+    "IRRDBU00": "",
+    "DFHBMSCA": "",
+    "DFHAID": "",
+    "IKJEFT1B":"", 
+    "IKJEFT01":"", 
+    "ASMA90":"", 
+    "LOADER":"", 
+    "$TSCONS":"", 
+    "WAITTIME":"", 
+    "DBA006":"", 
+    "ICEMAN":"", 
+    "DSNUTILB":"", 
+    "DSNJU004":"", 
+    "INZUTILB":"", 
+    "DBA025":"", 
+    "ALAMGR":"", 
+    "DBA004":"", 
+    "DBA007":"", 
+    "DBA010":"", 
+    "DBA00A":"", 
+    "BPXBATCH":"", 
+    "DB2PM":"", 
+    "CQM@WDB2":"", 
+    "CQM@ITXT":"", 
+    "PDS2RDR":"", 
+    "DBA014":"", 
+    "CKZ00500":"", 
+    "CSQUTIL":"", 
+    "ADRDSSU":"", 
+    "VIAPSPIN":"", 
+    "DSNJU003":"", 
+    "NDVRC1":"", 
+    "ICETOOL":"", 
+    "PCFDRV":"", 
+    "FTP":"", 
+    "CKRCARLA":"", 
+    "PCFPUR":"", 
+    "IRXJCL":"", 
+    "ACTDRV":"", 
+    "ACTEXT":"", 
+    "CALLCEMT":"", 
+    "BINDVER":"", 
+    "RMTVER":"", 
+    "ICEGENER":"", 
+    "SHAWABND":"", 
+    "EDGHSKP":"", 
+    "EDGRPTD":"", 
+    "$TSSCANU":"", 
+    "DRLPLC":"", 
+    "ARCMAIN":"", 
+    "@LFRACF":"", 
+    "MVF00010":"", 
+    "BPXBATSL":"", 
+    "KO2RPRTB":"", 
+    "ERBRMFPP":"", 
+    "IEAMDBLG":"", 
+    "VSRASMF1":"", 
+    "VSRASMF2":"", 
+    "VS80DRIV":"", 
+    "VS12DRIV":"", 
+    "VS10DRIV":"", 
+}

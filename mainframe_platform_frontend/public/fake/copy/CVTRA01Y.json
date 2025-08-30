@@ -1,0 +1,65 @@
+[
+  {
+    "level": "01",
+    "name": "TRAN-CAT-BAL-RECORD",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "TRAN-CAT-KEY",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "TRANCAT-ACCT-ID",
+    "picture_clause": "9(11)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "TRANCAT-TYPE-CD",
+    "picture_clause": "X(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "TRANCAT-CD",
+    "picture_clause": "9(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "TRAN-CAT-BAL",
+    "picture_clause": "S9(09)V99",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "FILLER",
+    "picture_clause": "X(22)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

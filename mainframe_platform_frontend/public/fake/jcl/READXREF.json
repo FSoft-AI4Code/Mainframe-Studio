@@ -1,0 +1,62 @@
+{
+  "overview": {
+    "job_name": "READXREF",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM's best property is its ability to efficiently manage and execute multiple job control statements for handling complex data processing tasks."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05",
+      "program_executed": "CBACT03C",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.LOADLIB" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "program_id": "CBACT03C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "XREFFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "variable_name": "XREFFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "program_id": "CBACT03C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB\n",
+        "XREFFILE: DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS\n"
+      ],
+      "property": "JCL IBM's best property is its ability to efficiently manage and execute multiple job control statements to handle complex data processing tasks."
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+version: '3.8'
+
+services:
+  # Mainframe Services Application
+  mainframe_services:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: ".env"
+    command: ["bash", "-lc", "PYTHONPATH=/workspace /workspace/.venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"]
+    ports:
+      - '16168:8000'
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - mainframe-dev-network
+    volumes:
+      - ./app:/workspace/app
+      - ./tmp:/app/tmp
+    environment:
+      - MONGO_HOST=mongodb
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_DATABASE=${MONGO_DATABASE}
+      - REDIS_URL=redis://redis:6379/0
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-/}
+      - RABBITMQ_EXCHANGE=${RABBITMQ_EXCHANGE}
+      - POETRY_DOTENV_ACTIVE=false
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c 'import requests; exit(0) if requests.get(\"http://localhost:8000/health\").status_code == 200 else exit(1)'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Mainframe Worker
+  mainframe_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: ".env"
+    command: ["bash", "-lc", "PYTHONPATH=/workspace /workspace/.venv/bin/python -m saq app.worker.settings"]
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - mainframe-dev-network
+    volumes:
+      - ./app:/workspace/app
+      - ./tmp:/app/tmp
+    environment:
+      - MONGO_HOST=mongodb
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_DATABASE=${MONGO_DATABASE}
+      - REDIS_URL=redis://redis:6379/0
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST:-/}
+      - RABBITMQ_EXCHANGE=${RABBITMQ_EXCHANGE}
+      - POETRY_DOTENV_ACTIVE=false
+      - AIRFLOW_BASE_URL=http://airflow-webserver:8080
+
+
+
+  # MongoDB
+  mongodb:
+    image: mongo:6.0
+    command: ["--bind_ip_all"]
+    restart: unless-stopped
+    expose:
+      - 27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-dev_password}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-mainframe}
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - mainframe-dev-network
+    healthcheck:
+      test:
+        - "CMD"
+        - "mongosh"
+        - "--quiet"
+        - "-u"
+        - "${MONGO_INITDB_ROOT_USERNAME:-admin}"
+        - "-p"
+        - "${MONGO_INITDB_ROOT_PASSWORD:-dev_password}"
+        - "--authenticationDatabase"
+        - "admin"
+        - "--eval"
+        - "db.adminCommand({ ping: 1 })"
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 20s
+
+  # Redis
+  redis:
+    # Redis is limited to 7.2-bookworm due to licencing change
+    # https://redis.io/blog/redis-adopts-dual-source-available-licensing/
+    image: redis:7.2-bookworm
+    restart: unless-stopped
+    expose:
+      - 6379
+    volumes:
+      - redis_data:/data
+    networks:
+      - mainframe-dev-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+      start_period: 30s
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    restart: unless-stopped
+    expose:
+      - 5672
+      - 15672
+    env_file:
+      - .env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-dev_password}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - mainframe-dev-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  mainframe-dev-network:
+    name: mainframe-dev-network
+    driver: bridge
+    # This network can be joined by other repositories
+    # Example: docker network connect mainframe-dev-network mainframe-workers

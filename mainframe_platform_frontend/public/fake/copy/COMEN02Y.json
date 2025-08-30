@@ -1,0 +1,443 @@
+[
+  {
+    "level": "01",
+    "name": "CARDDEMO-MAIN-MENU-OPTIONS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "CDEMO-MENU-OPT-COUNT",
+    "picture_clause": "9(02)",
+    "default_value": "10",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "05",
+    "name": "CDEMO-MENU-OPTIONS-DATA",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "1",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Account View                       '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COACTVWC'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "2",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Account Update                     '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COACTUPC'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "3",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Credit Card List                   '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COCRDLIC'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "4",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Credit Card View                   '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COCRDSLC'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "5",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Credit Card Update                 '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COCRDUPC'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "6",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Transaction List                   '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COTRN00C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "7",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Transaction View                   '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COTRN01C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "8",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Transaction Add                    '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COTRN02C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "9",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Transaction Reports                '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'CORPT00C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "9(02)",
+    "default_value": "10",
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(35)",
+    "default_value": "'Bill Payment                       '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(08)",
+    "default_value": "'COBIL00C'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "'U'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "CDEMO-MENU-OPTIONS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "CDEMO-MENU-OPTIONS-DATA",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "10",
+    "name": "CDEMO-MENU-OPT",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": 12,
+    "data_type": null
+  },
+  {
+    "level": "15",
+    "name": "CDEMO-MENU-OPT-NUM",
+    "picture_clause": "9(02)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "15",
+    "name": "CDEMO-MENU-OPT-NAME",
+    "picture_clause": "X(35)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "15",
+    "name": "CDEMO-MENU-OPT-PGMNAME",
+    "picture_clause": "X(08)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "15",
+    "name": "CDEMO-MENU-OPT-USRTYPE",
+    "picture_clause": "X(01)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

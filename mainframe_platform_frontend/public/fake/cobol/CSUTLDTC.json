@@ -1,0 +1,95 @@
+{
+  "id": "49880d411da74c1bbe5ef2a011c9c6f4",
+  "name": "CSUTLDTC",
+  "path": "DEMO.CARDDEMO.CBL/CSUTLDTC",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CSUTLDTC",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [],
+    "call_files": ["\"CEEDAYS\"::static"],
+    "summarization": "This COBOL code is designed to validate and format a date using specific date formats. Here is a summary of the main flow of the code:\n\n1. **Initialization:**\n   - The `WS-MESSAGE` variable is initialized, and `WS-DATE` is cleared.\n   \n2. **Main Processing:**\n   - Call to the `A000-MAIN` section, which performs the core processing logic.\n   - Within `A000-MAIN`:\n     - The lengths of `LS-DATE` and `LS-DATE-FORMAT` are computed and stored in the appropriate variables (`VSTRING-LENGTH` of `WS-DATE-TO-TEST` and `WS-DATE-FORMAT`).\n     - `LS-DATE` and `LS-DATE-FORMAT` are transferred to `WS-DATE-TO-TEST` and `WS-DATE-FORMAT`, respectively.\n     - The `CALL \"CEEDAYS\"` function is invoked to validate and potentially convert the date using the `WS-DATE-TO-TEST`, `WS-DATE-FORMAT`, `OUTPUT-LILLIAN`, and `FEEDBACK-CODE`.\n\n3. **Result Evaluation:**\n   - The results of the date validation are analyzed using the `EVALUATE` statement.\n   - Various feedback conditions from the `FEEDBACK-CODE` are checked, such as `FC-INVALID-DATE`, `FC-INSUFFICIENT-DATA`, `FC-BAD-DATE-VALUE`, etc.\n   - Based on the condition, an appropriate message is moved to `WS-RESULT`.\n\n4. **Exit and Finalization:**\n   - The `WS-MESSAGE` is moved to `LS-RESULT`.\n   - The severity number from `FEEDBACK-CODE` (`WS-SEVERITY-N`) is moved to `RETURN-CODE`.\n   - The program exits.\n\nThis structure ensures that the input date is processed, validated, and translated into a user-friendly result string, while also providing an appropriate return code based on the severity of any issues encountered.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "LS-DATE",
+        "cobol_level": "01",
+        "cobol_dtype": "X",
+        "length": "10",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "LS-DATE-FORMAT",
+        "cobol_level": "01",
+        "cobol_dtype": "X",
+        "length": "10",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "LS-RESULT",
+        "cobol_level": "01",
+        "cobol_dtype": "X",
+        "length": "80",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "A000-MAIN": {
+        "paragraph_name": "A000-MAIN",
+        "section": "procedure division",
+        "paragraph_code": "A000-MAIN.\n\n           MOVE LENGTH OF LS-DATE\n                        TO VSTRING-LENGTH  OF WS-DATE-TO-TEST\n           MOVE LS-DATE TO VSTRING-TEXT    OF WS-DATE-TO-TEST\n                           WS-DATE\n           MOVE LENGTH OF LS-DATE-FORMAT\n                         TO VSTRING-LENGTH OF WS-DATE-FORMAT\n           MOVE LS-DATE-FORMAT\n                         TO VSTRING-TEXT   OF WS-DATE-FORMAT\n                            WS-DATE-FMT\n           MOVE 0        TO OUTPUT-LILLIAN\n\n           CALL \"CEEDAYS\" USING\n                  WS-DATE-TO-TEST,\n                  WS-DATE-FORMAT,\n                  OUTPUT-LILLIAN,\n                  FEEDBACK-CODE\n\n           MOVE WS-DATE-TO-TEST            TO WS-DATE\n           MOVE SEVERITY OF FEEDBACK-CODE  TO WS-SEVERITY-N\n           MOVE MSG-NO OF FEEDBACK-CODE    TO WS-MSG-NO-N\n\n      *    WS-RESULT IS 15 CHARACTERS\n      *                123456789012345'\n           EVALUATE TRUE\n              WHEN FC-INVALID-DATE\n                 MOVE 'Date is valid'      TO WS-RESULT\n              WHEN FC-INSUFFICIENT-DATA\n                 MOVE 'Insufficient'       TO WS-RESULT\n              WHEN FC-BAD-DATE-VALUE\n                 MOVE 'Datevalue error'    TO WS-RESULT\n              WHEN FC-INVALID-ERA\n                 MOVE 'Invalid Era    '    TO WS-RESULT\n              WHEN FC-UNSUPP-RANGE\n                 MOVE 'Unsupp. Range  '    TO WS-RESULT\n              WHEN FC-INVALID-MONTH\n                 MOVE 'Invalid month  '    TO WS-RESULT\n              WHEN FC-BAD-PIC-STRING\n                 MOVE 'Bad Pic String '    TO WS-RESULT\n              WHEN FC-NON-NUMERIC-DATA\n                 MOVE 'Nonnumeric data'    TO WS-RESULT\n              WHEN FC-YEAR-IN-ERA-ZERO\n                 MOVE 'YearInEra is 0 '    TO WS-RESULT\n              WHEN OTHER\n                 MOVE 'Date is invalid'    TO WS-RESULT\n           END-EVALUATE\n\n           .\n",
+        "paragraph_lines": [103, 151],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the length of LS-DATE to the length field of WS-DATE-TO-TEST and the content of LS-DATE to the text field of WS-DATE-TO-TEST.",
+          "Calls the CEEDAYS subroutine to convert the date using the format in WS-DATE-FORMAT and stores the result in OUTPUT-LILLIAN.",
+          "Moves the resultant date from WS-DATE-TO-TEST to WS-DATE and captures the severity and message number from FEEDBACK-CODE.",
+          "Evaluates the feedback code to determine the result message to be displayed.",
+          "Sets WS-RESULT with the appropriate message based on the feedback code from the CEEDAYS call."
+        ]
+      },
+      "A000-MAIN-EXIT": {
+        "paragraph_name": "A000-MAIN-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "A000-MAIN-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [152, 154],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Exits the main procedure."]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "\"CEEDAYS\"",
+        "program_type": "Cobol",
+        "program_name": "\"CEEDAYS\"",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "A000-MAIN",
+        "identifier": ["WS-DATE-TO-TEST", "WS-DATE-FORMAT", "OUTPUT-LILLIAN", "FEEDBACK-CODE"]
+      }
+    ],
+    "details": [""]
+  }
+}

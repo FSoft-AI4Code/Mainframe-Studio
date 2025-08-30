@@ -1,0 +1,624 @@
+{
+  "id": "7ca79f2045cb4a53abad9fd6fc7c2296",
+  "name": "CBTRN01C",
+  "path": "DEMO.CARDDEMO.CBL/CBTRN01C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBTRN01C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": ["CVTRA06Y", "CVCUS01Y", "CVACT03Y", "CVACT02Y", "CVACT01Y", "CVTRA05Y"],
+    "call_files": ["'CEE3ABD'::static"],
+    "summarization": "This COBOL program, identified as CBTRN01C, processes daily transactions by interacting with multiple files: `DALYTRAN-FILE`, `CUSTOMER-FILE`, `XREF-FILE`, `CARD-FILE`, `ACCOUNT-FILE`, and `TRANSACT-FILE`. Here's an overview of the main flow and functionality:\n\n1. **Initialization and File Opening:**\n   - Display the start message.\n   - Open the necessary files one by one using procedures: `0000-DALYTRAN-OPEN`, `0100-CUSTFILE-OPEN`, `0200-XREFFILE-OPEN`, `0300-CARDFILE-OPEN`, `0400-ACCTFILE-OPEN`, `0500-TRANFILE-OPEN`.\n   - Each file open procedure sets an application result status and handles potential opening errors.\n\n2. **Main Processing Loop:**\n   - The program enters a loop that continues until the end of the daily transactions file, indicated by `END-OF-DAILY-TRANS-FILE = 'Y'`.\n   - Within the loop:\n     - It reads the next record from `DALYTRAN-FILE` using `1000-DALYTRAN-GET-NEXT`.\n       - If a record is successfully read (`DALYTRAN-STATUS = '00'`):\n         - Display the `DALYTRAN-RECORD`.\n         - Attempt to cross-reference the card number (`DALYTRAN-CARD-NUM`) in `XREF-FILE` using `2000-LOOKUP-XREF`.\n         - If the card number is found (`WS-XREF-READ-STATUS = 0`):\n           - Attempt to read the corresponding account record from `ACCOUNT-FILE` using `3000-READ-ACCOUNT`.\n           - If the account is found, processing continues. If not, it displays that the account was not found.\n         - If the card number is not found, display an error message.\n\n3. **File Closing and Finalization:**\n   - After processing all daily transactions, the program closes all opened files using procedures: `9000-DALYTRAN-CLOSE`, `9100-CUSTFILE-CLOSE`, `9200-XREFFILE-CLOSE`, `9300-CARDFILE-CLOSE`, `9400-ACCTFILE-CLOSE`, `9500-TRANFILE-CLOSE`.\n   - Display an error if any file fails to close properly.\n   - Display the end message indicating the completion of the program execution.\n\n4. **Error Handling:**\n   - Error handling throughout includes specific procedures to display IO statuses (`Z-DISPLAY-IO-STATUS`) and to abend the program (`Z-ABEND-PROGRAM`) if necessary.\n\nThis summarizes the structured flow of the COBOL program CBTRN01C, focusing on transaction processing through multiple file operations with robust error handling mechanisms.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "DALYTRAN-FILE",
+        "physical_name": "DALYTRAN",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "CUSTOMER-FILE",
+        "physical_name": "CUSTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "XREF-FILE",
+        "physical_name": "XREFFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "CARD-FILE",
+        "physical_name": "CARDFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "ACCOUNT-FILE",
+        "physical_name": "ACCTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "TRANSACT-FILE",
+        "physical_name": "TRANFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n           DISPLAY 'START OF EXECUTION OF PROGRAM CBTRN01C'.\n           PERFORM 0000-DALYTRAN-OPEN.\n           PERFORM 0100-CUSTFILE-OPEN.\n           PERFORM 0200-XREFFILE-OPEN.\n           PERFORM 0300-CARDFILE-OPEN.\n           PERFORM 0400-ACCTFILE-OPEN.\n           PERFORM 0500-TRANFILE-OPEN.\n\n           PERFORM UNTIL END-OF-DAILY-TRANS-FILE = 'Y'\n               IF  END-OF-DAILY-TRANS-FILE = 'N'\n                   PERFORM 1000-DALYTRAN-GET-NEXT\n                   IF  END-OF-DAILY-TRANS-FILE = 'N'\n                       DISPLAY DALYTRAN-RECORD\n                   END-IF\n                   MOVE 0                 TO WS-XREF-READ-STATUS\n                   MOVE DALYTRAN-CARD-NUM TO XREF-CARD-NUM\n                   PERFORM 2000-LOOKUP-XREF\n                   IF WS-XREF-READ-STATUS = 0\n                     MOVE 0            TO WS-ACCT-READ-STATUS\n                     MOVE XREF-ACCT-ID TO ACCT-ID\n                     PERFORM 3000-READ-ACCOUNT\n                     IF WS-ACCT-READ-STATUS NOT = 0\n                         DISPLAY 'ACCOUNT ' ACCT-ID ' NOT FOUND'\n                     END-IF\n                   ELSE\n                     DISPLAY 'CARD NUMBER ' DALYTRAN-CARD-NUM\n                     ' COULD NOT BE VERIFIED. SKIPPING TRANSACTION ID-'\n                     DALYTRAN-ID\n                   END-IF\n               END-IF\n           END-PERFORM.\n\n           PERFORM 9000-DALYTRAN-CLOSE.\n           PERFORM 9100-CUSTFILE-CLOSE.\n           PERFORM 9200-XREFFILE-CLOSE.\n           PERFORM 9300-CARDFILE-CLOSE.\n           PERFORM 9400-ACCTFILE-CLOSE.\n           PERFORM 9500-TRANFILE-CLOSE.\n\n           DISPLAY 'END OF EXECUTION OF PROGRAM CBTRN01C'.\n\n           GOBACK.\n\n",
+        "paragraph_lines": [155, 197],
+        "ref_paragraphs": [
+          "0000-DALYTRAN-OPEN",
+          "0100-CUSTFILE-OPEN",
+          "0200-XREFFILE-OPEN",
+          "0300-CARDFILE-OPEN",
+          "0400-ACCTFILE-OPEN",
+          "0500-TRANFILE-OPEN",
+          "1000-DALYTRAN-GET-NEXT",
+          "2000-LOOKUP-XREF",
+          "3000-READ-ACCOUNT",
+          "9000-DALYTRAN-CLOSE",
+          "9100-CUSTFILE-CLOSE",
+          "9200-XREFFILE-CLOSE",
+          "9300-CARDFILE-CLOSE",
+          "9400-ACCTFILE-CLOSE",
+          "9500-TRANFILE-CLOSE"
+        ],
+        "paragraph_logic": [
+          "Displays the start of execution message and opens all necessary files<0000-DALYTRAN-OPEN>, <0100-CUSTFILE-OPEN>, <0200-XREFFILE-OPEN>, <0300-CARDFILE-OPEN>, <0400-ACCTFILE-OPEN>, <0500-TRANFILE-OPEN>.",
+          "Calls the [daily transaction processing loop]<1000-DALYTRAN-GET-NEXT>, fetches next transaction and performs lookup<2000-LOOKUP-XREF>.",
+          "Verifies the cross-reference; if valid, reads the corresponding account<3000-READ-ACCOUNT> and handles errors if the account is not found.",
+          "Displays any necessary error messages for invalid transactions and skips to the next entry in the loop.",
+          "Closes all files<9000-DALYTRAN-CLOSE>, <9100-CUSTFILE-CLOSE>, <9200-XREFFILE-CLOSE>, <9300-CARDFILE-CLOSE>, <9400-ACCTFILE-CLOSE>, <9500-TRANFILE-CLOSE> and displays the end of execution message."
+        ]
+      },
+      "1000-DALYTRAN-GET-NEXT": {
+        "paragraph_name": "1000-DALYTRAN-GET-NEXT",
+        "section": "procedure division",
+        "paragraph_code": "1000-DALYTRAN-GET-NEXT.\n           READ DALYTRAN-FILE INTO DALYTRAN-RECORD.\n           IF  DALYTRAN-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               IF  DALYTRAN-STATUS = '10'\n                   MOVE 16 TO APPL-RESULT\n               ELSE\n                   MOVE 12 TO APPL-RESULT\n               END-IF\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               IF  APPL-EOF\n                   MOVE 'Y' TO END-OF-DAILY-TRANS-FILE\n               ELSE\n                   DISPLAY 'ERROR READING DAILY TRANSACTION FILE'\n                   MOVE DALYTRAN-STATUS TO IO-STATUS\n                   PERFORM Z-DISPLAY-IO-STATUS\n                   PERFORM Z-ABEND-PROGRAM\n               END-IF\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [202, 225],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads the next record from the daily transaction file into the working storage area DALYTRAN-RECORD.<br>",
+          "Checks the status of the read operation in DALYTRAN-STATUS and sets the application result in APPL-RESULT accordingly.<br>",
+          "If the application status (APPL-AOK) is valid, continues processing; otherwise, checks for end-of-file (APPL-EOF) or an error.<br>",
+          "If the end-of-file is reached, sets the end-of-file flag (END-OF-DAILY-TRANS-FILE) to Y.<br>",
+          "In case of any read errors, displays an error message, moves the status to IO-STATUS, and performs Z-DISPLAY-IO-STATUS and Z-ABEND-PROGRAM for error handling and program termination.<br>"
+        ]
+      },
+      "2000-LOOKUP-XREF": {
+        "paragraph_name": "2000-LOOKUP-XREF",
+        "section": "procedure division",
+        "paragraph_code": "2000-LOOKUP-XREF.\n           MOVE XREF-CARD-NUM TO FD-XREF-CARD-NUM\n           READ XREF-FILE  RECORD INTO CARD-XREF-RECORD\n           KEY IS FD-XREF-CARD-NUM\n                INVALID KEY\n                  DISPLAY 'INVALID CARD NUMBER FOR XREF'\n                  MOVE 4 TO WS-XREF-READ-STATUS\n                NOT INVALID KEY\n                  DISPLAY 'SUCCESSFUL READ OF XREF'\n                  DISPLAY 'CARD NUMBER: ' XREF-CARD-NUM\n                  DISPLAY 'ACCOUNT ID : ' XREF-ACCT-ID\n                  DISPLAY 'CUSTOMER ID: ' XREF-CUST-ID\n           END-READ.\n",
+        "paragraph_lines": [227, 239],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the cross-reference card number into the field designated for the XREF card number.",
+          "Reads the XREF file to search for the corresponding record using the card number as the key.",
+          "If the card number is invalid, displays INVALID CARD NUMBER FOR XREF and sets the read status to 4.",
+          "If the card number is valid, displays SUCCESSFUL READ OF XREF along with the card number, account ID, and customer ID.",
+          "End of the READ statement."
+        ]
+      },
+      "3000-READ-ACCOUNT": {
+        "paragraph_name": "3000-READ-ACCOUNT",
+        "section": "procedure division",
+        "paragraph_code": "3000-READ-ACCOUNT.\n           MOVE ACCT-ID TO FD-ACCT-ID\n           READ ACCOUNT-FILE RECORD INTO ACCOUNT-RECORD\n           KEY IS FD-ACCT-ID\n                INVALID KEY\n                  DISPLAY 'INVALID ACCOUNT NUMBER FOUND'\n                  MOVE 4 TO WS-ACCT-READ-STATUS\n                NOT INVALID KEY\n                  DISPLAY 'SUCCESSFUL READ OF ACCOUNT FILE'\n           END-READ.\n",
+        "paragraph_lines": [241, 250],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the account ID into the file description for the account ID field.",
+          "Reads a record from the account file into the account record using the account ID as the key.",
+          "Checks if the read operation encountered an invalid key.",
+          "Displays an error message if the account number is invalid and sets the account read status to an error code.",
+          "Displays a success message if the read operation is valid and completes successfully."
+        ]
+      },
+      "0000-DALYTRAN-OPEN": {
+        "paragraph_name": "0000-DALYTRAN-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0000-DALYTRAN-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT DALYTRAN-FILE\n           IF  DALYTRAN-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING DAILY TRANSACTION FILE'\n               MOVE DALYTRAN-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [252, 268],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "plaintext",
+          "Moves the value 8 to APPL-RESULT as a default starting value.",
+          "Opens the DALYTRAN-FILE for input.",
+          "Checks the status of the file opening; if successful, moves 0 to APPL-RESULT, otherwise moves 12 to APPL-RESULT.",
+          "If the application status is OK, continues processing.",
+          "If an error occurs, displays an error message, moves the file status to IO-STATUS, and performs the [display IO status process]<Z-DISPLAY-IO-STATUS> and [abend program process]<Z-ABEND-PROGRAM>."
+        ]
+      },
+      "0100-CUSTFILE-OPEN": {
+        "paragraph_name": "0100-CUSTFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0100-CUSTFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT CUSTOMER-FILE\n           IF  CUSTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING CUSTOMER FILE'\n               MOVE CUSTFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [271, 287],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves 8 to APPL-RESULT as an initial state.",
+          "Opens the CUSTOMER-FILE for input operation.",
+          "Checks the CUSTFILE-STATUS, if it equals 00 (successful), moves 0 to APPL-RESULT; otherwise, moves 12 to APPL-RESULT.",
+          "If the application is OK (APPL-AOK), continues processing.",
+          "If an error occurs, displays an error message ERROR OPENING CUSTOMER FILE, and moves the CUSTFILE-STATUS to IO-STATUS.",
+          "Calls the [display I/O status process]<Z-DISPLAY-IO-STATUS> to display the current I/O status.",
+          "Calls the [program abend process]<Z-ABEND-PROGRAM> to terminate the program abnormally."
+        ]
+      },
+      "0200-XREFFILE-OPEN": {
+        "paragraph_name": "0200-XREFFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0200-XREFFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT XREF-FILE\n           IF  XREFFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING CROSS REF FILE'\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [289, 305],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "plaintext",
+          "Sets the default application result to 8 before attempting to open the cross-reference file.",
+          "Opens the cross-reference file in INPUT mode, changing the application result to 0 if successful, else to 12.",
+          "Checks the application status; continues if successful, else displays an error message and proceeds to error handling.",
+          "Calls the [I/O status display process]<Z-DISPLAY-IO-STATUS> to show the I/O status of the cross-reference file.",
+          "Calls the [program abend process]<Z-ABEND-PROGRAM> to terminate the program in case of an error."
+        ]
+      },
+      "0300-CARDFILE-OPEN": {
+        "paragraph_name": "0300-CARDFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0300-CARDFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT CARD-FILE\n           IF  CARDFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING CARD FILE'\n               MOVE CARDFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [307, 323],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves 8 to APPL-RESULT to prepare for file open status.",
+          "Opens the CARD-FILE in input mode to read from it.",
+          "Checks if the CARD-FILE status is 00 (successful); if so, moves 0 to APPL-RESULT, indicating success.",
+          "If the file open fails (status other than 00), moves 12 to APPL-RESULT to indicate failure.",
+          "Checks the application result (APPL-RESULT), and if not successful, displays an error message.",
+          "Performs [I/O status display process]<Z-DISPLAY-IO-STATUS> to show the status code of the file operation.",
+          "Performs [program abend process]<Z-ABEND-PROGRAM> to terminate the program due to the error."
+        ]
+      },
+      "0400-ACCTFILE-OPEN": {
+        "paragraph_name": "0400-ACCTFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0400-ACCTFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT ACCOUNT-FILE\n           IF  ACCTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING ACCOUNT FILE'\n               MOVE ACCTFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [325, 341],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves the value 8 to APPL-RESULT initially.",
+          "Opens the account file in INPUT mode.",
+          "Checks if the file status is 00 and updates APPL-RESULT to 0 if successful, otherwise sets APPL-RESULT to 12.",
+          "If the APPL-AOK flag is true, continues the operation without interruption.",
+          "If the APPL-AOK flag is false, displays an error message, moves the file status to IO-STATUS, performs the Z-DISPLAY-IO-STATUS paragraph, and performs the Z-ABEND-PROGRAM paragraph."
+        ]
+      },
+      "0500-TRANFILE-OPEN": {
+        "paragraph_name": "0500-TRANFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0500-TRANFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT TRANSACT-FILE\n           IF  TRANFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING TRANSACTION FILE'\n               MOVE TRANFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [343, 359],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Checks the application result and sets it to 8 by default.",
+          "Attempts to open the transaction file for reading (input mode).",
+          "If the file opens successfully (status code 00), sets the application result to 0.",
+          "If the file fails to open, sets the application result to 12.",
+          "If the application result indicates success, the process continues normally.",
+          "If there is an error, displays an error message and calls the [I/O status display process]<Z-DISPLAY-IO-STATUS>.",
+          "Calls the [program termination process]<Z-ABEND-PROGRAM> to end the program due to the error."
+        ]
+      },
+      "9000-DALYTRAN-CLOSE": {
+        "paragraph_name": "9000-DALYTRAN-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9000-DALYTRAN-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE DALYTRAN-FILE\n           IF  DALYTRAN-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CUSTOMER FILE'\n               MOVE CUSTFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [361, 377],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Adds 8 to zero, storing the result in APPL-RESULT as an initial setup.",
+          "Closes the DALYTRAN-FILE to ensure all operations on this file are finalized.",
+          "Checks if the file close operation was successful (status 00) and updates APPL-RESULT accordingly.",
+          "If the application status is OK, continues processing; otherwise, handles the error.",
+          "Displays an error message if an issue occurs while closing the customer file, and performs error-handling routines <Z-DISPLAY-IO-STATUS> and <Z-ABEND-PROGRAM>."
+        ]
+      },
+      "9100-CUSTFILE-CLOSE": {
+        "paragraph_name": "9100-CUSTFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9100-CUSTFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE CUSTOMER-FILE\n           IF  CUSTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CUSTOMER FILE'\n               MOVE CUSTFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [379, 395],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Calculates the application result by adding 8 to zero and assigns it to APPL-RESULT.",
+          "Closes the CUSTOMER-FILE to finish processing file operations.",
+          "Checks the status of closing the CUSTOMER-FILE. If successful, sets APPL-RESULT to 0; otherwise, sets it to 12.",
+          "Determines whether the application is okay (APPL-AOK). If true, continues with the next step; otherwise, displays an error message.",
+          "Moves the file status code to IO-STATUS and calls the [IO status display process]<Z-DISPLAY-IO-STATUS> to show error status.",
+          "Calls the [program abend process]<Z-ABEND-PROGRAM> to handle the abnormal end of the program."
+        ]
+      },
+      "9200-XREFFILE-CLOSE": {
+        "paragraph_name": "9200-XREFFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9200-XREFFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE XREF-FILE\n           IF  XREFFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CROSS REF FILE'\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [397, 413],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Adds a constant value to zero and stores it in APPL-RESULT.",
+          "Closes the cross-reference file XREF-FILE.",
+          "Checks if the file closed successfully; if yes, sets APPL-RESULT to 0, otherwise sets it to 12.",
+          "If the application is in an OK state, continues processing; otherwise, handles the error by displaying an error message.",
+          "Calls the [IO status display process]<Z-DISPLAY-IO-STATUS> to display the current IO status.",
+          "Calls the [program abend process]<Z-ABEND-PROGRAM> to terminate the program in case of an error."
+        ]
+      },
+      "9300-CARDFILE-CLOSE": {
+        "paragraph_name": "9300-CARDFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9300-CARDFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE CARD-FILE\n           IF  CARDFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CARD FILE'\n               MOVE CARDFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [415, 431],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Calculates the result to check the status by adding 8 to zero and stores it in APPL-RESULT.",
+          "Closes the CARD-FILE dataset to ensure no more operations are performed on it.",
+          "Checks the CARDFILE-STATUS to determine if the file close operation was successful or not, setting APPL-RESULT accordingly.",
+          "If the close operation is successful (APPL-AOK), the program continues as normal.",
+          "If the close operation fails, it displays an error message and moves the CARDFILE-STATUS to IO-STATUS.",
+          "Calls the [status display process]<Z-DISPLAY-IO-STATUS> to display the I/O status error.",
+          "Calls the [program abend process]<Z-ABEND-PROGRAM> to handle the program termination due to the failure."
+        ]
+      },
+      "9400-ACCTFILE-CLOSE": {
+        "paragraph_name": "9400-ACCTFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9400-ACCTFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE ACCOUNT-FILE\n           IF  ACCTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING ACCOUNT FILE'\n               MOVE ACCTFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [433, 449],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Adds 8 to zero and stores the result in APPL-RESULT.",
+          "Closes the ACCOUNT-FILE.",
+          "If the file status is 00, sets APPL-RESULT to 0, otherwise sets it to 12.",
+          "If the application status is okay, continues processing.",
+          "If there is an error closing the file, displays an error message, moves the status to IO-STATUS, and performs error handling routines.",
+          "Calls the [display I/O status process]<Z-DISPLAY-IO-STATUS> and the [abend program process]<Z-ABEND-PROGRAM> for error handling."
+        ]
+      },
+      "9500-TRANFILE-CLOSE": {
+        "paragraph_name": "9500-TRANFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9500-TRANFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE TRANSACT-FILE\n           IF  TRANFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING TRANSACTION FILE'\n               MOVE TRANFILE-STATUS TO IO-STATUS\n               PERFORM Z-DISPLAY-IO-STATUS\n               PERFORM Z-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [451, 467],
+        "ref_paragraphs": ["Z-DISPLAY-IO-STATUS", "Z-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Adds 8 to zero and stores the result in APPL-RESULT to initialize.",
+          "Closes the TRANSACT-FILE for further processing.",
+          "Checks if the TRANFILE-STATUS is 00, moves 0 to APPL-RESULT if true, otherwise moves 12 to APPL-RESULT.",
+          "If everything is okay (APPL-AOK), continues processing.",
+          "If there is an error, displays a message and performs <Z-DISPLAY-IO-STATUS> to show the I/O status.",
+          "Calls <Z-ABEND-PROGRAM> to terminate the program gracefully in case of an error."
+        ]
+      },
+      "Z-ABEND-PROGRAM": {
+        "paragraph_name": "Z-ABEND-PROGRAM",
+        "section": "procedure division",
+        "paragraph_code": "Z-ABEND-PROGRAM.\n           DISPLAY 'ABENDING PROGRAM'\n           MOVE 0 TO TIMING\n           MOVE 999 TO ABCODE\n           CALL 'CEE3ABD'.\n\n",
+        "paragraph_lines": [469, 473],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays the message ABENDING PROGRAM to notify that the program is abending.",
+          "Sets the timing variable to 0 to potentially stop any timing operations.",
+          "Sets the ABEND code to 999 to indicate an abnormal termination.",
+          "Calls the CEE3ABD routine to perform the actual abend operation."
+        ]
+      },
+      "Z-DISPLAY-IO-STATUS": {
+        "paragraph_name": "Z-DISPLAY-IO-STATUS",
+        "section": "procedure division",
+        "paragraph_code": "Z-DISPLAY-IO-STATUS.\n           IF  IO-STATUS NOT NUMERIC\n           OR  IO-STAT1 = '9'\n               MOVE IO-STAT1 TO IO-STATUS-04(1:1)\n               MOVE 0        TO TWO-BYTES-BINARY\n               MOVE IO-STAT2 TO TWO-BYTES-RIGHT\n               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           ELSE\n               MOVE '0000' TO IO-STATUS-04\n               MOVE IO-STATUS TO IO-STATUS-04(3:2)\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [476, 489],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the I/O status is numeric or if the first status character is 9.",
+          "If true, formats the status as NNNN by moving binary and right-justified values.",
+          "Displays the formatted I/O status message.",
+          "If false, sets a default 0000 status and updates it with the actual I/O status.",
+          "Displays the final formatted I/O status message."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CEE3ABD",
+        "program_type": "Cobol",
+        "program_name": "CEE3ABD",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "Z-ABEND-PROGRAM",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "CVTRA06Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA06Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "CVCUS01Y",
+        "program_type": "Copy",
+        "program_name": "CVCUS01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "CVACT03Y",
+        "program_type": "Copy",
+        "program_name": "CVACT03Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CVACT02Y",
+        "program_type": "Copy",
+        "program_name": "CVACT02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CVACT01Y",
+        "program_type": "Copy",
+        "program_name": "CVACT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CVTRA05Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA05Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

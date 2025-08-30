@@ -1,0 +1,1334 @@
+[
+  {
+    "level": "01",
+    "name": "COUSR1AI",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(12)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TRNNAMEL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "TRNNAMEF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "TRNNAMEF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "TRNNAMEA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TRNNAMEI",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE01L",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "TITLE01F",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "TITLE01F",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "TITLE01A",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE01I",
+    "picture_clause": "X(40)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURDATEL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "CURDATEF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "CURDATEF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "CURDATEA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURDATEI",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PGMNAMEL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "PGMNAMEF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "PGMNAMEF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "PGMNAMEA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PGMNAMEI",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE02L",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "TITLE02F",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "TITLE02F",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "TITLE02A",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE02I",
+    "picture_clause": "X(40)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURTIMEL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "CURTIMEF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "CURTIMEF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "CURTIMEA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURTIMEI",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FNAMEL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "FNAMEF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "FNAMEF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "FNAMEA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FNAMEI",
+    "picture_clause": "X(20)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "LNAMEL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "LNAMEF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "LNAMEF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "LNAMEA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "LNAMEI",
+    "picture_clause": "X(20)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USERIDL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "USERIDF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "USERIDF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "USERIDA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USERIDI",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PASSWDL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "PASSWDF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "PASSWDF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "PASSWDA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PASSWDI",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USRTYPEL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "USRTYPEF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "USRTYPEF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "USRTYPEA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USRTYPEI",
+    "picture_clause": "X(1)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "ERRMSGL",
+    "picture_clause": "S9(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "02",
+    "name": "ERRMSGF",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "ERRMSGF",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "03",
+    "name": "ERRMSGA",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "ERRMSGI",
+    "picture_clause": "X(78)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "01",
+    "name": "COUSR1AO",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": "COUSR1AI",
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(12)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TRNNAMEC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TRNNAMEP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TRNNAMEH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TRNNAMEV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TRNNAMEO",
+    "picture_clause": "X(4)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE01C",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE01P",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE01H",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE01V",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE01O",
+    "picture_clause": "X(40)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURDATEC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURDATEP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURDATEH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURDATEV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURDATEO",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PGMNAMEC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PGMNAMEP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PGMNAMEH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PGMNAMEV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PGMNAMEO",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE02C",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE02P",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE02H",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE02V",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "TITLE02O",
+    "picture_clause": "X(40)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURTIMEC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURTIMEP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURTIMEH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURTIMEV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "CURTIMEO",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FNAMEC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FNAMEP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FNAMEH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FNAMEV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FNAMEO",
+    "picture_clause": "X(20)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "LNAMEC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "LNAMEP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "LNAMEH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "LNAMEV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "LNAMEO",
+    "picture_clause": "X(20)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USERIDC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USERIDP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USERIDH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USERIDV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USERIDO",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PASSWDC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PASSWDP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PASSWDH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PASSWDV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "PASSWDO",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USRTYPEC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USRTYPEP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USRTYPEH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USRTYPEV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "USRTYPEO",
+    "picture_clause": "X(1)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "FILLER",
+    "picture_clause": "X(3)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "ERRMSGC",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "ERRMSGP",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "ERRMSGH",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "ERRMSGV",
+    "picture_clause": "X",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "02",
+    "name": "ERRMSGO",
+    "picture_clause": "X(78)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

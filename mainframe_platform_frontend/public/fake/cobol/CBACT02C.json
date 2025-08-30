@@ -1,0 +1,165 @@
+{
+  "id": "ca89a4be9bb44633b514ec4a1ea48e59",
+  "name": "CBACT02C",
+  "path": "DEMO.CARDDEMO.CBL/CBACT02C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBACT02C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": ["CVACT02Y"],
+    "call_files": ["'CEE3ABD'::static"],
+    "summarization": "The provided COBOL code is for a program, named CBACT02C, that processes a VSAM KSDS data set named `CARDFILE-FILE`. Here is a summary of the program flow:\n\n1. **Initialization and Start Message**:\n   - `DISPLAY 'START OF EXECUTION OF PROGRAM CBACT02C'` - The program begins by displaying a message indicating the start of execution.\n\n2. **Opening the CARDFILE**:\n   - `PERFORM 0000-CARDFILE-OPEN` - The program opens the `CARDFILE-FILE` for reading. If successful, the process continues; otherwise, an error message is displayed, and the program terminates with an abend.\n\n3. **File Processing Loop**:\n   - `PERFORM UNTIL END-OF-FILE = 'Y'`: This loop continues until the end of the file is reached.\n       - `PERFORM 1000-CARDFILE-GET-NEXT` - In each iteration, the program calls this routine to read the next record from the file:\n           - If the read is successful (`CARDFILE-STATUS = '00'`), the record is processed.\n           - If the end-of-file status (`CARDFILE-STATUS = '10'`) is encountered, a flag (`END-OF-FILE`) is set to 'Y'.\n           - For other errors, an error message is displayed, and the program terminates.\n       - Display the record if successfully read (i.e., `END-OF-FILE` is still 'N' after the read).\n\n4. **Closing the CARDFILE**:\n   - `PERFORM 9000-CARDFILE-CLOSE` - Once the loop exits, the program closes the `CARDFILE-FILE`. If closing fails, an error message is displayed and the program abends.\n\n5. **End of Execution Message**:\n   - `DISPLAY 'END OF EXECUTION OF PROGRAM CBACT02C'` - The program then displays a message indicating the end of execution.\n\n6. **Termination**:\n   - `GOBACK` - The program exits.\n\n### Additional Routines:\n- **Error Handling and Display**:\n   - `9910-DISPLAY-IO-STATUS` - This routine formats and displays file I/O status for error reporting.\n   - `9999-ABEND-PROGRAM` - This routine handles abnormal program termination by displaying an abend message and calling a system routine to end the program abnormally.\n\n### Key Points:\n- `CARDFILE-FILE`: The input file being processed.\n- `CARD-RECORD`: The data structure for records read from the `CARDFILE-FILE`.\n- `CARDFILE-STATUS`: Tracks the status of file I/O operations.\n- `END-OF-FILE`: Flag to indicate the end of the file.\n- Various status handling fields (`IO-STATUS`, etc.) and their specific roles in error handling routines.\n\nOverall, the program efficiently handles the opening, reading, processing, and closing of a VSAM data set, including error detection and reporting.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "CARDFILE-FILE",
+        "physical_name": "CARDFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "1000-CARDFILE-GET-NEXT": {
+        "paragraph_name": "1000-CARDFILE-GET-NEXT",
+        "section": "procedure division",
+        "paragraph_code": "1000-CARDFILE-GET-NEXT.\n           READ CARDFILE-FILE INTO CARD-RECORD.\n           IF  CARDFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n      *        DISPLAY CARD-RECORD\n           ELSE\n               IF  CARDFILE-STATUS = '10'\n                   MOVE 16 TO APPL-RESULT\n               ELSE\n                   MOVE 12 TO APPL-RESULT\n               END-IF\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               IF  APPL-EOF\n                   MOVE 'Y' TO END-OF-FILE\n               ELSE\n                   DISPLAY 'ERROR READING CARDFILE'\n                   MOVE CARDFILE-STATUS TO IO-STATUS\n                   PERFORM 9910-DISPLAY-IO-STATUS\n                   PERFORM 9999-ABEND-PROGRAM\n               END-IF\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [92, 116],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads the next record from the CARDFILE-FILE into the CARD-RECORD data structure.",
+          "Checks the CARDFILE-STATUS to determine if the read operation was successful or if an error occurred.",
+          "Sets the application result code based on the CARDFILE-STATUS; 00 indicates success, 10 indicates end of file, and other statuses indicate an error.",
+          "If the read is successful (APPL-AOK), the procedure continues without interruption.",
+          "If an error occurs and the end of file is reached (APPL-EOF), sets the END-OF-FILE flag to Y.",
+          "Otherwise, displays an error message, moves CARDFILE-STATUS to IO-STATUS, calls the status display process <9910-DISPLAY-IO-STATUS>, and calls the program abend process <9999-ABEND-PROGRAM>."
+        ]
+      },
+      "0000-CARDFILE-OPEN": {
+        "paragraph_name": "0000-CARDFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0000-CARDFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT CARDFILE-FILE\n           IF  CARDFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING CARDFILE'\n               MOVE CARDFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [118, 134],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Attempts to open the CARDFILE-FILE for input.",
+          "Checks the status code of the file open operation. If successful (status 00), sets the application result to 0.",
+          "If unsuccessful, sets the application result to 12 and displays an error message.",
+          "If the application result is positive (APPL-AOK false), moves the file status to IO-STATUS, displays the IO status using <9910-DISPLAY-IO-STATUS>, and then aborts the program using <9999-ABEND-PROGRAM>.",
+          "Exits the paragraph cleanly."
+        ]
+      },
+      "9000-CARDFILE-CLOSE": {
+        "paragraph_name": "9000-CARDFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9000-CARDFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE CARDFILE-FILE\n           IF  CARDFILE-STATUS = '00'\n               SUBTRACT APPL-RESULT FROM APPL-RESULT\n           ELSE\n               ADD 12 TO ZERO GIVING APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CARDFILE'\n               MOVE CARDFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [136, 152],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Adds 8 to zero and stores it in APPL-RESULT as an initial operation.",
+          "Closes the CARDFILE-FILE.",
+          "Checks if the file close operation was successful by comparing CARDFILE-STATUS to 00. If successful, resets APPL-RESULT; otherwise, sets it to 12.",
+          "If the application status (APPL-AOK) is true, continues the operation; otherwise, handles the error.",
+          "Displays an error message and moves CARDFILE-STATUS to IO-STATUS if the file close operation fails.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to show detailed I/O status.",
+          "Calls the [abort program process]<9999-ABEND-PROGRAM> to terminate the program if an error occurs."
+        ]
+      },
+      "9999-ABEND-PROGRAM": {
+        "paragraph_name": "9999-ABEND-PROGRAM",
+        "section": "procedure division",
+        "paragraph_code": "9999-ABEND-PROGRAM.\n           DISPLAY 'ABENDING PROGRAM'\n           MOVE 0 TO TIMING\n           MOVE 999 TO ABCODE\n           CALL 'CEE3ABD'.\n\n",
+        "paragraph_lines": [154, 158],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays an ABENDING PROGRAM message to indicate the program is terminating abnormally.",
+          "Initializes the TIMING field to 0 as part of the abend process.",
+          "Assigns the value 999 to the ABCODE variable to specify the abend code.",
+          "Calls the CEE3ABD routine to carry out the abnormal termination of the program."
+        ]
+      },
+      "9910-DISPLAY-IO-STATUS": {
+        "paragraph_name": "9910-DISPLAY-IO-STATUS",
+        "section": "procedure division",
+        "paragraph_code": "9910-DISPLAY-IO-STATUS.\n           IF  IO-STATUS NOT NUMERIC\n           OR  IO-STAT1 = '9'\n               MOVE IO-STAT1 TO IO-STATUS-04(1:1)\n               MOVE 0        TO TWO-BYTES-BINARY\n               MOVE IO-STAT2 TO TWO-BYTES-RIGHT\n               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           ELSE\n               MOVE '0000' TO IO-STATUS-04\n               MOVE IO-STATUS TO IO-STATUS-04(3:2)\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [161, 174],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the IO-STATUS is not numeric or equal to 9.",
+          "If the condition is true, formats IO-STATUS using IO-STAT1 and IO-STAT2 values, then displays the formatted status message.",
+          "If the condition is false, sets a default 0000 status and displays the status message with portions of IO-STATUS.",
+          "Displays the final formatted file status.",
+          "Exits the paragraph."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CEE3ABD",
+        "program_type": "Cobol",
+        "program_name": "CEE3ABD",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "9999-ABEND-PROGRAM",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "CVACT02Y",
+        "program_type": "Copy",
+        "program_name": "CVACT02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}
