@@ -1,0 +1,363 @@
+{
+  "id": "ebbab1d064f34d979835056ca1bbd9b4",
+  "name": "CORPT00C",
+  "path": "DEMO.CARDDEMO.CBL/CORPT00C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CORPT00C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "COCOM01Y",
+      "CORPT00",
+      "COTTL01Y",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CVTRA05Y",
+      "DFHAID",
+      "DFHBMSCA"
+    ],
+    "call_files": ["'CSUTLDTC'::static", "'CSUTLDTC'::static"],
+    "summarization": "The provided COBOL code is a complex program designed to interact with CICS (Customer Information Control System) for screen handling and report generation based on user inputs. Here is a concise summary of its main flow and functionality:\n\n1. **Initialization (MAIN-PARA)**:\n   - Sets initial flags (`ERR-FLG-OFF`, `TRANSACT-NOT-EOF`, `SEND-ERASE-YES`) to true.\n   - Clears message workspace fields (`WS-MESSAGE`, `ERRMSGO OF CORPT0AO`).\n   - Checks if the `EIBCALEN` (length of communication area data) is zero.\n     - If zero, it routes to a previous program (`COSGN00C`), otherwise proceeds to main processing.\n\n2. **Main Processing**:\n   - Moves communication area data to `CARDDEMO-COMMAREA`.\n   - Checks if the program is in re-enter mode.\n     - Initializes fields if not in re-enter mode.\n     - Otherwise, Receives screen data (`RECEIVE-TRNRPT-SCREEN`) and evaluates user actions (`EIBAID`):\n       - **DFHENTER**: Processes the ENTER key (executes `PROCESS-ENTER-KEY`).\n       - **DFHPF3**: Routes to a previous program (`COMEN01C`), performing clean-up.\n       - **Other keys**: Indicates an error and sends the screen with an error message.\n\n3. **Processing ENTER Key (PROCESS-ENTER-KEY)**:\n   - Handles three types of report requests: Monthly, Yearly, and Custom.\n   - For each type, sets dates, validates them, and prepares parameters:\n     - Monthly: Sets start to the first day of the month and end to the current date.\n     - Yearly: Sets start to January 1 and end to December 31 of the current year.\n     - Custom: Validates user-provided start and end dates, ensuring they are numeric and within valid ranges.\n   - Calls `CSUTLDTC` for date validation.\n   - Submits the job if no errors are found (`SUBMIT-JOB-TO-INTRDR`).\n\n4. **Submit Job to Intradr (SUBMIT-JOB-TO-INTRDR)**:\n   - Confirms the print request from the user.\n   - Writes the job submission details to a transient data queue (`WRITE-JOBSUB-TDQ`).\n\n5. **Error Handling, Screen Send and Return Functions**:\n   - Handles errors and sends screens (`SEND-TRNRPT-SCREEN`).\n   - Returns control to the CICS transaction code (`RETURN-TO-CICS`).\n   - Receives data from the screen (`RECEIVE-TRNRPT-SCREEN`).\n   - Populates header information for the screen (`POPULATE-HEADER-INFO`).\n   - Initializes all fields to reset the screen and data areas (`INITIALIZE-ALL-FIELDS`).\n\n6. **Table References**:\n   - The main tables referenced are `CORPT0AO`, `CORPT0AI`, and various fields such as `CARDDEMO-COMMAREA` are used extensively to store and manipulate screen and communication data.\n\nThis COBOL code effectively manages screen inputs, validates data, prepares job parameters for reports, and handles various CICS transactions and communications.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n\n           SET ERR-FLG-OFF TO TRUE\n           SET TRANSACT-NOT-EOF TO TRUE\n           SET SEND-ERASE-YES TO TRUE\n\n           MOVE SPACES TO WS-MESSAGE\n                          ERRMSGO OF CORPT0AO\n\n           IF EIBCALEN = 0\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n               PERFORM RETURN-TO-PREV-SCREEN\n           ELSE\n               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA\n               IF NOT CDEMO-PGM-REENTER\n                   SET CDEMO-PGM-REENTER    TO TRUE\n                   MOVE LOW-VALUES          TO CORPT0AO\n                   MOVE -1       TO MONTHLYL OF CORPT0AI\n                   PERFORM SEND-TRNRPT-SCREEN\n               ELSE\n                   PERFORM RECEIVE-TRNRPT-SCREEN\n                   EVALUATE EIBAID\n                       WHEN DFHENTER\n                           PERFORM PROCESS-ENTER-KEY\n                       WHEN DFHPF3\n                           MOVE 'COMEN01C' TO CDEMO-TO-PROGRAM\n                           PERFORM RETURN-TO-PREV-SCREEN\n                       WHEN OTHER\n                           MOVE 'Y'                       TO WS-ERR-FLG\n                           MOVE -1       TO MONTHLYL OF CORPT0AI\n                           MOVE CCDA-MSG-INVALID-KEY      TO WS-MESSAGE\n                           PERFORM SEND-TRNRPT-SCREEN\n                   END-EVALUATE\n               END-IF\n           END-IF\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n           END-EXEC.\n\n\n",
+        "paragraph_lines": [163, 202],
+        "ref_paragraphs": [
+          "RETURN-TO-PREV-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "RECEIVE-TRNRPT-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "RETURN-TO-PREV-SCREEN",
+          "SEND-TRNRPT-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Sets several initial flags like ERR-FLG-OFF, TRANSACT-NOT-EOF, and SEND-ERASE-YES to indicate proper states before main processing.",
+          "If the transaction is new, initializes the process by calling the [RETURN TO PREVIOUS SCREEN process]<RETURN-TO-PREV-SCREEN>.",
+          "If reentering the program, moves data from DFHCOMMAREA to CARDDEMO-COMMAREA and prepares the screen by calling the [SEND TRANSACTION REPORT SCREEN process]<SEND-TRNRPT-SCREEN>.",
+          "Calls the [RECEIVE TRANSACTION REPORT SCREEN process]<RECEIVE-TRNRPT-SCREEN> to read user input and handle various keys through an EVALUATE statement.",
+          "Depending on the key pressed, either processes the enter key by calling the [PROCESS ENTER KEY process]<PROCESS-ENTER-KEY> or returns to the previous screen by calling [RETURN TO PREVIOUS SCREEN process]<RETURN-TO-PREV-SCREEN>.",
+          "If an invalid key is pressed, sets error flags and messages, and redisplays the screen by calling the [SEND TRANSACTION REPORT SCREEN process]<SEND-TRNRPT-SCREEN>."
+        ]
+      },
+      "PROCESS-ENTER-KEY": {
+        "paragraph_name": "PROCESS-ENTER-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-ENTER-KEY.\n\n           DISPLAY 'PROCESS ENTER KEY'\n\n           EVALUATE TRUE\n               WHEN MONTHLYI OF CORPT0AI NOT = SPACES AND LOW-VALUES\n                   MOVE 'Monthly'   TO WS-REPORT-NAME\n                   MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n                   MOVE WS-CURDATE-YEAR     TO WS-START-DATE-YYYY\n                   MOVE WS-CURDATE-MONTH    TO WS-START-DATE-MM\n                   MOVE '01'                TO WS-START-DATE-DD\n                   MOVE WS-START-DATE       TO PARM-START-DATE-1\n                                               PARM-START-DATE-2\n\n                   MOVE 1              TO WS-CURDATE-DAY\n                   ADD 1               TO WS-CURDATE-MONTH\n                   IF WS-CURDATE-MONTH > 12\n                       ADD 1           TO WS-CURDATE-YEAR\n                       MOVE 1          TO WS-CURDATE-MONTH\n                   END-IF\n                   COMPUTE WS-CURDATE-N = FUNCTION DATE-OF-INTEGER(\n                           FUNCTION INTEGER-OF-DATE(WS-CURDATE-N) - 1)\n\n                   MOVE WS-CURDATE-YEAR     TO WS-END-DATE-YYYY\n                   MOVE WS-CURDATE-MONTH    TO WS-END-DATE-MM\n                   MOVE WS-CURDATE-DAY      TO WS-END-DATE-DD\n                   MOVE WS-END-DATE         TO PARM-END-DATE-1\n                                               PARM-END-DATE-2\n\n                   PERFORM SUBMIT-JOB-TO-INTRDR\n               WHEN YEARLYI OF CORPT0AI NOT = SPACES AND LOW-VALUES\n                   MOVE 'Yearly'   TO WS-REPORT-NAME\n                   MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n                   MOVE WS-CURDATE-YEAR     TO WS-START-DATE-YYYY\n                                               WS-END-DATE-YYYY\n                   MOVE '01'                TO WS-START-DATE-MM\n                                               WS-START-DATE-DD\n                   MOVE WS-START-DATE       TO PARM-START-DATE-1\n                                               PARM-START-DATE-2\n\n                   MOVE '12'                TO WS-END-DATE-MM\n                   MOVE '31'                TO WS-END-DATE-DD\n                   MOVE WS-END-DATE         TO PARM-END-DATE-1\n                                               PARM-END-DATE-2\n\n                   PERFORM SUBMIT-JOB-TO-INTRDR\n               WHEN CUSTOMI OF CORPT0AI NOT = SPACES AND LOW-VALUES\n\n                   EVALUATE TRUE\n                       WHEN SDTMMI OF CORPT0AI = SPACES OR\n                                                   LOW-VALUES\n                           MOVE 'Start Date - Month can NOT be empty...'\n                             TO WS-MESSAGE\n                           MOVE 'Y'     TO WS-ERR-FLG\n                           MOVE -1       TO SDTMML OF CORPT0AI\n                           PERFORM SEND-TRNRPT-SCREEN\n                       WHEN SDTDDI OF CORPT0AI = SPACES OR\n                                                   LOW-VALUES\n                           MOVE 'Start Date - Day can NOT be empty...'\n                             TO WS-MESSAGE\n                           MOVE 'Y'     TO WS-ERR-FLG\n                           MOVE -1       TO SDTDDL OF CORPT0AI\n                           PERFORM SEND-TRNRPT-SCREEN\n                       WHEN SDTYYYYI OF CORPT0AI = SPACES OR\n                                                   LOW-VALUES\n                           MOVE 'Start Date - Year can NOT be empty...'\n                             TO WS-MESSAGE\n                           MOVE 'Y'     TO WS-ERR-FLG\n                           MOVE -1       TO SDTYYYYL OF CORPT0AI\n                           PERFORM SEND-TRNRPT-SCREEN\n                       WHEN EDTMMI OF CORPT0AI = SPACES OR\n                                                   LOW-VALUES\n                           MOVE 'End Date - Month can NOT be empty...'\n                             TO WS-MESSAGE\n                           MOVE 'Y'     TO WS-ERR-FLG\n                           MOVE -1       TO EDTMML OF CORPT0AI\n                           PERFORM SEND-TRNRPT-SCREEN\n                       WHEN EDTDDI OF CORPT0AI = SPACES OR\n                                                   LOW-VALUES\n                           MOVE 'End Date - Day can NOT be empty...'\n                             TO WS-MESSAGE\n                           MOVE 'Y'     TO WS-ERR-FLG\n                           MOVE -1       TO EDTDDL OF CORPT0AI\n                           PERFORM SEND-TRNRPT-SCREEN\n                       WHEN EDTYYYYI OF CORPT0AI = SPACES OR\n                                                   LOW-VALUES\n                           MOVE 'End Date - Year can NOT be empty...'\n                             TO WS-MESSAGE\n                           MOVE 'Y'     TO WS-ERR-FLG\n                           MOVE -1       TO EDTYYYYL OF CORPT0AI\n                           PERFORM SEND-TRNRPT-SCREEN\n                       WHEN OTHER\n                           CONTINUE\n                   END-EVALUATE\n\n                   COMPUTE WS-NUM-99 = FUNCTION NUMVAL-C\n                                         (SDTMMI OF CORPT0AI)\n                   MOVE WS-NUM-99      TO SDTMMI OF CORPT0AI\n\n                   COMPUTE WS-NUM-99 = FUNCTION NUMVAL-C\n                                         (SDTDDI OF CORPT0AI)\n                   MOVE WS-NUM-99      TO SDTDDI OF CORPT0AI\n\n                   COMPUTE WS-NUM-9999 = FUNCTION NUMVAL-C\n                                           (SDTYYYYI OF CORPT0AI)\n                   MOVE WS-NUM-9999      TO SDTYYYYI OF CORPT0AI\n\n                   COMPUTE WS-NUM-99 = FUNCTION NUMVAL-C\n                                         (EDTMMI OF CORPT0AI)\n                   MOVE WS-NUM-99      TO EDTMMI OF CORPT0AI\n\n                   COMPUTE WS-NUM-99 = FUNCTION NUMVAL-C\n                                         (EDTDDI OF CORPT0AI)\n                   MOVE WS-NUM-99      TO EDTDDI OF CORPT0AI\n\n                   COMPUTE WS-NUM-9999 = FUNCTION NUMVAL-C\n                                           (EDTYYYYI OF CORPT0AI)\n                   MOVE WS-NUM-9999      TO EDTYYYYI OF CORPT0AI\n\n                   IF SDTMMI OF CORPT0AI IS NOT NUMERIC OR\n                      SDTMMI OF CORPT0AI > '12'\n                       MOVE 'Start Date - Not a valid Month...'\n                         TO WS-MESSAGE\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE -1       TO SDTMML OF CORPT0AI\n                       PERFORM SEND-TRNRPT-SCREEN\n                   END-IF\n\n                   IF SDTDDI OF CORPT0AI IS NOT NUMERIC OR\n                      SDTDDI OF CORPT0AI > '31'\n                       MOVE 'Start Date - Not a valid Day...'\n                         TO WS-MESSAGE\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE -1       TO SDTDDL OF CORPT0AI\n                       PERFORM SEND-TRNRPT-SCREEN\n                   END-IF\n\n                   IF SDTYYYYI OF CORPT0AI IS NOT NUMERIC\n                       MOVE 'Start Date - Not a valid Year...'\n                         TO WS-MESSAGE\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE -1       TO SDTYYYYL OF CORPT0AI\n                       PERFORM SEND-TRNRPT-SCREEN\n                   END-IF\n\n                   IF EDTMMI OF CORPT0AI IS NOT NUMERIC OR\n                      EDTMMI OF CORPT0AI > '12'\n                       MOVE 'End Date - Not a valid Month...'\n                         TO WS-MESSAGE\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE -1       TO EDTMML OF CORPT0AI\n                       PERFORM SEND-TRNRPT-SCREEN\n                   END-IF\n\n                   IF EDTDDI OF CORPT0AI IS NOT NUMERIC OR\n                      EDTDDI OF CORPT0AI > '31'\n                       MOVE 'End Date - Not a valid Day...'\n                         TO WS-MESSAGE\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE -1       TO EDTDDL OF CORPT0AI\n                       PERFORM SEND-TRNRPT-SCREEN\n                   END-IF\n\n                   IF EDTYYYYI OF CORPT0AI IS NOT NUMERIC\n                       MOVE 'End Date - Not a valid Year...'\n                         TO WS-MESSAGE\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE -1       TO EDTYYYYL OF CORPT0AI\n                       PERFORM SEND-TRNRPT-SCREEN\n                   END-IF\n\n                   MOVE SDTYYYYI OF CORPT0AI TO WS-START-DATE-YYYY\n                   MOVE SDTMMI   OF CORPT0AI TO WS-START-DATE-MM\n                   MOVE SDTDDI   OF CORPT0AI TO WS-START-DATE-DD\n                   MOVE EDTYYYYI OF CORPT0AI TO WS-END-DATE-YYYY\n                   MOVE EDTMMI   OF CORPT0AI TO WS-END-DATE-MM\n                   MOVE EDTDDI   OF CORPT0AI TO WS-END-DATE-DD\n\n                   MOVE WS-START-DATE        TO CSUTLDTC-DATE\n                   MOVE WS-DATE-FORMAT       TO CSUTLDTC-DATE-FORMAT\n                   MOVE SPACES               TO CSUTLDTC-RESULT\n\n                   CALL 'CSUTLDTC' USING   CSUTLDTC-DATE\n                                           CSUTLDTC-DATE-FORMAT\n                                           CSUTLDTC-RESULT\n\n                   IF CSUTLDTC-RESULT-SEV-CD = '0000'\n                       CONTINUE\n                   ELSE\n                       IF CSUTLDTC-RESULT-MSG-NUM NOT = '2513'\n                           MOVE 'Start Date - Not a valid date...'\n                             TO WS-MESSAGE\n                           MOVE 'Y'     TO WS-ERR-FLG\n                           MOVE -1       TO SDTMML OF CORPT0AI\n                           PERFORM SEND-TRNRPT-SCREEN\n                       END-IF\n                   END-IF\n\n                   MOVE WS-END-DATE          TO CSUTLDTC-DATE\n                   MOVE WS-DATE-FORMAT       TO CSUTLDTC-DATE-FORMAT\n                   MOVE SPACES               TO CSUTLDTC-RESULT\n\n                   CALL 'CSUTLDTC' USING   CSUTLDTC-DATE\n                                           CSUTLDTC-DATE-FORMAT\n                                           CSUTLDTC-RESULT\n\n                   IF CSUTLDTC-RESULT-SEV-CD = '0000'\n                       CONTINUE\n                   ELSE\n                       IF CSUTLDTC-RESULT-MSG-NUM NOT = '2513'\n                           MOVE 'End Date - Not a valid date...'\n                             TO WS-MESSAGE\n                           MOVE 'Y'     TO WS-ERR-FLG\n                           MOVE -1       TO EDTMML OF CORPT0AI\n                           PERFORM SEND-TRNRPT-SCREEN\n                       END-IF\n                   END-IF\n\n\n                   MOVE WS-START-DATE       TO PARM-START-DATE-1\n                                               PARM-START-DATE-2\n                   MOVE WS-END-DATE         TO PARM-END-DATE-1\n                                               PARM-END-DATE-2\n                   MOVE 'Custom'   TO WS-REPORT-NAME\n                   IF NOT ERR-FLG-ON\n                       PERFORM SUBMIT-JOB-TO-INTRDR\n                   END-IF\n               WHEN OTHER\n                   MOVE 'Select a report type to print report...' TO\n                                   WS-MESSAGE\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE -1       TO MONTHLYL OF CORPT0AI\n                   PERFORM SEND-TRNRPT-SCREEN\n           END-EVALUATE\n\n           IF NOT ERR-FLG-ON\n\n               PERFORM INITIALIZE-ALL-FIELDS\n               MOVE DFHGREEN           TO ERRMSGC  OF CORPT0AO\n               STRING WS-REPORT-NAME   DELIMITED BY SPACE\n                 ' report submitted for printing ...'\n                                       DELIMITED BY SIZE\n                 INTO WS-MESSAGE\n               MOVE -1       TO MONTHLYL OF CORPT0AI\n               PERFORM SEND-TRNRPT-SCREEN\n\n           END-IF.\n\n\n",
+        "paragraph_lines": [208, 456],
+        "ref_paragraphs": [
+          "SUBMIT-JOB-TO-INTRDR",
+          "SUBMIT-JOB-TO-INTRDR",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "SUBMIT-JOB-TO-INTRDR",
+          "SEND-TRNRPT-SCREEN",
+          "INITIALIZE-ALL-FIELDS",
+          "SEND-TRNRPT-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Displays the message PROCESS ENTER KEY indicating the start of processing the Enter key.",
+          "Based on the selected report type, sets up the appropriate date range and report name, and performs intermediate date calculations.",
+          "For Monthly and Yearly report types, prepares and submits the job directly by calling <SUBMIT-JOB-TO-INTRDR>.",
+          "For Custom report type, validates input fields for start and end dates, displays errors using <SEND-TRNRPT-SCREEN> if needed, performs date conversion using CSUTLDTC, and submits the job if no errors are found.",
+          "Upon no errors, reinitializes fields by calling <INITIALIZE-ALL-FIELDS>, displays the success message report submitted for printing ..., and sends the final screen update using <SEND-TRNRPT-SCREEN>."
+        ]
+      },
+      "SUBMIT-JOB-TO-INTRDR": {
+        "paragraph_name": "SUBMIT-JOB-TO-INTRDR",
+        "section": "procedure division",
+        "paragraph_code": "SUBMIT-JOB-TO-INTRDR.\n\n           IF CONFIRMI OF CORPT0AI = SPACES OR LOW-VALUES\n               STRING\n                 'Please confirm to print the '\n                                   DELIMITED BY SIZE\n                 WS-REPORT-NAME    DELIMITED BY SPACE\n                 ' report...'      DELIMITED BY SIZE\n                 INTO WS-MESSAGE\n               MOVE 'Y'     TO WS-ERR-FLG\n               MOVE -1       TO CONFIRML OF CORPT0AI\n               PERFORM SEND-TRNRPT-SCREEN\n           END-IF\n\n           IF NOT ERR-FLG-ON\n               EVALUATE TRUE\n                   WHEN CONFIRMI OF CORPT0AI = 'Y' OR 'y'\n                       CONTINUE\n                   WHEN CONFIRMI OF CORPT0AI = 'N' OR 'n'\n                       PERFORM INITIALIZE-ALL-FIELDS\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       PERFORM SEND-TRNRPT-SCREEN\n                   WHEN OTHER\n                       STRING\n                         '\"'               DELIMITED BY SIZE\n                         CONFIRMI OF CORPT0AI    DELIMITED BY SPACE\n                         '\" is not a valid value to confirm...'\n                                           DELIMITED BY SIZE\n                         INTO WS-MESSAGE\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE -1       TO CONFIRML OF CORPT0AI\n                       PERFORM SEND-TRNRPT-SCREEN\n               END-EVALUATE\n\n               SET END-LOOP-NO TO TRUE\n\n               PERFORM VARYING WS-IDX FROM 1 BY 1 UNTIL WS-IDX > 1000 OR\n                                      END-LOOP-YES  OR ERR-FLG-ON\n\n                   MOVE JOB-LINES(WS-IDX) TO JCL-RECORD\n                   IF JCL-RECORD = '/*EOF' OR\n                      JCL-RECORD = SPACES OR LOW-VALUES\n                       SET END-LOOP-YES TO TRUE\n                   END-IF\n\n                   PERFORM WIRTE-JOBSUB-TDQ\n               END-PERFORM\n\n           END-IF.\n\n",
+        "paragraph_lines": [462, 510],
+        "ref_paragraphs": [
+          "SEND-TRNRPT-SCREEN",
+          "INITIALIZE-ALL-FIELDS",
+          "SEND-TRNRPT-SCREEN",
+          "SEND-TRNRPT-SCREEN",
+          "WIRTE-JOBSUB-TDQ"
+        ],
+        "paragraph_logic": [
+          "Checks if confirmation input is blank or invalid and prompts user to confirm the print, setting error flags if needed.",
+          "If confirmation is valid (Y or y), continues processing; if invalid (N or n), initializes fields and sets error flags.",
+          "Handles other invalid confirmations by setting an error message and flag.",
+          "Sets up a loop to process up to 1000 job lines until end-of-job marker or error flag is encountered.",
+          "Submits each job line to Transient Data Queue in the loop, stopping on end markers or empty/low value records."
+        ]
+      },
+      "WIRTE-JOBSUB-TDQ": {
+        "paragraph_name": "WIRTE-JOBSUB-TDQ",
+        "section": "procedure division",
+        "paragraph_code": "WIRTE-JOBSUB-TDQ.\n\n           EXEC CICS WRITEQ TD\n             QUEUE ('JOBS')\n             FROM (JCL-RECORD)\n             LENGTH (LENGTH OF JCL-RECORD)\n             RESP(WS-RESP-CD)\n             RESP2(WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to Write TDQ (JOBS)...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO MONTHLYL OF CORPT0AI\n                   PERFORM SEND-TRNRPT-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [515, 535],
+        "ref_paragraphs": ["SEND-TRNRPT-SCREEN"],
+        "paragraph_logic": [
+          "Executes a CICS command to write the job submission data to the transient data queue named JOBS.",
+          "Evaluates the response code to determine the success or failure of the write operation.",
+          "If the write operation is successful, continues processing without any interruption.",
+          "If the write operation fails, displays the response and reason codes and sets an error flag.",
+          "Moves an error message and error code to designate the failure to write to the transient data queue.",
+          "Calls the [SEND-TRNRPT-SCREEN] process to display an error report screen."
+        ]
+      },
+      "RETURN-TO-PREV-SCREEN": {
+        "paragraph_name": "RETURN-TO-PREV-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RETURN-TO-PREV-SCREEN.\n\n           IF CDEMO-TO-PROGRAM = LOW-VALUES OR SPACES\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n           END-IF\n           MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n           MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n           MOVE ZEROS        TO CDEMO-PGM-CONTEXT\n           EXEC CICS\n               XCTL PROGRAM(CDEMO-TO-PROGRAM)\n               COMMAREA(CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [540, 551],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the target program name is either empty or contains low values, and if so, sets it to COSGN00C.",
+          "Moves the transaction ID from the working storage to the relevant field for communication.",
+          "Moves the current program name from the working storage to the relevant field for communication.",
+          "Resets the program context field to zeros.",
+          "Executes a CICS transfer control (XCTL) command to switch to the targeted program using the provided communication area."
+        ]
+      },
+      "SEND-TRNRPT-SCREEN": {
+        "paragraph_name": "SEND-TRNRPT-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "SEND-TRNRPT-SCREEN.\n\n           PERFORM POPULATE-HEADER-INFO\n\n           MOVE WS-MESSAGE TO ERRMSGO OF CORPT0AO\n\n           IF SEND-ERASE-YES\n               EXEC CICS SEND\n                         MAP('CORPT0A')\n                         MAPSET('CORPT00')\n                         FROM(CORPT0AO)\n                         ERASE\n                         CURSOR\n               END-EXEC\n           ELSE\n               EXEC CICS SEND\n                         MAP('CORPT0A')\n                         MAPSET('CORPT00')\n                         FROM(CORPT0AO)\n      *                  ERASE\n                         CURSOR\n               END-EXEC\n           END-IF.\n\n           GO TO RETURN-TO-CICS.\n\n",
+        "paragraph_lines": [556, 580],
+        "ref_paragraphs": ["POPULATE-HEADER-INFO"],
+        "paragraph_logic": [
+          "Calls the [header information population process]<POPULATE-HEADER-INFO> to populate the screen header with necessary data.",
+          "Moves the value of WS-MESSAGE into the error message field ERRMSGO of CORPT0AO.",
+          "Checks if the screen should be erased before sending. If yes, sends the screen with the ERASE option.",
+          "If the screen should not be erased, sends the screen without the ERASE option.",
+          "After sending the screen, control transfers to the paragraph RETURN-TO-CICS."
+        ]
+      },
+      "RETURN-TO-CICS": {
+        "paragraph_name": "RETURN-TO-CICS",
+        "section": "procedure division",
+        "paragraph_code": "RETURN-TO-CICS.\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n      *              LENGTH(LENGTH OF CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [585, 591],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initiates the return to CICS with transaction ID and communication area settings.",
+          "Executes the CICS RETURN command using the transaction ID specified in WS-TRANID.",
+          "Passing the communication area CARDDEMO-COMMAREA to the next program."
+        ]
+      },
+      "RECEIVE-TRNRPT-SCREEN": {
+        "paragraph_name": "RECEIVE-TRNRPT-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RECEIVE-TRNRPT-SCREEN.\n\n           EXEC CICS RECEIVE\n                     MAP('CORPT0A')\n                     MAPSET('CORPT00')\n                     INTO(CORPT0AI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC.\n\n",
+        "paragraph_lines": [596, 604],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Receives the terminal report screen map CORPT0A from the mapset CORPT00.",
+          "Stores the received data into the designated area CORPT0AI.",
+          "Handles the response codes and sets appropriate values in WS-RESP-CD and WS-REAS-CD."
+        ]
+      },
+      "POPULATE-HEADER-INFO": {
+        "paragraph_name": "POPULATE-HEADER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-HEADER-INFO.\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF CORPT0AO\n           MOVE CCDA-TITLE02           TO TITLE02O OF CORPT0AO\n           MOVE WS-TRANID              TO TRNNAMEO OF CORPT0AO\n           MOVE WS-PGMNAME             TO PGMNAMEO OF CORPT0AO\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF CORPT0AO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF CORPT0AO.\n\n",
+        "paragraph_lines": [609, 628],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Retrieves the current date and stores it in WS-CURDATE-DATA.",
+          "Moves the title information to the respective fields in CORPT0AO structure.",
+          "Transfers the transaction ID and program name to their designated fields in CORPT0AO.",
+          "Extracts and reformats the current month, day, and year into WS-CURDATE-MM, WS-CURDATE-DD, and WS-CURDATE-YY respectively.",
+          "Combines the date components into one field and moves it to CURDATEO of CORPT0AO.",
+          "Extracts and reformats the current hours, minutes, and seconds into WS-CURTIME-HH, WS-CURTIME-MM, and WS-CURTIME-SS respectively.",
+          "Combines the time components into one field and moves it to CURTIMEO of CORPT0AO."
+        ]
+      },
+      "INITIALIZE-ALL-FIELDS": {
+        "paragraph_name": "INITIALIZE-ALL-FIELDS",
+        "section": "procedure division",
+        "paragraph_code": "INITIALIZE-ALL-FIELDS.\n\n           MOVE -1              TO MONTHLYL OF CORPT0AI\n           INITIALIZE              MONTHLYI OF CORPT0AI\n                                   YEARLYI  OF CORPT0AI\n                                   CUSTOMI  OF CORPT0AI\n                                   SDTMMI   OF CORPT0AI\n                                   SDTDDI   OF CORPT0AI\n                                   SDTYYYYI OF CORPT0AI\n                                   EDTMMI   OF CORPT0AI\n                                   EDTDDI   OF CORPT0AI\n                                   EDTYYYYI OF CORPT0AI\n                                   CONFIRMI OF CORPT0AI\n                                   WS-MESSAGE.\n",
+        "paragraph_lines": [633, 646],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets the value of MONTHLYL in CORPT0AI to -1 to indicate uninitialized or invalid status.",
+          "Initializes numeric fields MONTHLYI, YEARLYI, CUSTOMI, SDTMMI, SDTDDI, SDTYYYYI, EDTMMI, EDTDDI, EDTYYYYI, and CONFIRMI in CORPT0AI to their default values.",
+          "Initializes the WS-MESSAGE field to a default or empty value."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CSUTLDTC",
+        "program_type": "Cobol",
+        "program_name": "CSUTLDTC",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "CSUTLDTC",
+        "program_type": "Cobol",
+        "program_name": "CSUTLDTC",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "CORPT00",
+        "program_type": "Copy",
+        "program_name": "CORPT00",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CVTRA05Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA05Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

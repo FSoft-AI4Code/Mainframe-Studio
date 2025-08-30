@@ -1,0 +1,262 @@
+{
+  "overview": {
+    "job_name": "CMPBATCH",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM's best property is its ability to efficiently manage job execution and resource allocation on mainframes."
+  },
+  "step_list": [
+    {
+      "step_name": "BAT0",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN03C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN03C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN03C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBTRN03C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBTRN03C)\n"],
+      "property": "The JCL step 'BAT0' with no program executed uses a DD statement to reference an input file 'COBOL.SYSIN' from dataset 'FPTLT01.DEMO.CARDDEMO.CBL(CBTRN03C)'."
+    },
+    {
+      "step_name": "BAT1",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN02C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN02C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN02C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBTRN02C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBTRN02C)\n"],
+      "property": "The JCL step BAT1 specifies a DD statement for input using COBOL.SYSIN, pointing to the dataset FPTLT01.DEMO.CARDDEMO.CBL(CBTRN02C)."
+    },
+    {
+      "step_name": "BAT2",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN01C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN01C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBTRN01C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBTRN01C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBTRN01C)\n"],
+      "property": "JCL allows for precise control over job execution and resource allocation, even without specifying a program to execute."
+    },
+    {
+      "step_name": "BAT3",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)\n"],
+      "property": "The step BAT3 includes a DD statement for input file COBOL.SYSIN with dataset FPTLT01.DEMO.CARDDEMO.CBL(CBACT04C)."
+    },
+    {
+      "step_name": "BAT4",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT03C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT03C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT03C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT03C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT03C)\n"],
+      "property": "Best property of JCL IBM: Efficiently manages job execution and resource allocation on mainframes."
+    },
+    {
+      "step_name": "BAT5",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03B)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03B)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03B)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03B)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03B)\n"],
+      "property": "JCL (Job Control Language) allows you to specify various parameters, including datasets and program execution details, to effectively manage batch jobs on IBM mainframe systems."
+    },
+    {
+      "step_name": "BAT6",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03A)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03A)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03A)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03A)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBSTM03A)\n"],
+      "property": "JCL IBM's best property is its ability to precisely control the execution of batch jobs, including specifying datasets and managing program inputs and outputs."
+    },
+    {
+      "step_name": "BAT7",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT02C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT02C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT02C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT02C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT02C)\n"],
+      "property": "JCL IBM provides efficient and flexible control over job execution in mainframe environments, including detailed dataset management as shown in the DD statement for COBOL.SYSIN."
+    },
+    {
+      "step_name": "BAT8",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBCUS01C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBCUS01C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBCUS01C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBCUS01C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBCUS01C)\n"],
+      "property": "The JCL step BAT8 is set up to access the COBOL source from the specified dataset without executing any program."
+    },
+    {
+      "step_name": "BAT9",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "COBOL.SYSIN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT01C)",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT01C)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CBL(CBACT01C)",
+              "variable_name": "COBOL.SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT01C)",
+              "program_id": "IGYWCL"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["COBOL.SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CBL(CBACT01C)\n"],
+      "property": "The JCL IBM property allows for detailed and customizable job control, enabling efficient specification of datasets and execution parameters."
+    }
+  ]
+}

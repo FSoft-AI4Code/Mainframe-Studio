@@ -1,0 +1,344 @@
+[
+  {
+    "level": "10",
+    "name": "WS-EDIT-DATE-CCYYMMDD",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-DATE-CCYY",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "25",
+    "name": "WS-EDIT-DATE-CC",
+    "picture_clause": "X(2)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "25",
+    "name": "WS-EDIT-DATE-CC-N",
+    "picture_clause": "9(2)",
+    "default_value": null,
+    "redefine": "WS-EDIT-DATE-CC",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "25",
+    "name": "WS-EDIT-DATE-YY",
+    "picture_clause": "X(2)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "25",
+    "name": "WS-EDIT-DATE-YY-N",
+    "picture_clause": "9(2)",
+    "default_value": null,
+    "redefine": "WS-EDIT-DATE-YY",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-DATE-CCYY-N",
+    "picture_clause": "9(4)",
+    "default_value": null,
+    "redefine": "WS-EDIT-DATE-CCYY",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-DATE-MM",
+    "picture_clause": "X(2)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-DATE-MM-N",
+    "picture_clause": "9(2)",
+    "default_value": null,
+    "redefine": "WS-EDIT-DATE-MM",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-DATE-DD",
+    "picture_clause": "X(2)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-DATE-DD-N",
+    "picture_clause": "9(2)",
+    "default_value": null,
+    "redefine": "WS-EDIT-DATE-DD",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "WS-EDIT-DATE-CCYYMMDD-N",
+    "picture_clause": "9(8)",
+    "default_value": null,
+    "redefine": "WS-EDIT-DATE-CCYYMMDD",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "WS-EDIT-DATE-BINARY",
+    "picture_clause": "S9(9)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "WS-CURRENT-DATE",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "20",
+    "name": "WS-CURRENT-DATE-YYYYMMDD",
+    "picture_clause": "X(8)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-CURRENT-DATE-YYYYMMDD-N",
+    "picture_clause": "9(8)",
+    "default_value": null,
+    "redefine": "WS-CURRENT-DATE-YYYYMMDD",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "20",
+    "name": "WS-CURRENT-DATE-BINARY",
+    "picture_clause": "S9(9)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "10",
+    "name": "WS-EDIT-DATE-FLGS",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-YEAR-FLG",
+    "picture_clause": "X(01)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-MONTH",
+    "picture_clause": "X(01)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-EDIT-DAY",
+    "picture_clause": "X(01)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-DATE-FORMAT",
+    "picture_clause": "X(08)",
+    "default_value": "'YYYYMMDD'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "WS-DATE-VALIDATION-RESULT",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "20",
+    "name": "WS-SEVERITY",
+    "picture_clause": "X(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-SEVERITY-N",
+    "picture_clause": "9(4)",
+    "default_value": null,
+    "redefine": "WS-SEVERITY",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "20",
+    "name": "FILLER",
+    "picture_clause": "X(11)",
+    "default_value": "'Mesg Code:'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-MSG-NO",
+    "picture_clause": "X(04)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-MSG-NO-N",
+    "picture_clause": "9(4)",
+    "default_value": null,
+    "redefine": "WS-MSG-NO",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "20",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "SPACE",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-RESULT",
+    "picture_clause": "X(15)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "SPACE",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "FILLER",
+    "picture_clause": "X(09)",
+    "default_value": "'TstDate:'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-DATE",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "SPACE",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "FILLER",
+    "picture_clause": "X(10)",
+    "default_value": "'Mask used:'",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "WS-DATE-FMT",
+    "picture_clause": "X(10)",
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "FILLER",
+    "picture_clause": "X(01)",
+    "default_value": "SPACE",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "20",
+    "name": "FILLER",
+    "picture_clause": "X(03)",
+    "default_value": "SPACES",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

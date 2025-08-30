@@ -1,0 +1,62 @@
+{
+  "overview": {
+    "job_name": "READCUST",
+    "class": "A",
+    "msgclass": null,
+    "notify": null,
+    "time": null,
+    "description": "JCL IBM provides efficient job control and resource management, allowing seamless execution of COBOL programs with precise dataset handling."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05",
+      "program_executed": "CBCUS01C",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.LOADLIB" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "program_id": "CBCUS01C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "CUSTFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS",
+              "variable_name": "CUSTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS",
+              "program_id": "CBCUS01C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB\n",
+        "CUSTFILE: DSN=FPTLT01.DEMO.CARDDEMO.CUSTDATA.VSAM.KSDS\n"
+      ],
+      "property": "JCL IBM provides efficient job control and resource management, allowing seamless execution of COBOL programs with precise dataset handling."
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "id": "10a8ff7fd0d545b48495d8f99811532c",
+  "name": "COSGN00C",
+  "path": "DEMO.CARDDEMO.CBL/COSGN00C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COSGN00C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "COCOM01Y",
+      "COSGN00",
+      "COTTL01Y",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CSUSR01Y",
+      "DFHAID",
+      "DFHBMSCA"
+    ],
+    "call_files": [],
+    "summarization": "### Summary of COBOL Code Flow\n\nThis COBOL program segment handles a user sign-on process within a CICS environment. The main flow can be divided into several key sections and procedures:\n\n1. **MAIN-PARA (Main Paragraph):**\n   - Initializes error flag and message fields.\n   - Checks if the transaction communication area `EIBCALEN` is empty.\n     - If true:\n       - Sets default values for user ID and other fields.\n       - Calls `SEND-SIGNON-SCREEN` to display the sign-on screen.\n     - If false:\n       - Processes user input based on the AID key pressed (`EIBAID`).\n         - If `DFHENTER`, it calls `PROCESS-ENTER-KEY`.\n         - If `DFHPF3`, it displays a thank you message via `SEND-PLAIN-TEXT`.\n         - For other keys, it displays an invalid key message and re-sends the sign-on screen.\n\n2. **PROCESS-ENTER-KEY:**\n   - Receives user data from the 'COSGN0A' map.\n   - Validates user ID and password fields.\n     - If either field is empty, sets an error flag and displays a respective error message before re-sending the sign-on screen.\n     - Converts user ID and password to uppercase.\n   - Calls `READ-USER-SEC-FILE` to authenticate the user if no error flags are set.\n\n3. **SEND-SIGNON-SCREEN:**\n   - Populates header information.\n   - Moves the message to the output map field `ERRMSGO`.\n   - Sends the 'COSGN0A' map to the user terminal.\n\n4. **SEND-PLAIN-TEXT:**\n   - Sends a plain text message to the user terminal.\n   - Executes a CICS RETURN command.\n\n5. **POPULATE-HEADER-INFO:**\n   - Retrieves and formats the current date and time.\n   - Moves various header information and transaction-specific values (e.g., transaction ID, program name) to the output map.\n\n6. **READ-USER-SEC-FILE:**\n   - Reads the user's security file using user ID as the key.\n   - Handles read responses:\n     - If successful (`WS-RESP-CD` is 0) and passwords match:\n       - Routes to administration or menu program based on user type.\n     - If user not found (`WS-RESP-CD` is 13), displays respective error messages.\n     - For other errors, displays a generic verification error message.\n\n### Key Tables and Fields:\n- **COSGN0A and COSGN00 Maps:** \n  - Using fields like `ERRMSGO`, `USERIDI`, `PASSWDI`, `TITLE01O`, etc.\n- **COMMAREA:**\n  - Shared area `CARDDEMO-COMMAREA` between transactions.\n- **Response Codes:**\n  - `WS-RESP-CD`, `WS-REAS-CD` for handling various read statuses.\n- **User Data:**\n  - `WS-USER-ID`, `WS-USER-PWD`\n  - Security file data `SEC-USER-DATA` containing fields like `SEC-USR-PWD` and `SEC-USR-TYPE`.\n\nThis design ensures a structured and guided user sign-on process, handling various states and conditions effectively within a CICS environment.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n\n           SET ERR-FLG-OFF TO TRUE\n\n           MOVE SPACES TO WS-MESSAGE\n                          ERRMSGO OF COSGN0AO\n\n           IF EIBCALEN = 0\n               MOVE LOW-VALUES TO COSGN0AO\n               MOVE -1       TO USERIDL OF COSGN0AI\n               PERFORM SEND-SIGNON-SCREEN\n           ELSE\n               EVALUATE EIBAID\n                   WHEN DFHENTER\n                       PERFORM PROCESS-ENTER-KEY\n                   WHEN DFHPF3\n                       MOVE CCDA-MSG-THANK-YOU        TO WS-MESSAGE\n                       PERFORM SEND-PLAIN-TEXT\n                   WHEN OTHER\n                       MOVE 'Y'                       TO WS-ERR-FLG\n                       MOVE CCDA-MSG-INVALID-KEY      TO WS-MESSAGE\n                       PERFORM SEND-SIGNON-SCREEN\n               END-EVALUATE\n           END-IF.\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n                     LENGTH(LENGTH OF CARDDEMO-COMMAREA)\n           END-EXEC.\n\n\n",
+        "paragraph_lines": [73, 102],
+        "ref_paragraphs": [
+          "SEND-SIGNON-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "SEND-PLAIN-TEXT",
+          "SEND-SIGNON-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Initializes error flag and clears message fields.",
+          "If no data was passed, sets up a blank sign-on screen, clearing previous sign-on screen (PERFORM SEND-SIGNON-SCREEN).",
+          "Handles function keys by evaluating their IDs: Processes Enter key (PERFORM PROCESS-ENTER-KEY), sends a thank you message for PF3 key (PERFORM SEND-PLAIN-TEXT), and handles invalid keys by setting error flag and displaying sign-on screen again (PERFORM SEND-SIGNON-SCREEN).",
+          "Returns control back to CICS with updated transaction ID and communication area."
+        ]
+      },
+      "PROCESS-ENTER-KEY": {
+        "paragraph_name": "PROCESS-ENTER-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-ENTER-KEY.\n\n           EXEC CICS RECEIVE\n                     MAP('COSGN0A')\n                     MAPSET('COSGN00')\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE TRUE\n               WHEN USERIDI OF COSGN0AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'      TO WS-ERR-FLG\n                   MOVE 'Please enter User ID ...' TO WS-MESSAGE\n                   MOVE -1       TO USERIDL OF COSGN0AI\n                   PERFORM SEND-SIGNON-SCREEN\n               WHEN PASSWDI OF COSGN0AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'      TO WS-ERR-FLG\n                   MOVE 'Please enter Password ...' TO WS-MESSAGE\n                   MOVE -1       TO PASSWDL OF COSGN0AI\n                   PERFORM SEND-SIGNON-SCREEN\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE.\n\n           MOVE FUNCTION UPPER-CASE(USERIDI OF COSGN0AI) TO\n                           WS-USER-ID\n                           CDEMO-USER-ID\n           MOVE FUNCTION UPPER-CASE(PASSWDI OF COSGN0AI) TO\n                           WS-USER-PWD\n\n           IF NOT ERR-FLG-ON\n               PERFORM READ-USER-SEC-FILE\n           END-IF.\n\n",
+        "paragraph_lines": [108, 140],
+        "ref_paragraphs": ["SEND-SIGNON-SCREEN", "SEND-SIGNON-SCREEN", "READ-USER-SEC-FILE"],
+        "paragraph_logic": [
+          "Receives the input map for sign-on data from the user terminal.",
+          "Checks if the User ID is blank or contains low-values, flags an error, sets an error message, and calls the [sign-on screen sending process]<SEND-SIGNON-SCREEN>.",
+          "Checks if the Password is blank or contains low-values, flags an error, sets an error message, and calls the [sign-on screen sending process]<SEND-SIGNON-SCREEN>.",
+          "Converts the User ID and Password to uppercase and stores them in working storage fields.",
+          "If no errors are encountered, calls the [user security file reading process]<READ-USER-SEC-FILE> to validate the input credentials."
+        ]
+      },
+      "SEND-SIGNON-SCREEN": {
+        "paragraph_name": "SEND-SIGNON-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "SEND-SIGNON-SCREEN.\n\n           PERFORM POPULATE-HEADER-INFO\n\n           MOVE WS-MESSAGE TO ERRMSGO OF COSGN0AO\n\n           EXEC CICS SEND\n                     MAP('COSGN0A')\n                     MAPSET('COSGN00')\n                     FROM(COSGN0AO)\n                     ERASE\n                     CURSOR\n           END-EXEC.\n\n",
+        "paragraph_lines": [145, 157],
+        "ref_paragraphs": ["POPULATE-HEADER-INFO"],
+        "paragraph_logic": [
+          "Calls the [header information population process]<POPULATE-HEADER-INFO> to fill in the required header details for the sign-on screen.",
+          "Moves the workspace message (WS-MESSAGE) to the error message field (ERRMSGO) of the sign-on map (COSGN0AO).",
+          "Executes a CICS command to send the sign-on screen map (COSGN0A) from the COSGN0AO storage area.",
+          "Clears the existing screen content before sending the new map.",
+          "Sets the cursor position on the new screen."
+        ]
+      },
+      "SEND-PLAIN-TEXT": {
+        "paragraph_name": "SEND-PLAIN-TEXT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-PLAIN-TEXT.\n\n           EXEC CICS SEND TEXT\n                     FROM(WS-MESSAGE)\n                     LENGTH(LENGTH OF WS-MESSAGE)\n                     ERASE\n                     FREEKB\n           END-EXEC.\n\n           EXEC CICS RETURN\n           END-EXEC.\n\n",
+        "paragraph_lines": [162, 172],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the CICS SEND TEXT command to send a message to the terminal.",
+          "Specifies the message to be sent from the working-storage variable, WS-MESSAGE.",
+          "Sets the length of the message to the length of WS-MESSAGE, ensuring the entire message is sent.",
+          "Uses the ERASE option to clear the screen before displaying the new message.",
+          "Utilizes the FREEKB option to unlock the keyboard for user input.",
+          "Executes the CICS RETURN command to pass control back to CICS after sending the message."
+        ]
+      },
+      "POPULATE-HEADER-INFO": {
+        "paragraph_name": "POPULATE-HEADER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-HEADER-INFO.\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF COSGN0AO\n           MOVE CCDA-TITLE02           TO TITLE02O OF COSGN0AO\n           MOVE WS-TRANID              TO TRNNAMEO OF COSGN0AO\n           MOVE WS-PGMNAME             TO PGMNAMEO OF COSGN0AO\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF COSGN0AO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF COSGN0AO\n\n           EXEC CICS ASSIGN\n               APPLID(APPLIDO OF COSGN0AO)\n           END-EXEC\n\n           EXEC CICS ASSIGN\n               SYSID(SYSIDO OF COSGN0AO)\n           END-EXEC.\n\n",
+        "paragraph_lines": [177, 204],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the current date from system to the working storage variable WS-CURDATE-DATA.",
+          "Transfers header title information to the screen fields TITLE01O and TITLE02O of the COSGN0AO layout.",
+          "Populates screen fields TRNNAMEO and PGMNAMEO with the transaction and program names from working storage.",
+          "Formats the current date into month, day, and two-digit year, and moves it to the CURDATEO field on the screen.",
+          "Retrieves and formats the current time into hours, minutes, and seconds, and moves it to the CURTIMEO field on the screen.",
+          "Assigns the application and system identifiers to the corresponding fields in the COSGN0AO layout using CICS commands."
+        ]
+      },
+      "READ-USER-SEC-FILE": {
+        "paragraph_name": "READ-USER-SEC-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READ-USER-SEC-FILE.\n\n           EXEC CICS READ\n                DATASET   (WS-USRSEC-FILE)\n                INTO      (SEC-USER-DATA)\n                LENGTH    (LENGTH OF SEC-USER-DATA)\n                RIDFLD    (WS-USER-ID)\n                KEYLENGTH (LENGTH OF WS-USER-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN 0\n                   IF SEC-USR-PWD = WS-USER-PWD\n                       MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n                       MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n                       MOVE WS-USER-ID   TO CDEMO-USER-ID\n                       MOVE SEC-USR-TYPE TO CDEMO-USER-TYPE\n                       MOVE ZEROS        TO CDEMO-PGM-CONTEXT\n\n                       IF CDEMO-USRTYP-ADMIN\n                            EXEC CICS XCTL\n                              PROGRAM ('COADM01C')\n                              COMMAREA(CARDDEMO-COMMAREA)\n                            END-EXEC\n                       ELSE\n                            EXEC CICS XCTL\n                              PROGRAM ('COMEN01C')\n                              COMMAREA(CARDDEMO-COMMAREA)\n                            END-EXEC\n                       END-IF\n                   ELSE\n                       MOVE 'Wrong Password. Try again ...' TO\n                                                          WS-MESSAGE\n                       MOVE -1       TO PASSWDL OF COSGN0AI\n                       PERFORM SEND-SIGNON-SCREEN\n                   END-IF\n               WHEN 13\n                   MOVE 'Y'      TO WS-ERR-FLG\n                   MOVE 'User not found. Try again ...' TO WS-MESSAGE\n                   MOVE -1       TO USERIDL OF COSGN0AI\n                   PERFORM SEND-SIGNON-SCREEN\n               WHEN OTHER\n                   MOVE 'Y'      TO WS-ERR-FLG\n                   MOVE 'Unable to verify the User ...' TO WS-MESSAGE\n                   MOVE -1       TO USERIDL OF COSGN0AI\n                   PERFORM SEND-SIGNON-SCREEN\n           END-EVALUATE.\n",
+        "paragraph_lines": [209, 257],
+        "ref_paragraphs": ["SEND-SIGNON-SCREEN", "SEND-SIGNON-SCREEN", "SEND-SIGNON-SCREEN"],
+        "paragraph_logic": [
+          "Initiates a READ command in CICS to fetch the user security record from the file and populate SEC-USER-DATA.",
+          "Evaluates the response code from the READ operation to determine further actions.",
+          "If the response code is 0 and the password matches, sets up transaction and user details for subsequent program execution.",
+          "Depending on the user type, transfers control to an admin or common user program using the XCTL command.",
+          "For incorrect passwords, sets an error message and password indicator, then performs SEND-SIGNON-SCREEN.",
+          "If the user is not found, sets corresponding error flags and messages, followed by SEND-SIGNON-SCREEN.",
+          "Handles any other response code by flagging an error and setting an appropriate message, then performs SEND-SIGNON-SCREEN."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COSGN00",
+        "program_type": "Copy",
+        "program_name": "COSGN00",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CSUSR01Y",
+        "program_type": "Copy",
+        "program_name": "CSUSR01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

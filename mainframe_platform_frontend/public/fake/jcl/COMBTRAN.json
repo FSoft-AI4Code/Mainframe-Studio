@@ -1,0 +1,138 @@
+{
+  "overview": {
+    "job_name": "COMBTRAN",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The IBM JCL job 'COMBTRAN' effectively sorts, merges, and transfers data between datasets using SORT and IDCAMS programs across its defined steps."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05R",
+      "program_executed": "SORT",
+      "description": "Sorts and merges records in files",
+      "dd_statement": [
+        {
+          "ddname": "SORTIN",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(0)" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(0)",
+              "variable_name": "SORTIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(0)",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.SYSTRAN(0)" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.SYSTRAN(0)",
+              "variable_name": "UNKNOWN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.SYSTRAN(0)",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYMNAMES",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "TRAN-ID,1,16,CH\r\n"
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " SORT FIELDS=(TRAN-ID,A)\r\n"
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SORTOUT",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "(*.SORTIN)",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)",
+              "variable_name": "SORTOUT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "SORTIN: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(0)\n",
+        ": DSN=FPTLT01.DEMO.CARDDEMO.SYSTRAN(0)\n",
+        "SORTOUT: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)\n"
+      ],
+      "property": "STEP05R uses the SORT program to sort and merge records from `FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(0)` and `FPTLT01.DEMO.CARDDEMO.SYSTRAN(0)` into `FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)`."
+    },
+    {
+      "step_name": "STEP10",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "TRANSACT",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)",
+              "variable_name": "TRANSACT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "TRANVSAM",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS",
+              "variable_name": "TRANVSAM",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   REPRO INFILE(TRANSACT) OUTFILE(TRANVSAM)\r\n"
+        }
+      ],
+      "io_statements": [
+        "TRANSACT: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)\n",
+        "TRANVSAM: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS\n"
+      ],
+      "property": "STEP10 executes IDCAMS (Access Method Services) to REPRO data from TRANSACT (FPTLT01.DEMO.CARDDEMO.TRANSACT.COMBINED(+1)) to TRANVSAM (FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS)."
+    }
+  ]
+}

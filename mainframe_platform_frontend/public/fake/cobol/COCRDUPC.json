@@ -1,0 +1,816 @@
+{
+  "id": "4b064002ec0040968d9f1afd9bc398ae",
+  "name": "COCRDUPC",
+  "path": "DEMO.CARDDEMO.CBL/COCRDUPC",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COCRDUPC",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "CVCRD01Y",
+      "COCOM01Y",
+      "DFHBMSCA",
+      "DFHAID",
+      "COTTL01Y",
+      "COCRDUP",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CSMSG02Y",
+      "CSUSR01Y",
+      "CVACT02Y",
+      "CVCUS01Y",
+      "'CSSTRPFY'"
+    ],
+    "call_files": [],
+    "summarization": "### Summary of the COBOL Code Section\n\n#### Overview\nThis snippet represents a COBOL program designed for a CICS environment. It processes credit card details and handles various user interface interactions, updating records within a transactional context. The overall flow ensures initial setup, handles user inputs, validates data, decides on further actions, and performs necessary CICS EXEC commands including map sending and database reads/writes.\n\n#### Main Flow\n1. **Initialization & Common Setup**:\n   - **EXEC CICS HANDLE ABEND**: Set error handling routine.\n   - **INITIALIZE**: Work areas and communication areas are initialized.\n   - **MOVE/SET Statements**: Default transaction and error message states are set.\n   - **IF EIBCALEN IS EQUAL TO 0\u2026**: Handle conditional initialization of comm-areas based on previous program states.\n\n2. **User Interaction Processing**:\n   - **Evaluate Input**: Major loop for evaluating user actions through function keys and other inputs.\n   - **PERFORM Procedures**: Different sections are called based on user input, e.g., retrieving data (`YYYY-STORE-PFKEY`), evaluating function keys, sending maps (`3000-SEND-MAP`), processing inputs (`1000-PROCESS-INPUTS`).\n\n3. **Processing Inputs**:\n   - **Perform Pieces**: Series of steps (`1100-RECEIVE-MAP`, `1200-EDIT-MAP-INPUTS`) to handle data received from the user, validate, and process it.\n   - **VALIDATION**: Specific validation procedures like `1210-EDIT-ACCOUNT` and `1220-EDIT-CARD` ensure the data received is valid before proceeding.\n   - **ERROR Handling**: Various `IF` conditions and setting error flags if validation fails.\n      \n4. **Decision Making**:\n   - **EVALUATE TRUE Statement**: Decision-oriented logic based on the validated inputs and flagged error states, which results in appropriate actions like:\n     - **Sending Error Messages**.\n     - **Navigating to Other Programs (XCTL)**.\n     - **Reading or Writing Data** (`9000-READ-DATA`, `9200-WRITE-PROCESSING`).\n  \n5. **Data Handling**:\n   - **READ Operations**: Reading from CICS files (`LIT-CARDFILENAME`) to fetch associated card data and handling responses.\n   - **WRITE Operations**: Updating data, handling conditional checks to ensure data integrity, such as detecting changes (`9300-CHECK-CHANGE-IN-REC`).\n\n6. **Map Handling**:\n   - **3000-SEND-MAP Procedure**: Setup and send screen maps back to the user with appropriate data fields and cursor positioning.\n\n7. **Error Handling**:\n   - **ABEND-ROUTINE**: If an unexpected error occurs, it prepares an error message and sends it.\n\n#### Programs and Tables\n- **Common Areas**: `CARDDEMO-COMMAREA`, `WS-THIS-PROGCOMMAREA`.\n- **Tables/Files**: Key table involved is `LIT-CARDFILENAME`.\n\n### Conclusion\nThe program organizes and handles user interactions, performs necessary validations, reads/updates credit card details in a structured manner using a sequence of well-defined steps. Each function key or user action leads to distinct flow paths ensuring data integrity and user feedback in the CICS transactional processing environment.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "1",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "1",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "0000-MAIN": {
+        "paragraph_name": "0000-MAIN",
+        "section": "procedure division",
+        "paragraph_code": "0000-MAIN.\n\n\n           EXEC CICS HANDLE ABEND\n                     LABEL(ABEND-ROUTINE)\n           END-EXEC\n\n           INITIALIZE CC-WORK-AREA\n                      WS-MISC-STORAGE\n                      WS-COMMAREA\n      *****************************************************************\n      * Store our context\n      *****************************************************************\n           MOVE LIT-THISTRANID       TO WS-TRANID\n      *****************************************************************\n      * Ensure error message is cleared                               *\n      *****************************************************************\n           SET WS-RETURN-MSG-OFF  TO TRUE\n      *****************************************************************\n      * Store passed data if  any                *\n      *****************************************************************\n           IF EIBCALEN IS EQUAL TO 0\n               OR (CDEMO-FROM-PROGRAM = LIT-MENUPGM\n               AND NOT CDEMO-PGM-REENTER)\n              INITIALIZE CARDDEMO-COMMAREA\n                         WS-THIS-PROGCOMMAREA\n              SET CDEMO-PGM-ENTER TO TRUE\n              SET CCUP-DETAILS-NOT-FETCHED TO TRUE\n           ELSE\n              MOVE DFHCOMMAREA (1:LENGTH OF CARDDEMO-COMMAREA)  TO\n                                CARDDEMO-COMMAREA\n              MOVE DFHCOMMAREA(LENGTH OF CARDDEMO-COMMAREA + 1:\n                               LENGTH OF WS-THIS-PROGCOMMAREA ) TO\n                                WS-THIS-PROGCOMMAREA\n           END-IF\n      *****************************************************************\n      * Remap PFkeys as needed.\n      * Store the Mapped PF Key\n      *****************************************************************\n           PERFORM YYYY-STORE-PFKEY\n              THRU YYYY-STORE-PFKEY-EXIT\n      *****************************************************************\n      * Check the AID to see if its valid at this point               *\n      * F3 - Exit\n      * Enter show screen again\n      *****************************************************************\n           SET PFK-INVALID TO TRUE\n           IF CCARD-AID-ENTER OR\n              CCARD-AID-PFK03 OR\n              (CCARD-AID-PFK05 AND CCUP-CHANGES-OK-NOT-CONFIRMED)\n                              OR\n              (CCARD-AID-PFK12 AND NOT CCUP-DETAILS-NOT-FETCHED)\n              SET PFK-VALID TO TRUE\n           END-IF\n\n           IF PFK-INVALID\n              SET CCARD-AID-ENTER TO TRUE\n           END-IF\n\n      *****************************************************************\n      * Decide what to do based on inputs received\n      *****************************************************************\n           EVALUATE TRUE\n      ******************************************************************\n      *       USER PRESSES PF03 TO EXIT\n      *  OR   USER IS DONE WITH UPDATE\n      *            XCTL TO CALLING PROGRAM OR MAIN MENU\n      ******************************************************************\n              WHEN CCARD-AID-PFK03\n              WHEN (CCUP-CHANGES-OKAYED-AND-DONE\n               AND  CDEMO-LAST-MAPSET   EQUAL LIT-CCLISTMAPSET)\n              WHEN (CCUP-CHANGES-FAILED\n               AND  CDEMO-LAST-MAPSET   EQUAL LIT-CCLISTMAPSET)\n                   SET CCARD-AID-PFK03     TO TRUE\n\n                   IF CDEMO-FROM-TRANID    EQUAL LOW-VALUES\n                   OR CDEMO-FROM-TRANID    EQUAL SPACES\n                      MOVE LIT-MENUTRANID  TO CDEMO-TO-TRANID\n                   ELSE\n                      MOVE CDEMO-FROM-TRANID  TO CDEMO-TO-TRANID\n                   END-IF\n\n                   IF CDEMO-FROM-PROGRAM   EQUAL LOW-VALUES\n                   OR CDEMO-FROM-PROGRAM   EQUAL SPACES\n                      MOVE LIT-MENUPGM     TO CDEMO-TO-PROGRAM\n                   ELSE\n                      MOVE CDEMO-FROM-PROGRAM TO CDEMO-TO-PROGRAM\n                   END-IF\n\n                   MOVE LIT-THISTRANID     TO CDEMO-FROM-TRANID\n                   MOVE LIT-THISPGM        TO CDEMO-FROM-PROGRAM\n\n                   IF CDEMO-LAST-MAPSET    EQUAL LIT-CCLISTMAPSET\n                       MOVE ZEROS          TO CDEMO-ACCT-ID\n                                              CDEMO-CARD-NUM\n                   END-IF\n\n                   SET  CDEMO-USRTYP-USER  TO TRUE\n                   SET  CDEMO-PGM-ENTER    TO TRUE\n                   MOVE LIT-THISMAPSET     TO CDEMO-LAST-MAPSET\n                   MOVE LIT-THISMAP        TO CDEMO-LAST-MAP\n\n                   EXEC CICS\n                        SYNCPOINT\n                   END-EXEC\n      *\n                   EXEC CICS XCTL\n                        PROGRAM (CDEMO-TO-PROGRAM)\n                        COMMAREA(CARDDEMO-COMMAREA)\n                   END-EXEC\n      ******************************************************************\n      *       USER CAME FROM CREDIT CARD LIST SCREEN\n      *            SO WE ALREADY HAVE THE FILTER KEYS\n      *            FETCH THE ASSSOCIATED CARD DETAILS FOR UPDATE\n      ******************************************************************\n              WHEN CDEMO-PGM-ENTER\n               AND CDEMO-FROM-PROGRAM  EQUAL LIT-CCLISTPGM\n              WHEN CCARD-AID-PFK12\n               AND CDEMO-FROM-PROGRAM  EQUAL LIT-CCLISTPGM\n                   SET CDEMO-PGM-REENTER    TO TRUE\n                   SET INPUT-OK             TO TRUE\n                   SET FLG-ACCTFILTER-ISVALID  TO TRUE\n                   SET FLG-CARDFILTER-ISVALID  TO TRUE\n                   MOVE CDEMO-ACCT-ID       TO CC-ACCT-ID-N\n                   MOVE CDEMO-CARD-NUM      TO CC-CARD-NUM-N\n                   PERFORM 9000-READ-DATA\n                      THRU 9000-READ-DATA-EXIT\n                   SET CCUP-SHOW-DETAILS TO TRUE\n                   PERFORM 3000-SEND-MAP\n                      THRU 3000-SEND-MAP-EXIT\n                   GO TO COMMON-RETURN\n      ******************************************************************\n      *       FRESH ENTRY INTO PROGRAM\n      *            ASK THE USER FOR THE KEYS TO FETCH CARD TO BE UPDATED\n      ******************************************************************\n              WHEN CCUP-DETAILS-NOT-FETCHED\n               AND CDEMO-PGM-ENTER\n              WHEN CDEMO-FROM-PROGRAM   EQUAL LIT-MENUPGM\n               AND NOT CDEMO-PGM-REENTER\n                   INITIALIZE WS-THIS-PROGCOMMAREA\n                   PERFORM 3000-SEND-MAP THRU\n                           3000-SEND-MAP-EXIT\n                   SET CDEMO-PGM-REENTER        TO TRUE\n                   SET CCUP-DETAILS-NOT-FETCHED TO TRUE\n                   GO TO COMMON-RETURN\n      ******************************************************************\n      *       CARD DATA CHANGES REVIEWED, OKAYED AND DONE SUCESSFULLY\n      *            RESET THE SEARCH KEYS\n      *            ASK THE USER FOR FRESH SEARCH CRITERIA\n      ******************************************************************\n              WHEN CCUP-CHANGES-OKAYED-AND-DONE\n              WHEN CCUP-CHANGES-FAILED\n                   INITIALIZE WS-THIS-PROGCOMMAREA\n                              WS-MISC-STORAGE\n                              CDEMO-ACCT-ID\n                              CDEMO-CARD-NUM\n                   SET CDEMO-PGM-ENTER            TO TRUE\n                   PERFORM 3000-SEND-MAP THRU\n                           3000-SEND-MAP-EXIT\n                   SET CDEMO-PGM-REENTER          TO TRUE\n                   SET CCUP-DETAILS-NOT-FETCHED   TO TRUE\n                   GO TO COMMON-RETURN\n      ******************************************************************\n      *      CARD DATA HAS BEEN PRESENTED TO USER\n      *            CHECK THE USER INPUTS\n      *            DECIDE WHAT TO DO\n      *            PRESENT NEXT STEPS TO USER\n      ******************************************************************\n              WHEN OTHER\n                   PERFORM 1000-PROCESS-INPUTS\n                      THRU 1000-PROCESS-INPUTS-EXIT\n                   PERFORM 2000-DECIDE-ACTION\n                      THRU 2000-DECIDE-ACTION-EXIT\n                   PERFORM 3000-SEND-MAP\n                      THRU 3000-SEND-MAP-EXIT\n                   GO TO COMMON-RETURN\n           END-EVALUATE\n           .\n\n",
+        "paragraph_lines": [367, 544],
+        "ref_paragraphs": [
+          "YYYY-STORE-PFKEY",
+          "YYYY-STORE-PFKEY-EXIT",
+          "9000-READ-DATA",
+          "9000-READ-DATA-EXIT",
+          "3000-SEND-MAP",
+          "3000-SEND-MAP-EXIT",
+          "3000-SEND-MAP",
+          "3000-SEND-MAP-EXIT",
+          "3000-SEND-MAP",
+          "3000-SEND-MAP-EXIT",
+          "1000-PROCESS-INPUTS",
+          "1000-PROCESS-INPUTS-EXIT",
+          "2000-DECIDE-ACTION",
+          "2000-DECIDE-ACTION-EXIT",
+          "3000-SEND-MAP",
+          "3000-SEND-MAP-EXIT"
+        ],
+        "paragraph_logic": [
+          "Handles abend conditions by directing abends to the ABEND routine<ABEND-ROUTINE>.",
+          "Initializes working storage areas and common area values.",
+          "Stores the transaction ID to keep track of the process context.",
+          "Sets flags and initializes necessary data based on the input conditions, either from a fresh entry or a returning program.",
+          "Performs the PF Key storage operation by calling the PF Key storage process<YYYY-STORE-PFKEY>.",
+          "Evaluates user inputs and navigates through different user paths, such as exiting the transaction or fetching card details, using sub-program calls like reading data<9000-READ-DATA>, sending the map<3000-SEND-MAP>, processing inputs<1000-PROCESS-INPUTS>, and deciding actions<2000-DECIDE-ACTION>."
+        ]
+      },
+      "COMMON-RETURN": {
+        "paragraph_name": "COMMON-RETURN",
+        "section": "procedure division",
+        "paragraph_code": "COMMON-RETURN.\n           MOVE WS-RETURN-MSG     TO CCARD-ERROR-MSG\n\n           MOVE  CARDDEMO-COMMAREA    TO WS-COMMAREA\n           MOVE  WS-THIS-PROGCOMMAREA TO\n                  WS-COMMAREA(LENGTH OF CARDDEMO-COMMAREA + 1:\n                               LENGTH OF WS-THIS-PROGCOMMAREA )\n\n           EXEC CICS RETURN\n                TRANSID (LIT-THISTRANID)\n                COMMAREA (WS-COMMAREA)\n                LENGTH(LENGTH OF WS-COMMAREA)\n           END-EXEC\n           .\n",
+        "paragraph_lines": [546, 559],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the content of WS-RETURN-MSG to CCARD-ERROR-MSG to indicate return message.",
+          "Copies the data from CARDDEMO-COMMAREA to WS-COMMAREA for shared access.",
+          "Appends program-specific commarea data from WS-THIS-PROGCOMMAREA into WS-COMMAREA.",
+          "Executes a CICS return, passing control to the transaction ID specified in LIT-THISTRANID with the combined commarea WS-COMMAREA."
+        ]
+      },
+      "0000-MAIN-EXIT": {
+        "paragraph_name": "0000-MAIN-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "0000-MAIN-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [560, 562],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the main program section, signaling the end of the main routine."
+        ]
+      },
+      "1000-PROCESS-INPUTS": {
+        "paragraph_name": "1000-PROCESS-INPUTS",
+        "section": "procedure division",
+        "paragraph_code": "1000-PROCESS-INPUTS.\n           PERFORM 1100-RECEIVE-MAP\n              THRU 1100-RECEIVE-MAP-EXIT\n           PERFORM 1200-EDIT-MAP-INPUTS\n              THRU 1200-EDIT-MAP-INPUTS-EXIT\n           MOVE WS-RETURN-MSG  TO CCARD-ERROR-MSG\n           MOVE LIT-THISPGM    TO CCARD-NEXT-PROG\n           MOVE LIT-THISMAPSET TO CCARD-NEXT-MAPSET\n           MOVE LIT-THISMAP    TO CCARD-NEXT-MAP\n           .\n\n",
+        "paragraph_lines": [564, 573],
+        "ref_paragraphs": [
+          "1100-RECEIVE-MAP",
+          "1100-RECEIVE-MAP-EXIT",
+          "1200-EDIT-MAP-INPUTS",
+          "1200-EDIT-MAP-INPUTS-EXIT"
+        ],
+        "paragraph_logic": [
+          "Calls the [map receiving process]<1100-RECEIVE-MAP> to receive and store the input data from the map.",
+          "Calls the [map input editing process]<1200-EDIT-MAP-INPUTS> to validate and edit the received input data.",
+          "Moves the return message from the working storage to the card error message field.",
+          "Assigns the current program identifier to the next program field.",
+          "Sets the next mapset and map to the current one, ensuring continuity in navigation."
+        ]
+      },
+      "1000-PROCESS-INPUTS-EXIT": {
+        "paragraph_name": "1000-PROCESS-INPUTS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1000-PROCESS-INPUTS-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [575, 577],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 1000-PROCESS-INPUTS section, handing control back to the calling section."
+        ]
+      },
+      "1100-RECEIVE-MAP": {
+        "paragraph_name": "1100-RECEIVE-MAP",
+        "section": "procedure division",
+        "paragraph_code": "1100-RECEIVE-MAP.\n           EXEC CICS RECEIVE MAP(LIT-THISMAP)\n                     MAPSET(LIT-THISMAPSET)\n                     INTO(CCRDUPAI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC\n\n           INITIALIZE CCUP-NEW-DETAILS\n\n      *    REPLACE * WITH LOW-VALUES\n           IF  ACCTSIDI OF CCRDUPAI = '*'\n           OR  ACCTSIDI OF CCRDUPAI = SPACES\n               MOVE LOW-VALUES           TO  CC-ACCT-ID\n                                             CCUP-NEW-ACCTID\n           ELSE\n               MOVE ACCTSIDI OF CCRDUPAI TO  CC-ACCT-ID\n                                             CCUP-NEW-ACCTID\n           END-IF\n\n           IF  CARDSIDI OF CCRDUPAI = '*'\n           OR  CARDSIDI OF CCRDUPAI = SPACES\n               MOVE LOW-VALUES           TO  CC-CARD-NUM\n                                             CCUP-NEW-CARDID\n           ELSE\n               MOVE CARDSIDI OF CCRDUPAI TO  CC-CARD-NUM\n                                             CCUP-NEW-CARDID\n           END-IF\n\n           IF  CRDNAMEI OF CCRDUPAI = '*'\n           OR  CRDNAMEI OF CCRDUPAI = SPACES\n               MOVE LOW-VALUES           TO  CCUP-NEW-CRDNAME\n           ELSE\n               MOVE CRDNAMEI OF CCRDUPAI TO  CCUP-NEW-CRDNAME\n           END-IF\n\n           IF  CRDSTCDI OF CCRDUPAI = '*'\n           OR  CRDSTCDI OF CCRDUPAI = SPACES\n               MOVE LOW-VALUES           TO  CCUP-NEW-CRDSTCD\n           ELSE\n               MOVE CRDSTCDI OF CCRDUPAI TO  CCUP-NEW-CRDSTCD\n           END-IF\n\n           MOVE EXPDAYI     OF CCRDUPAI  TO  CCUP-NEW-EXPDAY\n\n           IF  EXPMONI OF CCRDUPAI = '*'\n           OR  EXPMONI OF CCRDUPAI = SPACES\n               MOVE LOW-VALUES           TO  CCUP-NEW-EXPMON\n           ELSE\n               MOVE EXPMONI OF CCRDUPAI  TO  CCUP-NEW-EXPMON\n           END-IF\n\n           IF  EXPYEARI OF CCRDUPAI = '*'\n           OR  EXPYEARI OF CCRDUPAI = SPACES\n               MOVE LOW-VALUES           TO  CCUP-NEW-EXPYEAR\n           ELSE\n               MOVE EXPYEARI OF CCRDUPAI TO  CCUP-NEW-EXPYEAR\n           END-IF\n           .\n\n",
+        "paragraph_lines": [578, 636],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes CICS command to receive the map (LIT-THISMAP) and mapset (LIT-THISMAPSET) into the data structure (CCRDUPAI).",
+          "Initializes the new details data structure (CCUP-NEW-DETAILS).",
+          "Checks and assigns account ID from received data, replacing with LOW-VALUES if necessary.",
+          "Checks and assigns card number from received data, replacing with LOW-VALUES if necessary.",
+          "Checks and assigns card name and card status from received data, replacing with LOW-VALUES if necessary."
+        ]
+      },
+      "1100-RECEIVE-MAP-EXIT": {
+        "paragraph_name": "1100-RECEIVE-MAP-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1100-RECEIVE-MAP-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [638, 640],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the map receiving process cleanly, indicating the end of this logic."
+        ]
+      },
+      "1200-EDIT-MAP-INPUTS": {
+        "paragraph_name": "1200-EDIT-MAP-INPUTS",
+        "section": "procedure division",
+        "paragraph_code": "1200-EDIT-MAP-INPUTS.\n\n           SET INPUT-OK                  TO TRUE\n\n           IF  CCUP-DETAILS-NOT-FETCHED\n      *        VALIDATE THE SEARCH KEYS\n               PERFORM 1210-EDIT-ACCOUNT\n                  THRU 1210-EDIT-ACCOUNT-EXIT\n\n               PERFORM 1220-EDIT-CARD\n                  THRU 1220-EDIT-CARD-EXIT\n\n               MOVE LOW-VALUES                 TO CCUP-NEW-CARDDATA\n\n      *       IF THE SEARCH CONDITIONS HAVE PROBLEMS SKIP OTHER EDITS\n               IF  FLG-ACCTFILTER-BLANK\n               AND FLG-CARDFILTER-BLANK\n                   SET NO-SEARCH-CRITERIA-RECEIVED TO TRUE\n               END-IF\n\n               GO TO 1200-EDIT-MAP-INPUTS-EXIT\n\n           ELSE\n               CONTINUE\n           END-IF\n\n      *    SEARCH KEYS ALREADY VALIDATED AND DATA FETCHED\n           SET FOUND-CARDS-FOR-ACCOUNT TO TRUE\n           SET FLG-ACCTFILTER-ISVALID  TO TRUE\n           SET FLG-CARDFILTER-ISVALID  TO TRUE\n           MOVE CCUP-OLD-ACCTID     TO CDEMO-ACCT-ID\n           MOVE CCUP-OLD-CARDID     TO CDEMO-CARD-NUM\n           MOVE CCUP-OLD-CRDNAME    TO CARD-EMBOSSED-NAME\n           MOVE CCUP-OLD-CRDSTCD    TO CARD-ACTIVE-STATUS\n           MOVE CCUP-OLD-EXPDAY     TO CARD-EXPIRY-DAY\n           MOVE CCUP-OLD-EXPMON     TO CARD-EXPIRY-MONTH\n           MOVE CCUP-OLD-EXPYEAR    TO CARD-EXPIRY-YEAR\n\n      *    NEW DATA IS SAME AS OLD DATA\n           IF  (FUNCTION UPPER-CASE(CCUP-NEW-CARDDATA) EQUAL\n                FUNCTION UPPER-CASE(CCUP-OLD-CARDDATA))\n               SET NO-CHANGES-DETECTED TO TRUE\n           END-IF\n\n           IF  NO-CHANGES-DETECTED\n           OR  CCUP-CHANGES-OK-NOT-CONFIRMED\n           OR  CCUP-CHANGES-OKAYED-AND-DONE\n               SET FLG-CARDNAME-ISVALID    TO TRUE\n               SET FLG-CARDSTATUS-ISVALID  TO TRUE\n               SET FLG-CARDEXPMON-ISVALID  TO TRUE\n               SET FLG-CARDEXPYEAR-ISVALID TO TRUE\n               GO TO 1200-EDIT-MAP-INPUTS-EXIT\n           END-IF\n\n\n           SET CCUP-CHANGES-NOT-OK    TO TRUE\n\n           PERFORM 1230-EDIT-NAME\n              THRU 1230-EDIT-NAME-EXIT\n\n           PERFORM 1240-EDIT-CARDSTATUS\n              THRU 1240-EDIT-CARDSTATUS-EXIT\n\n           PERFORM 1250-EDIT-EXPIRY-MON\n              THRU 1250-EDIT-EXPIRY-MON-EXIT\n\n           PERFORM 1260-EDIT-EXPIRY-YEAR\n              THRU 1260-EDIT-EXPIRY-YEAR-EXIT\n\n           IF INPUT-ERROR\n              CONTINUE\n           ELSE\n              SET CCUP-CHANGES-OK-NOT-CONFIRMED TO TRUE\n           END-IF\n           .\n\n",
+        "paragraph_lines": [641, 715],
+        "ref_paragraphs": [
+          "1210-EDIT-ACCOUNT",
+          "1210-EDIT-ACCOUNT-EXIT",
+          "1220-EDIT-CARD",
+          "1220-EDIT-CARD-EXIT",
+          "1230-EDIT-NAME",
+          "1230-EDIT-NAME-EXIT",
+          "1240-EDIT-CARDSTATUS",
+          "1240-EDIT-CARDSTATUS-EXIT",
+          "1250-EDIT-EXPIRY-MON",
+          "1250-EDIT-EXPIRY-MON-EXIT",
+          "1260-EDIT-EXPIRY-YEAR",
+          "1260-EDIT-EXPIRY-YEAR-EXIT"
+        ],
+        "paragraph_logic": [
+          "Sets the initial state of the input validation to true and checks if card details have not been fetched.",
+          "Calls the [account editing process]<1210-EDIT-ACCOUNT> to validate the account details.",
+          "Calls the [card editing process]<1220-EDIT-CARD> to validate the card details.",
+          "Sets various validation flags if the search keys are already validated and the data is fetched.",
+          "Calls multiple field-specific editing processes like [name editing process]<1230-EDIT-NAME>, [card status editing process]<1240-EDIT-CARDSTATUS>, [expiry month editing process]<1250-EDIT-EXPIRY-MON>, and [expiry year editing process]<1260-EDIT-EXPIRY-YEAR> to edit respective fields.",
+          "Depending on the detected changes, sets the necessary validation flags and goes to the exit if no errors are found."
+        ]
+      },
+      "1200-EDIT-MAP-INPUTS-EXIT": {
+        "paragraph_name": "1200-EDIT-MAP-INPUTS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1200-EDIT-MAP-INPUTS-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [717, 719],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the paragraph [1200-EDIT-MAP-INPUTS-EXIT] cleanly after ensuring all necessary edits on map inputs are complete."
+        ]
+      },
+      "1210-EDIT-ACCOUNT": {
+        "paragraph_name": "1210-EDIT-ACCOUNT",
+        "section": "procedure division",
+        "paragraph_code": "1210-EDIT-ACCOUNT.\n           SET FLG-ACCTFILTER-NOT-OK TO TRUE\n\n      *    Not supplied\n           IF CC-ACCT-ID   EQUAL LOW-VALUES\n           OR CC-ACCT-ID   EQUAL SPACES\n           OR CC-ACCT-ID-N EQUAL ZEROS\n              SET INPUT-ERROR           TO TRUE\n              SET FLG-ACCTFILTER-BLANK  TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET WS-PROMPT-FOR-ACCT TO TRUE\n              END-IF\n              MOVE ZEROES       TO CDEMO-ACCT-ID\n              MOVE LOW-VALUES   TO CCUP-NEW-ACCTID\n              GO TO  1210-EDIT-ACCOUNT-EXIT\n           END-IF\n      *\n      *    Not numeric\n      *    Not 11 characters\n           IF CC-ACCT-ID  IS NOT NUMERIC\n              SET INPUT-ERROR TO TRUE\n              SET FLG-ACCTFILTER-NOT-OK TO TRUE\n              IF WS-RETURN-MSG-OFF\n                MOVE\n              'ACCOUNT FILTER,IF SUPPLIED MUST BE A 11 DIGIT NUMBER'\n                              TO WS-RETURN-MSG\n              END-IF\n              MOVE ZERO       TO CDEMO-ACCT-ID\n              MOVE LOW-VALUES TO CCUP-NEW-ACCTID\n              GO TO 1210-EDIT-ACCOUNT-EXIT\n           ELSE\n              MOVE CC-ACCT-ID TO CDEMO-ACCT-ID\n                                 CCUP-NEW-ACCTID\n              SET FLG-ACCTFILTER-ISVALID TO TRUE\n           END-IF\n           .\n\n",
+        "paragraph_lines": [721, 756],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets account filter validation flag to false.",
+          "Checks if account ID is not supplied (either low values, spaces, or zeros).",
+          "If account ID is not supplied, sets input error flag and prompts for account input, then exits the paragraph.",
+          "Checks if account ID is not numeric or not 11 characters long.",
+          "If account ID is invalid, sets input error flag and sets an error message, then exits the paragraph.",
+          "Moves account ID to demo account ID fields and sets the valid account filter flag if checks pass."
+        ]
+      },
+      "1210-EDIT-ACCOUNT-EXIT": {
+        "paragraph_name": "1210-EDIT-ACCOUNT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1210-EDIT-ACCOUNT-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [758, 760],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the EDIT-ACCOUNT section of the COBOL program, returning control to the previous paragraph or procedure."
+        ]
+      },
+      "1220-EDIT-CARD": {
+        "paragraph_name": "1220-EDIT-CARD",
+        "section": "procedure division",
+        "paragraph_code": "1220-EDIT-CARD.\n      *    Not numeric\n      *    Not 16 characters\n           SET FLG-CARDFILTER-NOT-OK TO TRUE\n\n      *    Not supplied\n           IF CC-CARD-NUM   EQUAL LOW-VALUES\n           OR CC-CARD-NUM   EQUAL SPACES\n           OR CC-CARD-NUM-N EQUAL ZEROS\n              SET INPUT-ERROR           TO TRUE\n              SET FLG-CARDFILTER-BLANK  TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET WS-PROMPT-FOR-CARD TO TRUE\n              END-IF\n\n              MOVE ZEROES        TO CDEMO-CARD-NUM\n                                   CCUP-NEW-CARDID\n              GO TO  1220-EDIT-CARD-EXIT\n           END-IF\n      *\n      *    Not numeric\n      *    Not 16 characters\n           IF CC-CARD-NUM  IS NOT NUMERIC\n              SET INPUT-ERROR TO TRUE\n              SET FLG-CARDFILTER-NOT-OK TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 MOVE\n              'CARD ID FILTER,IF SUPPLIED MUST BE A 16 DIGIT NUMBER'\n                                 TO WS-RETURN-MSG\n              END-IF\n              MOVE ZERO          TO CDEMO-CARD-NUM\n              MOVE LOW-VALUES    TO CCUP-NEW-CARDID\n              GO TO 1220-EDIT-CARD-EXIT\n           ELSE\n              MOVE CC-CARD-NUM-N TO CDEMO-CARD-NUM\n              MOVE CC-CARD-NUM   TO CCUP-NEW-CARDID\n              SET FLG-CARDFILTER-ISVALID TO TRUE\n           END-IF\n           .\n\n",
+        "paragraph_lines": [762, 800],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets the flag FLG-CARDFILTER-NOT-OK to TRUE if the card filter is not numeric or not 16 characters.",
+          "Checks if the card number is not supplied and sets INPUT-ERROR and FLG-CARDFILTER-BLANK to TRUE, then prompts for a card ID if required.",
+          "Moves zeros to card number fields and exits the edit card process if the card number is not supplied.",
+          "Checks if the card number is not numeric, sets INPUT-ERROR and FLG-CARDFILTER-NOT-OK to TRUE, and sets the return message if message display is off.",
+          "Moves zeros and low values to card number fields and exits the edit card process if the card number is not numeric.",
+          "If the card number passes validation, moves it to appropriate fields and sets FLG-CARDFILTER-ISVALID to TRUE."
+        ]
+      },
+      "1220-EDIT-CARD-EXIT": {
+        "paragraph_name": "1220-EDIT-CARD-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1220-EDIT-CARD-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [802, 804],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 1220-EDIT-CARD paragraph cleanly after completing its operations."
+        ]
+      },
+      "1230-EDIT-NAME": {
+        "paragraph_name": "1230-EDIT-NAME",
+        "section": "procedure division",
+        "paragraph_code": "1230-EDIT-NAME.\n      *    Not BLANK\n           SET FLG-CARDNAME-NOT-OK      TO TRUE\n\n      *    Not supplied\n           IF CCUP-NEW-CRDNAME   EQUAL LOW-VALUES\n           OR CCUP-NEW-CRDNAME   EQUAL SPACES\n           OR CCUP-NEW-CRDNAME   EQUAL ZEROS\n              SET INPUT-ERROR           TO TRUE\n              SET FLG-CARDNAME-BLANK  TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET WS-PROMPT-FOR-NAME TO TRUE\n              END-IF\n              GO TO  1230-EDIT-NAME-EXIT\n           END-IF\n\n      *    Only Alphabets and space allowed\n           MOVE CCUP-NEW-CRDNAME        TO CARD-NAME-CHECK\n           INSPECT CARD-NAME-CHECK\n             CONVERTING LIT-ALL-ALPHA-FROM\n                     TO LIT-ALL-SPACES-TO\n\n      *    IF FUNCTION LENGTH(FUNCTION TRIM(CARD-NAME-CHECK)) = 0\n           IF CARD-NAME-CHECK = SPACES\n              CONTINUE\n           ELSE\n              SET INPUT-ERROR           TO TRUE\n              SET FLG-CARDNAME-NOT-OK   TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET WS-NAME-MUST-BE-ALPHA  TO TRUE\n              END-IF\n              GO TO  1230-EDIT-NAME-EXIT\n           END-IF\n\n           SET FLG-CARDNAME-ISVALID     TO TRUE\n           .\n",
+        "paragraph_lines": [806, 841],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the new card name provided is not blank or consists only of low-values, spaces, or zeros, flagging any input errors.",
+          "If the card name is empty, sets appropriate flags and decides whether to prompt for the name again.",
+          "Moves the new card name into a buffer and inspects it to ensure it contains only alphabets and spaces, converting any invalid characters.",
+          "If the buffer is not entirely alphabetic and spaces, flags an input error and checks whether to display an error message.",
+          "Finally, if all validations pass, sets the flag indicating the card name is valid."
+        ]
+      },
+      "1230-EDIT-NAME-EXIT": {
+        "paragraph_name": "1230-EDIT-NAME-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1230-EDIT-NAME-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [842, 844],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the [name editing process]<1230-EDIT-NAME-EXIT> and returns to the calling paragraph."
+        ]
+      },
+      "1240-EDIT-CARDSTATUS": {
+        "paragraph_name": "1240-EDIT-CARDSTATUS",
+        "section": "procedure division",
+        "paragraph_code": "1240-EDIT-CARDSTATUS.\n      *    Must be Y or N\n           SET FLG-CARDSTATUS-NOT-OK      TO TRUE\n\n      *    Not supplied\n           IF CCUP-NEW-CRDSTCD   EQUAL LOW-VALUES\n           OR CCUP-NEW-CRDSTCD   EQUAL SPACES\n           OR CCUP-NEW-CRDSTCD   EQUAL ZEROS\n              SET INPUT-ERROR           TO TRUE\n              SET FLG-CARDSTATUS-BLANK  TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET CARD-STATUS-MUST-BE-YES-NO TO TRUE\n              END-IF\n              GO TO  1240-EDIT-CARDSTATUS-EXIT\n           END-IF\n\n           MOVE CCUP-NEW-CRDSTCD          TO FLG-YES-NO-CHECK\n\n           IF FLG-YES-NO-VALID\n              SET FLG-CARDSTATUS-ISVALID  TO TRUE\n           ELSE\n              SET INPUT-ERROR             TO TRUE\n              SET FLG-CARDSTATUS-NOT-OK   TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET CARD-STATUS-MUST-BE-YES-NO  TO TRUE\n              END-IF\n              GO TO  1240-EDIT-CARDSTATUS-EXIT\n           END-IF\n           .\n",
+        "paragraph_lines": [846, 874],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets the [card status flag] to invalid with FLG-CARDSTATUS-NOT-OK.",
+          "Checks if the new card status code is not supplied (low values, spaces, or zeros), sets an input error flag, and exits if true.",
+          "Moves the new card status code to a validation flag (FLG-YES-NO-CHECK).",
+          "If the card status code is valid, sets the valid flag (FLG-CARDSTATUS-ISVALID).",
+          "If the card status code is invalid, sets input error flags and exits."
+        ]
+      },
+      "1240-EDIT-CARDSTATUS-EXIT": {
+        "paragraph_name": "1240-EDIT-CARDSTATUS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1240-EDIT-CARDSTATUS-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [875, 877],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Marks the end of the EDIT-CARDSTATUS paragraph and exits the current scope without performing any further operations."
+        ]
+      },
+      "1250-EDIT-EXPIRY-MON": {
+        "paragraph_name": "1250-EDIT-EXPIRY-MON",
+        "section": "procedure division",
+        "paragraph_code": "1250-EDIT-EXPIRY-MON.\n\n\n           SET FLG-CARDEXPMON-NOT-OK      TO TRUE\n\n      *    Not supplied\n           IF CCUP-NEW-EXPMON   EQUAL LOW-VALUES\n           OR CCUP-NEW-EXPMON   EQUAL SPACES\n           OR CCUP-NEW-EXPMON   EQUAL ZEROS\n              SET INPUT-ERROR           TO TRUE\n              SET FLG-CARDEXPMON-BLANK  TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET CARD-EXPIRY-MONTH-NOT-VALID TO TRUE\n              END-IF\n              GO TO  1250-EDIT-EXPIRY-MON-EXIT\n           END-IF\n\n      *    Must be numeric\n      *    Must be 1 to 12\n           MOVE CCUP-NEW-EXPMON           TO CARD-MONTH-CHECK\n\n           IF VALID-MONTH\n              SET FLG-CARDEXPMON-ISVALID  TO TRUE\n           ELSE\n              SET INPUT-ERROR             TO TRUE\n              SET FLG-CARDEXPMON-NOT-OK   TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET CARD-EXPIRY-MONTH-NOT-VALID  TO TRUE\n              END-IF\n              GO TO  1250-EDIT-EXPIRY-MON-EXIT\n           END-IF\n           .\n\n",
+        "paragraph_lines": [878, 909],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the new expiry month is a low value, space, or zero and sets error flags if true.",
+          "Sets the card expiry month to invalid if the expiry month is not provided and return messages are off.",
+          "Moves the new expiry month to a check variable.",
+          "Validates if the month is numeric and falls between 1 and 12, setting the appropriate flags.",
+          "Sets error flags if the month is not valid, and invalidates the card expiry month if return messages are off."
+        ]
+      },
+      "1250-EDIT-EXPIRY-MON-EXIT": {
+        "paragraph_name": "1250-EDIT-EXPIRY-MON-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1250-EDIT-EXPIRY-MON-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [911, 913],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Terminates the [expiry month edit process]<1250-EDIT-EXPIRY-MON-EXIT> and exits the current procedure."
+        ]
+      },
+      "1260-EDIT-EXPIRY-YEAR": {
+        "paragraph_name": "1260-EDIT-EXPIRY-YEAR",
+        "section": "procedure division",
+        "paragraph_code": "1260-EDIT-EXPIRY-YEAR.\n\n      *    Not supplied\n           IF CCUP-NEW-EXPYEAR   EQUAL LOW-VALUES\n           OR CCUP-NEW-EXPYEAR   EQUAL SPACES\n           OR CCUP-NEW-EXPYEAR   EQUAL ZEROS\n              SET INPUT-ERROR           TO TRUE\n              SET FLG-CARDEXPYEAR-BLANK  TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET CARD-EXPIRY-YEAR-NOT-VALID TO TRUE\n              END-IF\n              GO TO  1260-EDIT-EXPIRY-YEAR-EXIT\n           END-IF\n\n      *    Must be numeric\n      *    Must be 1 to 12\n\n           SET FLG-CARDEXPYEAR-NOT-OK      TO TRUE\n\n           MOVE CCUP-NEW-EXPYEAR           TO CARD-YEAR-CHECK\n\n           IF VALID-YEAR\n              SET FLG-CARDEXPYEAR-ISVALID  TO TRUE\n           ELSE\n              SET INPUT-ERROR              TO TRUE\n              SET FLG-CARDEXPYEAR-NOT-OK   TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET CARD-EXPIRY-YEAR-NOT-VALID  TO TRUE\n              END-IF\n              GO TO  1260-EDIT-EXPIRY-YEAR-EXIT\n           END-IF\n           .\n",
+        "paragraph_lines": [914, 945],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the new expiry year is supplied, setting error flags if it is missing or invalid.",
+          "Verifies that the new expiry year is numeric and falls within the valid range (1 to 12).",
+          "Moves the new expiry year to a check field.",
+          "If the year is valid, sets a flag indicating the expiry year is valid.",
+          "If the year is not valid, sets error flags and appropriate messages before exiting the process."
+        ]
+      },
+      "1260-EDIT-EXPIRY-YEAR-EXIT": {
+        "paragraph_name": "1260-EDIT-EXPIRY-YEAR-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1260-EDIT-EXPIRY-YEAR-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [946, 948],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the current [expiry year editing process] to return to the calling program.<1260-EDIT-EXPIRY-YEAR-EXIT>"
+        ]
+      },
+      "2000-DECIDE-ACTION": {
+        "paragraph_name": "2000-DECIDE-ACTION",
+        "section": "procedure division",
+        "paragraph_code": "2000-DECIDE-ACTION.\n           EVALUATE TRUE\n      ******************************************************************\n      *       NO DETAILS SHOWN.\n      *       SO GET THEM AND SETUP DETAIL EDIT SCREEN\n      ******************************************************************\n              WHEN CCUP-DETAILS-NOT-FETCHED\n      ******************************************************************\n      *       CHANGES MADE. BUT USER CANCELS\n      ******************************************************************\n              WHEN CCARD-AID-PFK12\n                 IF  FLG-ACCTFILTER-ISVALID\n                 AND FLG-CARDFILTER-ISVALID\n                     PERFORM 9000-READ-DATA\n                        THRU 9000-READ-DATA-EXIT\n                     IF FOUND-CARDS-FOR-ACCOUNT\n                        SET CCUP-SHOW-DETAILS    TO TRUE\n                     END-IF\n                 END-IF\n      ******************************************************************\n      *       DETAILS SHOWN\n      *       CHECK CHANGES AND ASK CONFIRMATION IF GOOD\n      ******************************************************************\n              WHEN CCUP-SHOW-DETAILS\n                 IF INPUT-ERROR\n                 OR NO-CHANGES-DETECTED\n                    CONTINUE\n                 ELSE\n                    SET CCUP-CHANGES-OK-NOT-CONFIRMED TO TRUE\n                 END-IF\n      ******************************************************************\n      *       DETAILS SHOWN\n      *       BUT INPUT EDIT ERRORS FOUND\n      ******************************************************************\n              WHEN CCUP-CHANGES-NOT-OK\n                  CONTINUE\n      ******************************************************************\n      *       DETAILS EDITED , FOUND OK, CONFIRM SAVE REQUESTED\n      *       CONFIRMATION GIVEN.SO SAVE THE CHANGES\n      ******************************************************************\n              WHEN CCUP-CHANGES-OK-NOT-CONFIRMED\n               AND CCARD-AID-PFK05\n                 PERFORM 9200-WRITE-PROCESSING\n                    THRU 9200-WRITE-PROCESSING-EXIT\n                 EVALUATE TRUE\n                    WHEN COULD-NOT-LOCK-FOR-UPDATE\n                         SET CCUP-CHANGES-OKAYED-LOCK-ERROR TO TRUE\n                    WHEN LOCKED-BUT-UPDATE-FAILED\n                       SET CCUP-CHANGES-OKAYED-BUT-FAILED TO TRUE\n                    WHEN DATA-WAS-CHANGED-BEFORE-UPDATE\n                        SET CCUP-SHOW-DETAILS            TO TRUE\n                    WHEN OTHER\n                       SET CCUP-CHANGES-OKAYED-AND-DONE   TO TRUE\n                 END-EVALUATE\n      ******************************************************************\n      *       DETAILS EDITED , FOUND OK, CONFIRM SAVE REQUESTED\n      *       CONFIRMATION NOT GIVEN. SO SHOW DETAILS AGAIN\n      ******************************************************************\n              WHEN CCUP-CHANGES-OK-NOT-CONFIRMED\n                  CONTINUE\n      ******************************************************************\n      *       SHOW CONFIRMATION. GO BACK TO SQUARE 1\n      ******************************************************************\n              WHEN CCUP-CHANGES-OKAYED-AND-DONE\n                  SET CCUP-SHOW-DETAILS TO TRUE\n                  IF CDEMO-FROM-TRANID    EQUAL LOW-VALUES\n                  OR CDEMO-FROM-TRANID    EQUAL SPACES\n                     MOVE ZEROES       TO CDEMO-ACCT-ID\n                                          CDEMO-CARD-NUM\n                     MOVE LOW-VALUES   TO CDEMO-ACCT-STATUS\n                  END-IF\n              WHEN OTHER\n                   MOVE LIT-THISPGM    TO ABEND-CULPRIT\n                   MOVE '0001'         TO ABEND-CODE\n                   MOVE SPACES         TO ABEND-REASON\n                   MOVE 'UNEXPECTED DATA SCENARIO'\n                                       TO ABEND-MSG\n                   PERFORM ABEND-ROUTINE\n                      THRU ABEND-ROUTINE-EXIT\n           END-EVALUATE\n           .\n",
+        "paragraph_lines": [949, 1029],
+        "ref_paragraphs": [
+          "9000-READ-DATA",
+          "9000-READ-DATA-EXIT",
+          "9200-WRITE-PROCESSING",
+          "9200-WRITE-PROCESSING-EXIT",
+          "ABEND-ROUTINE",
+          "ABEND-ROUTINE-EXIT"
+        ],
+        "paragraph_logic": [
+          "Evaluates different conditions to decide the next action based on the current state.",
+          "When no details are fetched, initiates the process to show the detail edit screen (condition: CCUP-DETAILS-NOT-FETCHED).",
+          "If changes are made but the user cancels, it validates certain flags and performs data reading to update the screen with account and card details (condition: CCARD-AID-PFK12).",
+          "When details are shown, checks for input errors and sets a flag if changes are not confirmed (condition: CCUP-SHOW-DETAILS).",
+          "If details are edited and confirmed for saving, performs write processing and sets appropriate flags based on the result (condition: CCUP-CHANGES-OK-NOT-CONFIRMED AND CCARD-AID-PFK05).",
+          "Handles unexpected data scenarios by moving relevant information to ABEND fields and performing the abend routine (condition: OTHER)."
+        ]
+      },
+      "2000-DECIDE-ACTION-EXIT": {
+        "paragraph_name": "2000-DECIDE-ACTION-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2000-DECIDE-ACTION-EXIT.\n           EXIT\n           .\n\n\n\n",
+        "paragraph_lines": [1030, 1032],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the [2000-DECIDE-ACTION-EXIT] paragraph, marking the end of this processing block."
+        ]
+      },
+      "3000-SEND-MAP": {
+        "paragraph_name": "3000-SEND-MAP",
+        "section": "procedure division",
+        "paragraph_code": "3000-SEND-MAP.\n           PERFORM 3100-SCREEN-INIT\n              THRU 3100-SCREEN-INIT-EXIT\n           PERFORM 3200-SETUP-SCREEN-VARS\n              THRU 3200-SETUP-SCREEN-VARS-EXIT\n           PERFORM 3250-SETUP-INFOMSG\n              THRU 3250-SETUP-INFOMSG-EXIT\n           PERFORM 3300-SETUP-SCREEN-ATTRS\n              THRU 3300-SETUP-SCREEN-ATTRS-EXIT\n           PERFORM 3400-SEND-SCREEN\n              THRU 3400-SEND-SCREEN-EXIT\n           .\n\n",
+        "paragraph_lines": [1036, 1047],
+        "ref_paragraphs": [
+          "3100-SCREEN-INIT",
+          "3100-SCREEN-INIT-EXIT",
+          "3200-SETUP-SCREEN-VARS",
+          "3200-SETUP-SCREEN-VARS-EXIT",
+          "3250-SETUP-INFOMSG",
+          "3250-SETUP-INFOMSG-EXIT",
+          "3300-SETUP-SCREEN-ATTRS",
+          "3300-SETUP-SCREEN-ATTRS-EXIT",
+          "3400-SEND-SCREEN",
+          "3400-SEND-SCREEN-EXIT"
+        ],
+        "paragraph_logic": [
+          "Calls the [screen initialization process]<3100-SCREEN-INIT> to clear and prepare the screen for new data.",
+          "Calls the [screen variables setup process]<3200-SETUP-SCREEN-VARS> to initialize screen variables necessary for display.",
+          "Calls the [information message setup process]<3250-SETUP-INFOMSG> to prepare any info messages that need to be shown.",
+          "Calls the [screen attribute setup process]<3300-SETUP-SCREEN-ATTRS> to configure screen attributes like positioning and field lengths.",
+          "Calls the [screen sending process]<3400-SEND-SCREEN> to send the screen map to the user, displaying the updated information."
+        ]
+      },
+      "3000-SEND-MAP-EXIT": {
+        "paragraph_name": "3000-SEND-MAP-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "3000-SEND-MAP-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1049, 1051],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Defines the [3000-SEND-MAP-EXIT] paragraph to mark the end of the procedure for sending the map and exits from the current procedure."
+        ]
+      },
+      "3100-SCREEN-INIT": {
+        "paragraph_name": "3100-SCREEN-INIT",
+        "section": "procedure division",
+        "paragraph_code": "3100-SCREEN-INIT.\n           MOVE LOW-VALUES TO CCRDUPAO\n\n           MOVE FUNCTION CURRENT-DATE     TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01              TO TITLE01O OF CCRDUPAO\n           MOVE CCDA-TITLE02              TO TITLE02O OF CCRDUPAO\n           MOVE LIT-THISTRANID            TO TRNNAMEO OF CCRDUPAO\n           MOVE LIT-THISPGM               TO PGMNAMEO OF CCRDUPAO\n\n           MOVE FUNCTION CURRENT-DATE     TO WS-CURDATE-DATA\n\n           MOVE WS-CURDATE-MONTH          TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY            TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)      TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY       TO CURDATEO OF CCRDUPAO\n\n           MOVE WS-CURTIME-HOURS          TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE         TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND         TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS       TO CURTIMEO OF CCRDUPAO\n\n           .\n\n",
+        "paragraph_lines": [1053, 1077],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initializes screen fields by setting low values to data buffer variables for clearing purposes.",
+          "Stores the current date and time into working storage fields to maintain the current timestamp.",
+          "Loads titles and program identifiers into the screen output buffer variables to display relevant information.",
+          "Formats current date components (month, day, year) and time components (hours, minutes, seconds) for standardized representation.",
+          "Moves formatted current date and time into the screen output buffer to ensure they are displayed correctly."
+        ]
+      },
+      "3100-SCREEN-INIT-EXIT": {
+        "paragraph_name": "3100-SCREEN-INIT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "3100-SCREEN-INIT-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1079, 1081],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Calls the [screen initialization exit process]<3100-SCREEN-INIT-EXIT> to mark the end of the screen initialization routine.",
+          "Exits the current paragraph to return control to the calling paragraph."
+        ]
+      },
+      "3200-SETUP-SCREEN-VARS": {
+        "paragraph_name": "3200-SETUP-SCREEN-VARS",
+        "section": "procedure division",
+        "paragraph_code": "3200-SETUP-SCREEN-VARS.\n      *    INITIALIZE SEARCH CRITERIA\n           IF CDEMO-PGM-ENTER\n              CONTINUE\n           ELSE\n              IF CC-ACCT-ID-N = 0\n                 MOVE LOW-VALUES          TO ACCTSIDO OF CCRDUPAO\n              ELSE\n                 MOVE CC-ACCT-ID          TO ACCTSIDO OF CCRDUPAO\n              END-IF\n\n              IF CC-CARD-NUM-N = 0\n                MOVE LOW-VALUES           TO CARDSIDO OF CCRDUPAO\n              ELSE\n                MOVE CC-CARD-NUM          TO CARDSIDO OF CCRDUPAO\n              END-IF\n\n              EVALUATE TRUE\n                  WHEN CCUP-DETAILS-NOT-FETCHED\n                       MOVE LOW-VALUES         TO CRDNAMEO OF CCRDUPAO\n                                                  CRDNAMEO OF CCRDUPAO\n                                                  CRDSTCDO OF CCRDUPAO\n                                                  EXPDAYO  OF CCRDUPAO\n                                                  EXPMONO  OF CCRDUPAO\n                                                  EXPYEARO OF CCRDUPAO\n                  WHEN CCUP-SHOW-DETAILS\n                      MOVE CCUP-OLD-CRDNAME    TO CRDNAMEO OF CCRDUPAO\n                      MOVE CCUP-OLD-CRDSTCD    TO CRDSTCDO OF CCRDUPAO\n                      MOVE CCUP-OLD-EXPDAY     TO EXPDAYO  OF CCRDUPAO\n                      MOVE CCUP-OLD-EXPMON     TO EXPMONO  OF CCRDUPAO\n                      MOVE CCUP-OLD-EXPYEAR    TO EXPYEARO OF CCRDUPAO\n                  WHEN CCUP-CHANGES-MADE\n                      MOVE CCUP-NEW-CRDNAME    TO CRDNAMEO OF CCRDUPAO\n                      MOVE CCUP-NEW-CRDSTCD    TO CRDSTCDO OF CCRDUPAO\n                      MOVE CCUP-NEW-EXPMON     TO EXPMONO  OF CCRDUPAO\n                      MOVE CCUP-NEW-EXPYEAR    TO EXPYEARO OF CCRDUPAO\n      ******************************************************************\n      *               MOVE OLD VALUES TO NON-DISPLAY FIELDS\n      *               THAT WE ARE NOT ALLOWING USER TO CHANGE(FOR NOW)\n      *****************************************************************\n      *               MOVE CCUP-NEW-EXPDAY     TO EXPDAYO  OF CCRDUPAO\n                      MOVE CCUP-OLD-EXPDAY     TO EXPDAYO  OF CCRDUPAO\n                  WHEN OTHER\n                      MOVE CCUP-OLD-CRDNAME    TO CRDNAMEO OF CCRDUPAO\n                      MOVE CCUP-OLD-CRDSTCD    TO CRDSTCDO OF CCRDUPAO\n                      MOVE CCUP-OLD-EXPDAY     TO EXPDAYO  OF CCRDUPAO\n                      MOVE CCUP-OLD-EXPMON     TO EXPMONO  OF CCRDUPAO\n                      MOVE CCUP-OLD-EXPYEAR    TO EXPYEARO OF CCRDUPAO\n              END-EVALUATE\n\n\n            END-IF\n           .\n",
+        "paragraph_lines": [1083, 1135],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initializes search criteria based on program input.",
+          "Checks if a program enter code exists; if so, continues without changes.",
+          "If the account ID is zero, sets the account ID to low values; otherwise, sets it to the current account ID.",
+          "If the card number is zero, sets the card number to low values; otherwise, sets it to the current card number.",
+          "Evaluates different conditions to move the appropriate card details to the screen depending on whether details are fetched, shown, or if changes are made.",
+          "If none of the conditions meet, moves the old card details to the screen."
+        ]
+      },
+      "3200-SETUP-SCREEN-VARS-EXIT": {
+        "paragraph_name": "3200-SETUP-SCREEN-VARS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "3200-SETUP-SCREEN-VARS-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [1136, 1138],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Marks the end of the setup screen variables process and exits the current paragraph."
+        ]
+      },
+      "3250-SETUP-INFOMSG": {
+        "paragraph_name": "3250-SETUP-INFOMSG",
+        "section": "procedure division",
+        "paragraph_code": "3250-SETUP-INFOMSG.\n      *    SETUP INFORMATION MESSAGE\n           EVALUATE TRUE\n               WHEN CDEMO-PGM-ENTER\n                    SET  PROMPT-FOR-SEARCH-KEYS TO TRUE\n               WHEN CCUP-DETAILS-NOT-FETCHED\n                   SET PROMPT-FOR-SEARCH-KEYS      TO TRUE\n               WHEN CCUP-SHOW-DETAILS\n                    SET FOUND-CARDS-FOR-ACCOUNT    TO TRUE\n               WHEN CCUP-CHANGES-NOT-OK\n                    SET PROMPT-FOR-CHANGES         TO TRUE\n               WHEN CCUP-CHANGES-OK-NOT-CONFIRMED\n                    SET PROMPT-FOR-CONFIRMATION    TO TRUE\n               WHEN CCUP-CHANGES-OKAYED-AND-DONE\n                    SET CONFIRM-UPDATE-SUCCESS     TO TRUE\n               WHEN CCUP-CHANGES-OKAYED-LOCK-ERROR\n                    SET INFORM-FAILURE             TO TRUE\n               WHEN CCUP-CHANGES-OKAYED-BUT-FAILED\n                    SET INFORM-FAILURE             TO TRUE\n               WHEN WS-NO-INFO-MESSAGE\n                   SET PROMPT-FOR-SEARCH-KEYS      TO TRUE\n           END-EVALUATE\n\n           MOVE WS-INFO-MSG                    TO INFOMSGO OF CCRDUPAO\n\n           MOVE WS-RETURN-MSG                  TO ERRMSGO OF CCRDUPAO\n           .\n",
+        "paragraph_lines": [1139, 1165],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Evaluates various conditions to determine the appropriate informational message to set.",
+          "Sets the search key prompt if entering the program or details were not fetched.",
+          "Sets flags for found cards or change-related prompts based on user actions.",
+          "Moves the prepared information message to the output message area.",
+          "Moves the return message to the error message area in the output screen."
+        ]
+      },
+      "3250-SETUP-INFOMSG-EXIT": {
+        "paragraph_name": "3250-SETUP-INFOMSG-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "3250-SETUP-INFOMSG-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [1166, 1168],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Ends the [information message setup process]<3250-SETUP-INFOMSG-EXIT> by exiting the paragraph."
+        ]
+      },
+      "3300-SETUP-SCREEN-ATTRS": {
+        "paragraph_name": "3300-SETUP-SCREEN-ATTRS",
+        "section": "procedure division",
+        "paragraph_code": "3300-SETUP-SCREEN-ATTRS.\n\n\n      *    PROTECT OR UNPROTECT BASED ON CONTEXT\n           EVALUATE TRUE\n              WHEN CCUP-DETAILS-NOT-FETCHED\n                   MOVE DFHBMFSE      TO ACCTSIDA OF CCRDUPAI\n                                         CARDSIDA OF CCRDUPAI\n                   MOVE DFHBMPRF      TO CRDNAMEA OF CCRDUPAI\n                                         CRDSTCDA OF CCRDUPAI\n      *                                  EXPDAYA  OF CCRDUPAI\n                                         EXPMONA  OF CCRDUPAI\n                                         EXPYEARA OF CCRDUPAI\n              WHEN  CCUP-SHOW-DETAILS\n              WHEN  CCUP-CHANGES-NOT-OK\n                   MOVE DFHBMPRF      TO ACCTSIDA OF CCRDUPAI\n                                         CARDSIDA OF CCRDUPAI\n      *                                  EXPDAYA  OF CCRDUPAI\n                   MOVE DFHBMFSE      TO CRDNAMEA OF CCRDUPAI\n                                         CRDSTCDA OF CCRDUPAI\n\n                                         EXPMONA  OF CCRDUPAI\n                                         EXPYEARA OF CCRDUPAI\n              WHEN CCUP-CHANGES-OK-NOT-CONFIRMED\n              WHEN CCUP-CHANGES-OKAYED-AND-DONE\n                   MOVE DFHBMPRF      TO ACCTSIDA OF CCRDUPAI\n                                         CARDSIDA OF CCRDUPAI\n                                         CRDNAMEA OF CCRDUPAI\n                                         CRDSTCDA OF CCRDUPAI\n      *                                  EXPDAYA  OF CCRDUPAI\n                                         EXPMONA  OF CCRDUPAI\n                                         EXPYEARA OF CCRDUPAI\n              WHEN OTHER\n                   MOVE DFHBMFSE      TO ACCTSIDA OF CCRDUPAI\n                                         CARDSIDA OF CCRDUPAI\n                   MOVE DFHBMPRF      TO CRDNAMEA OF CCRDUPAI\n                                         CRDSTCDA OF CCRDUPAI\n      *                                  EXPDAYA  OF CCRDUPAI\n                                         EXPMONA  OF CCRDUPAI\n                                         EXPYEARA OF CCRDUPAI\n           END-EVALUATE\n\n      *    POSITION CURSOR\n           EVALUATE TRUE\n              WHEN FOUND-CARDS-FOR-ACCOUNT\n              WHEN NO-CHANGES-DETECTED\n                  MOVE -1              TO CRDNAMEL OF CCRDUPAI\n              WHEN FLG-ACCTFILTER-NOT-OK\n              WHEN FLG-ACCTFILTER-BLANK\n                   MOVE -1             TO ACCTSIDL OF CCRDUPAI\n              WHEN FLG-CARDFILTER-NOT-OK\n              WHEN FLG-CARDFILTER-BLANK\n                   MOVE -1             TO CARDSIDL OF CCRDUPAI\n              WHEN FLG-CARDNAME-NOT-OK\n              WHEN FLG-CARDNAME-BLANK\n                  MOVE -1              TO CRDNAMEL OF  CCRDUPAI\n              WHEN FLG-CARDSTATUS-NOT-OK\n              WHEN FLG-CARDSTATUS-BLANK\n                  MOVE -1              TO CRDSTCDL OF  CCRDUPAI\n              WHEN FLG-CARDEXPMON-NOT-OK\n              WHEN FLG-CARDEXPMON-BLANK\n                  MOVE -1              TO EXPMONL  OF  CCRDUPAI\n              WHEN FLG-CARDEXPYEAR-NOT-OK\n              WHEN FLG-CARDEXPYEAR-BLANK\n                  MOVE -1              TO EXPYEARL OF  CCRDUPAI\n              WHEN OTHER\n                  MOVE -1              TO ACCTSIDL OF CCRDUPAI\n           END-EVALUATE\n\n      *    SETUP COLOR\n           IF CDEMO-LAST-MAPSET   EQUAL LIT-CCLISTMAPSET\n              MOVE DFHDFCOL            TO ACCTSIDC OF CCRDUPAO\n              MOVE DFHDFCOL            TO CARDSIDC OF CCRDUPAO\n           END-IF\n\n           IF FLG-ACCTFILTER-NOT-OK\n              MOVE DFHRED              TO ACCTSIDC OF CCRDUPAO\n           END-IF\n\n           IF  FLG-ACCTFILTER-BLANK\n           AND CDEMO-PGM-REENTER\n               MOVE '*'                TO ACCTSIDO OF CCRDUPAO\n               MOVE DFHRED             TO ACCTSIDC OF CCRDUPAO\n           END-IF\n\n           IF FLG-CARDFILTER-NOT-OK\n              MOVE DFHRED              TO CARDSIDC OF CCRDUPAO\n           END-IF\n\n           IF  FLG-CARDFILTER-BLANK\n           AND CDEMO-PGM-REENTER\n               MOVE '*'                TO CARDSIDO OF CCRDUPAO\n               MOVE DFHRED             TO CARDSIDC OF CCRDUPAO\n           END-IF\n\n           IF FLG-CARDNAME-NOT-OK\n           AND CCUP-CHANGES-NOT-OK\n              MOVE DFHRED              TO CRDNAMEC OF CCRDUPAO\n           END-IF\n\n           IF  FLG-CARDNAME-BLANK\n           AND CCUP-CHANGES-NOT-OK\n               MOVE '*'                TO CRDNAMEO OF CCRDUPAO\n               MOVE DFHRED             TO CRDNAMEC OF CCRDUPAO\n           END-IF\n\n           IF FLG-CARDSTATUS-NOT-OK\n           AND CCUP-CHANGES-NOT-OK\n              MOVE DFHRED              TO CRDSTCDC OF CCRDUPAO\n           END-IF\n\n           IF  FLG-CARDSTATUS-BLANK\n           AND CCUP-CHANGES-NOT-OK\n               MOVE '*'                TO CRDSTCDO OF CCRDUPAO\n               MOVE DFHRED             TO CRDSTCDC OF CCRDUPAO\n           END-IF\n\n           MOVE DFHBMDAR               TO EXPDAYC  OF CCRDUPAO\n\n           IF FLG-CARDEXPMON-NOT-OK\n           AND CCUP-CHANGES-NOT-OK\n              MOVE DFHRED              TO EXPMONC  OF CCRDUPAO\n           END-IF\n\n           IF  FLG-CARDEXPMON-BLANK\n           AND CCUP-CHANGES-NOT-OK\n               MOVE '*'                TO EXPMONO  OF CCRDUPAO\n               MOVE DFHRED             TO EXPMONC  OF CCRDUPAO\n           END-IF\n\n           IF  FLG-CARDEXPYEAR-NOT-OK\n           AND CCUP-CHANGES-NOT-OK\n              MOVE DFHRED              TO EXPYEARC OF CCRDUPAO\n           END-IF\n\n           IF  FLG-CARDEXPYEAR-BLANK\n           AND CCUP-CHANGES-NOT-OK\n               MOVE '*'                TO EXPYEARO OF CCRDUPAO\n               MOVE DFHRED             TO EXPYEARC OF CCRDUPAO\n           END-IF\n\n           IF  WS-NO-INFO-MESSAGE\n               MOVE DFHBMDAR           TO INFOMSGA OF CCRDUPAI\n           ELSE\n               MOVE DFHBMBRY           TO INFOMSGA OF CCRDUPAI\n           END-IF\n\n           IF PROMPT-FOR-CONFIRMATION\n              MOVE DFHBMBRY            TO FKEYSCA  OF CCRDUPAI\n           END-IF\n           .\n",
+        "paragraph_lines": [1169, 1319],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Evaluates various conditions to determine whether to protect or unprotect fields on the screen, moving appropriate attributes based on the context.",
+          "Positions the cursor in specific fields based on different filter and status conditions, moving the cursor to the desired field based on these conditions.",
+          "Sets up screen colors for various fields, distinguishing between valid and invalid input using different colors such as red for errors.",
+          "Displays information messages based on whether certain conditions are met, updating the informational message field accordingly.",
+          "Prompts the user for confirmation when necessary, updating the function key labels or prompt indicators on the screen."
+        ]
+      },
+      "3300-SETUP-SCREEN-ATTRS-EXIT": {
+        "paragraph_name": "3300-SETUP-SCREEN-ATTRS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "3300-SETUP-SCREEN-ATTRS-EXIT.\n           EXIT\n           .\n\n\n",
+        "paragraph_lines": [1320, 1322],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Exits the paragraph and returns control to the calling paragraph."]
+      },
+      "3400-SEND-SCREEN": {
+        "paragraph_name": "3400-SEND-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "3400-SEND-SCREEN.\n\n           MOVE LIT-THISMAPSET         TO CCARD-NEXT-MAPSET\n           MOVE LIT-THISMAP            TO CCARD-NEXT-MAP\n\n           EXEC CICS SEND MAP(CCARD-NEXT-MAP)\n                          MAPSET(CCARD-NEXT-MAPSET)\n                          FROM(CCRDUPAO)\n                          CURSOR\n                          ERASE\n                          FREEKB\n                          RESP(WS-RESP-CD)\n           END-EXEC\n           .\n",
+        "paragraph_lines": [1325, 1338],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets the next mapset name <LIT-THISMAPSET> into the variable <CCARD-NEXT-MAPSET>.",
+          "Sets the next map name <LIT-THISMAP> into the variable <CCARD-NEXT-MAP>.",
+          "Sends the map referenced by <CCARD-NEXT-MAP> through CICS, using the mapset <CCARD-NEXT-MAPSET> to clear the screen and move the cursor to the default position.",
+          "Specifies options to erase the screen, free the keyboard, and handle response codes in <WS-RESP-CD>."
+        ]
+      },
+      "3400-SEND-SCREEN-EXIT": {
+        "paragraph_name": "3400-SEND-SCREEN-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "3400-SEND-SCREEN-EXIT.\n           EXIT\n           .\n\n\n",
+        "paragraph_lines": [1339, 1341],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits paragraph 3400-SEND-SCREEN.",
+          "Marks the end of the 3400-SEND-SCREEN-EXIT process."
+        ]
+      },
+      "9000-READ-DATA": {
+        "paragraph_name": "9000-READ-DATA",
+        "section": "procedure division",
+        "paragraph_code": "9000-READ-DATA.\n\n           INITIALIZE CCUP-OLD-DETAILS\n           MOVE CC-ACCT-ID              TO CCUP-OLD-ACCTID\n           MOVE CC-CARD-NUM             TO CCUP-OLD-CARDID\n\n           PERFORM 9100-GETCARD-BYACCTCARD\n              THRU 9100-GETCARD-BYACCTCARD-EXIT\n\n           IF FOUND-CARDS-FOR-ACCOUNT\n\n              MOVE CARD-CVV-CD          TO CCUP-OLD-CVV-CD\n\n              INSPECT CARD-EMBOSSED-NAME\n              CONVERTING LIT-LOWER\n                      TO LIT-UPPER\n\n              MOVE CARD-EMBOSSED-NAME   TO CCUP-OLD-CRDNAME\n              MOVE CARD-EXPIRAION-DATE(1:4)\n                                        TO CCUP-OLD-EXPYEAR\n              MOVE CARD-EXPIRAION-DATE(6:2)\n                                        TO CCUP-OLD-EXPMON\n              MOVE CARD-EXPIRAION-DATE(9:2)\n                                        TO CCUP-OLD-EXPDAY\n              MOVE CARD-ACTIVE-STATUS   TO CCUP-OLD-CRDSTCD\n\n           END-IF\n           .\n\n",
+        "paragraph_lines": [1344, 1371],
+        "ref_paragraphs": ["9100-GETCARD-BYACCTCARD", "9100-GETCARD-BYACCTCARD-EXIT"],
+        "paragraph_logic": [
+          "Initializes old credit card details structure.",
+          "Moves account and card number to CCUP-OLD-DETAILS.",
+          "Calls the [card lookup process by account and card]<9100-GETCARD-BYACCTCARD> to retrieve card details.",
+          "If a card for the account is found, copies CVV and embossing information to CCUP-OLD-DETAILS.",
+          "Converts embossing name to uppercase and formats the expiration date into year, month, and day."
+        ]
+      },
+      "9000-READ-DATA-EXIT": {
+        "paragraph_name": "9000-READ-DATA-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9000-READ-DATA-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1373, 1375],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Marks the exit point of the 9000-READ-DATA paragraph.",
+          "Ensures no further processing occurs within this paragraph by executing the EXIT statement."
+        ]
+      },
+      "9100-GETCARD-BYACCTCARD": {
+        "paragraph_name": "9100-GETCARD-BYACCTCARD",
+        "section": "procedure division",
+        "paragraph_code": "9100-GETCARD-BYACCTCARD.\n      *    Read the Card file\n      *\n      *    MOVE CC-ACCT-ID-N            TO WS-CARD-RID-ACCT-ID\n           MOVE CC-CARD-NUM             TO WS-CARD-RID-CARDNUM\n\n           EXEC CICS READ\n                FILE      (LIT-CARDFILENAME)\n                RIDFLD    (WS-CARD-RID-CARDNUM)\n                KEYLENGTH (LENGTH OF WS-CARD-RID-CARDNUM)\n                INTO      (CARD-RECORD)\n                LENGTH    (LENGTH OF CARD-RECORD)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                  SET FOUND-CARDS-FOR-ACCOUNT TO TRUE\n               WHEN DFHRESP(NOTFND)\n                  SET INPUT-ERROR                    TO TRUE\n                  SET FLG-ACCTFILTER-NOT-OK          TO TRUE\n                  SET FLG-CARDFILTER-NOT-OK          TO TRUE\n                  IF  WS-RETURN-MSG-OFF\n                     SET DID-NOT-FIND-ACCTCARD-COMBO TO TRUE\n                  END-IF\n               WHEN OTHER\n                  SET INPUT-ERROR                    TO TRUE\n                  IF  WS-RETURN-MSG-OFF\n                      SET FLG-ACCTFILTER-NOT-OK      TO TRUE\n                  END-IF\n                  MOVE 'READ'                        TO ERROR-OPNAME\n                  MOVE LIT-CARDFILENAME              TO ERROR-FILE\n                  MOVE WS-RESP-CD                    TO ERROR-RESP\n                  MOVE WS-REAS-CD                    TO ERROR-RESP2\n                  MOVE WS-FILE-ERROR-MESSAGE         TO WS-RETURN-MSG\n           END-EVALUATE\n           .\n\n",
+        "paragraph_lines": [1377, 1414],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves account ID and card number to the working storage fields WS-CARD-RID-ACCT-ID and WS-CARD-RID-CARDNUM.",
+          "Performs a CICS READ operation on the card file using the provided card number.",
+          "Evaluates the response code from the CICS READ operation for different conditions.",
+          "If the response code is NORMAL, sets the flag FOUND-CARDS-FOR-ACCOUNT to TRUE.",
+          "If the response code is NOTFND, sets multiple flags to indicate an input error and a failed account/card combination.",
+          "For any other response, sets INPUT-ERROR to TRUE and populates various error-related fields with relevant information."
+        ]
+      },
+      "9100-GETCARD-BYACCTCARD-EXIT": {
+        "paragraph_name": "9100-GETCARD-BYACCTCARD-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9100-GETCARD-BYACCTCARD-EXIT.\n           EXIT\n           .\n\n\n",
+        "paragraph_lines": [1416, 1418],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Terminates the GETCARD-BYACCTCARD process cleanly and returns control to the calling paragraph."
+        ]
+      },
+      "9200-WRITE-PROCESSING": {
+        "paragraph_name": "9200-WRITE-PROCESSING",
+        "section": "procedure division",
+        "paragraph_code": "9200-WRITE-PROCESSING.\n\n      *    Read the Card file\n      *\n      *    MOVE CC-ACCT-ID-N            TO WS-CARD-RID-ACCT-ID\n           MOVE CC-CARD-NUM             TO WS-CARD-RID-CARDNUM\n\n           EXEC CICS READ\n                FILE      (LIT-CARDFILENAME)\n                UPDATE\n                RIDFLD    (WS-CARD-RID-CARDNUM)\n                KEYLENGTH (LENGTH OF WS-CARD-RID-CARDNUM)\n                INTO      (CARD-RECORD)\n                LENGTH    (LENGTH OF CARD-RECORD)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n      *****************************************************************\n      *    Could we lock the record ?\n      *****************************************************************\n           IF WS-RESP-CD EQUAL TO DFHRESP(NORMAL)\n              CONTINUE\n           ELSE\n              SET INPUT-ERROR                    TO TRUE\n              IF  WS-RETURN-MSG-OFF\n                  SET COULD-NOT-LOCK-FOR-UPDATE  TO TRUE\n              END-IF\n              GO TO 9200-WRITE-PROCESSING-EXIT\n           END-IF\n      *****************************************************************\n      *    Did someone change the record while we were out ?\n      *****************************************************************\n           PERFORM 9300-CHECK-CHANGE-IN-REC\n              THRU 9300-CHECK-CHANGE-IN-REC-EXIT\n           IF DATA-WAS-CHANGED-BEFORE-UPDATE\n              GO TO 9200-WRITE-PROCESSING-EXIT\n           END-IF\n      *****************************************************************\n      * Prepare the update\n      *****************************************************************\n           INITIALIZE CARD-UPDATE-RECORD\n           MOVE CCUP-NEW-CARDID             TO CARD-UPDATE-NUM\n           MOVE CC-ACCT-ID-N                TO CARD-UPDATE-ACCT-ID\n           MOVE CCUP-NEW-CVV-CD             TO CARD-CVV-CD-X\n           MOVE CARD-CVV-CD-N               TO CARD-UPDATE-CVV-CD\n           MOVE CCUP-NEW-CRDNAME            TO CARD-UPDATE-EMBOSSED-NAME\n           STRING  CCUP-NEW-EXPYEAR\n                   '-'\n                   CCUP-NEW-EXPMON\n                   '-'\n                   CCUP-NEW-EXPDAY\n                   DELIMITED BY SIZE\n              INTO CARD-UPDATE-EXPIRAION-DATE\n           END-STRING\n           MOVE CCUP-NEW-CRDSTCD            TO CARD-UPDATE-ACTIVE-STATUS\n\n           EXEC CICS\n                REWRITE FILE(LIT-CARDFILENAME)\n                        FROM(CARD-UPDATE-RECORD)\n                        LENGTH(LENGTH OF CARD-UPDATE-RECORD)\n                        RESP      (WS-RESP-CD)\n                        RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n      *****************************************************************\n      * Did the update succeed ?  *\n      *****************************************************************\n           IF WS-RESP-CD EQUAL TO DFHRESP(NORMAL)\n             CONTINUE\n           ELSE\n             SET LOCKED-BUT-UPDATE-FAILED    TO TRUE\n           END-IF\n           .\n",
+        "paragraph_lines": [1421, 1494],
+        "ref_paragraphs": ["9300-CHECK-CHANGE-IN-REC", "9300-CHECK-CHANGE-IN-REC-EXIT"],
+        "paragraph_logic": [
+          "Verifies if the card record can be locked successfully; proceeds if lock successful, sets error if not.",
+          "Calls the [record change check process]<9300-CHECK-CHANGE-IN-REC> to ensure no one else changed the record.",
+          "Prepares necessary fields and values for the card record update.",
+          "Rewrites the card record with new data in the dataset file.",
+          "Checks if the update was successful and proceeds, else sets the appropriate error flag."
+        ]
+      },
+      "9200-WRITE-PROCESSING-EXIT": {
+        "paragraph_name": "9200-WRITE-PROCESSING-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9200-WRITE-PROCESSING-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1495, 1497],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the write processing section.",
+          "Returns control to the calling flow to proceed with the next operation."
+        ]
+      },
+      "9300-CHECK-CHANGE-IN-REC": {
+        "paragraph_name": "9300-CHECK-CHANGE-IN-REC",
+        "section": "procedure division",
+        "paragraph_code": "9300-CHECK-CHANGE-IN-REC.\n           INSPECT CARD-EMBOSSED-NAME\n           CONVERTING LIT-LOWER\n                   TO LIT-UPPER\n\n           IF  CARD-CVV-CD              EQUAL  TO CCUP-OLD-CVV-CD\n           AND CARD-EMBOSSED-NAME       EQUAL  TO CCUP-OLD-CRDNAME\n           AND CARD-EXPIRAION-DATE(1:4) EQUAL  TO CCUP-OLD-EXPYEAR\n           AND CARD-EXPIRAION-DATE(6:2) EQUAL  TO CCUP-OLD-EXPMON\n           AND CARD-EXPIRAION-DATE(9:2) EQUAL  TO CCUP-OLD-EXPDAY\n           AND CARD-ACTIVE-STATUS       EQUAL  TO CCUP-OLD-CRDSTCD\n               CONTINUE\n           ELSE\n              SET DATA-WAS-CHANGED-BEFORE-UPDATE TO TRUE\n              MOVE CARD-CVV-CD                 TO CCUP-OLD-CVV-CD\n              MOVE CARD-EMBOSSED-NAME          TO CCUP-OLD-CRDNAME\n              MOVE CARD-EXPIRAION-DATE(1:4)    TO CCUP-OLD-EXPYEAR\n              MOVE CARD-EXPIRAION-DATE(6:2)    TO CCUP-OLD-EXPMON\n              MOVE CARD-EXPIRAION-DATE(9:2)    TO CCUP-OLD-EXPDAY\n              MOVE CARD-ACTIVE-STATUS          TO CCUP-OLD-CRDSTCD\n              GO TO 9200-WRITE-PROCESSING-EXIT\n           END-IF EXIT\n           .\n",
+        "paragraph_lines": [1499, 1521],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Converts the embossed name on the card from lower to upper case for consistency.",
+          "Compares the card CVV code, embossed name, expiration year, month, day, and active status with old values.",
+          "If no change is detected in these fields, the process continues without setting any flags.",
+          "If a change in any field is detected, sets the flag indicating data was changed and updates the old values with the new ones.",
+          "Exits the procedure if changes were detected, moving to the next step in the process."
+        ]
+      },
+      "9300-CHECK-CHANGE-IN-REC-EXIT": {
+        "paragraph_name": "9300-CHECK-CHANGE-IN-REC-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9300-CHECK-CHANGE-IN-REC-EXIT.\n           EXIT\n           .\n\n      ******************************************************************\n      *Common code to store PFKey\n      ******************************************************************\n       COPY 'CSSTRPFY'\n           .\n",
+        "paragraph_lines": [1522, 1530],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 9300-CHECK-CHANGE-IN-REC paragraph, indicating the end of its processing.",
+          "Includes common code for storing PFKey operations by copying the CSSTRPFY section."
+        ]
+      },
+      "ABEND-ROUTINE-EXIT": {
+        "paragraph_name": "ABEND-ROUTINE-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "ABEND-ROUTINE-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [1555, 1557],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Exits the ABEND routine to terminate abnormally in a clean manner."]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CVCRD01Y",
+        "program_type": "Copy",
+        "program_name": "CVCRD01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "COCRDUP",
+        "program_type": "Copy",
+        "program_name": "COCRDUP",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 8,
+        "program_id": "CSMSG02Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 9,
+        "program_id": "CSUSR01Y",
+        "program_type": "Copy",
+        "program_name": "CSUSR01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 10,
+        "program_id": "CVACT02Y",
+        "program_type": "Copy",
+        "program_name": "CVACT02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 11,
+        "program_id": "CVCUS01Y",
+        "program_type": "Copy",
+        "program_name": "CVCUS01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 12,
+        "program_id": "'CSSTRPFY'",
+        "program_type": "Copy",
+        "program_name": "'CSSTRPFY'",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

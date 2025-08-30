@@ -1,0 +1,607 @@
+{
+  "overview": {
+    "job_name": "CMPCICS",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM allows for efficient job control with customizable steps, execution sequences, and resource management."
+  },
+  "step_list": [
+    {
+      "step_name": "CICSCOB1",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY1",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COACTVWC) NEWCOPY'                        00160006\r\n                                                                        00171003\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOB2",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY2",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COCRDLIC) NEWCOPY'                        00280006\r\n                                                                        00291003\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOB3",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY3",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COCRDSLC) NEWCOPY'                        00400006\r\n                                                                        00411003\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOB4",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY4",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COCRDUPC) NEWCOPY'                        00520006\r\n                                                                        00531003\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOB5",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY5",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COUSR03C) NEWCOPY'                        00640006\r\n                                                                        00651003\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOB6",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY6",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COUSR02C) NEWCOPY'                        00760006\r\n                                                                        00760203\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOB7",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY7",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COADM01C) NEWCOPY'                        00769206\r\n                                                                        00769403\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOB8",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY8",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COBIL00C) NEWCOPY'                        00773006\r\n                                                                        00773203\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOB9",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPY9",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COMEN01C) NEWCOPY'                        00779506\r\n                                                                        00779803\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOBA",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPYA",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "                                                                        00785203\r\n /MODIFY CICSA,'CEMT SET PROG(CORPT00C) NEWCOPY'                        00786006\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOBB",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPYB",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COSGN00C) NEWCOPY'                        00789806\r\n                                                                        00790003\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOBC",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPYC",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COTRN00C) NEWCOPY'                        00799006\r\n                                                                        00799203\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOBD",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPYD",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COTRN01C) NEWCOPY'                        00801006\r\n                                                                        00801203\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOBE",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPYE",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COTRN02C) NEWCOPY'                        00809306\r\n                                                                        00809503\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOBF",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPYF",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COUSR00C) NEWCOPY'                        00814006\r\n                                                                        00814203\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOBG",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPYG",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COUSR01C) NEWCOPY'                        00819606\r\n                                                                        00830003\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "CICSCOBH",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "NEWCOPYH",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /MODIFY CICSA,'CEMT SET PROG(COACTUPC) NEWCOPY'                        00940006\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

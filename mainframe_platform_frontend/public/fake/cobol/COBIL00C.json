@@ -1,0 +1,442 @@
+{
+  "id": "596b2f58f5d441f880cfa7c8b8efa88a",
+  "name": "COBIL00C",
+  "path": "DEMO.CARDDEMO.CBL/COBIL00C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COBIL00C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "COCOM01Y",
+      "COBIL00",
+      "COTTL01Y",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CVACT01Y",
+      "CVACT03Y",
+      "CVTRA05Y",
+      "DFHAID",
+      "DFHBMSCA"
+    ],
+    "call_files": [],
+    "summarization": "### Summary of Main Flow in COBOL Code Sectons\n\n#### Procedure Division\n\nThe main flow of the COBOL program is structured into several paragraphs and sub-routines, focusing primarily on processing a bill payment transaction via a CICS interface. Below is a concise summary of the main processing steps:\n\n1. **Initialization (`MAIN-PARA`)**:\n    - Flags `ERR-FLG` and `USR-MODIFIED` are set to `TRUE`.\n    - Errors and messages are cleared.\n    - If no communication area (calculated by `EIBCALEN`), the program directs to a previous screen (`RETURN-TO-PREV-SCREEN`).\n    - If there is communication data, the program moves it to the working storage areas and proceeds with further processing.\n\n2. **Processing User Actions and Screens**:\n    - If `CDEMO-PGM-REENTER` is not set, it is initialized along with other variables and calls `PROCESS-ENTER-KEY` if a transaction is selected, followed by sending the `BILLPAY` screen.\n    - On re-entry:\n        - Receives data from the `BILLPAY` screen.\n        - Evaluates the action key (ENTER, PF3, PF4, etc.) and performs appropriate actions (`PROCESS-ENTER-KEY`, `RETURN-TO-PREV-SCREEN`, `CLEAR-CURRENT-SCREEN`).\n\n3. **Processing Return and Response Actions**:\n    - Uses `EVALUATE` statements to determine the actions for keys and potential error handling.\n\n4. **Bill Payment Processing (`PROCESS-ENTER-KEY`)**:\n    - Ensures account ID `ACTIDINI` is filled.\n    - Checks confirmation input (`CONFIRMI`):\n        - On confirmation (`Y` or `y`), it reads account data and processes the transaction.\n        - On denial (`N` or `n`), clears the screen and sets error flag.\n        - For invalid inputs, relevant error message is set.\n    - If balance is non-zero and transaction ID is valid, it performs file read, update, and write operations for the transaction records.\n\n5. **Utility Sub-Routines**:\n    - **GET-CURRENT-TIMESTAMP**: Retrieves and formats the current timestamp.\n    - **RETURN-TO-PREV-SCREEN**: Manages navigation back to the previous program.\n    - **SEND-BILLPAY-SCREEN**, **RECEIVE-BILLPAY-SCREEN**: Handles sending and receiving data from the `BILLPAY` screen.\n    - **POPULATE-HEADER-INFO**: Populates screen headers with transaction and program information.\n\n6. **File Operations (Read/Write)**:\n    - **READ-ACCTDAT-FILE**, **UPDATE-ACCTDAT-FILE**: Reads and updates account data files, with error handling on response codes.\n    - **READ-CXACAIX-FILE**, **STARTBR-TRANSACT-FILE**, **READPREV-TRANSACT-FILE**, **ENDBR-TRANSACT-FILE**, **WRITE-TRANSACT-FILE**: Manages transaction files for bill payments, including reading and writing transaction records and handling errors.\n\n7. **Screen Clearing and Initialization**:\n    - **CLEAR-CURRENT-SCREEN**: Clears current screen data fields.\n    - **INITIALIZE-ALL-FIELDS**: Initializes all relevant fields to default values to prepare for new input.\n\nThis flow ensures that user inputs for bill payment via CICS screens are validated, processed, and stored with appropriate interaction feedback and error handling. Tables such as `COBIL0AO`, `COBIL0AI`, and files like `WS-TRANSACT-FILE` and `WS-ACCTDAT-FILE` are key components in this process.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n\n           SET ERR-FLG-OFF     TO TRUE\n           SET USR-MODIFIED-NO TO TRUE\n\n           MOVE SPACES TO WS-MESSAGE\n                          ERRMSGO OF COBIL0AO\n\n           IF EIBCALEN = 0\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n               PERFORM RETURN-TO-PREV-SCREEN\n           ELSE\n               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA\n               IF NOT CDEMO-PGM-REENTER\n                   SET CDEMO-PGM-REENTER    TO TRUE\n                   MOVE LOW-VALUES          TO COBIL0AO\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   IF CDEMO-CB00-TRN-SELECTED NOT =\n                                              SPACES AND LOW-VALUES\n                       MOVE CDEMO-CB00-TRN-SELECTED TO\n                            ACTIDINI OF COBIL0AI\n                       PERFORM PROCESS-ENTER-KEY\n                   END-IF\n                   PERFORM SEND-BILLPAY-SCREEN\n               ELSE\n                   PERFORM RECEIVE-BILLPAY-SCREEN\n                   EVALUATE EIBAID\n                       WHEN DFHENTER\n                           PERFORM PROCESS-ENTER-KEY\n                       WHEN DFHPF3\n                           IF CDEMO-FROM-PROGRAM = SPACES OR LOW-VALUES\n                               MOVE 'COMEN01C' TO CDEMO-TO-PROGRAM\n                           ELSE\n                               MOVE CDEMO-FROM-PROGRAM TO\n                               CDEMO-TO-PROGRAM\n                           END-IF\n                           PERFORM RETURN-TO-PREV-SCREEN\n                       WHEN DFHPF4\n                           PERFORM CLEAR-CURRENT-SCREEN\n                       WHEN OTHER\n                           MOVE 'Y'                       TO WS-ERR-FLG\n                           MOVE CCDA-MSG-INVALID-KEY      TO WS-MESSAGE\n                           PERFORM SEND-BILLPAY-SCREEN\n                   END-EVALUATE\n               END-IF\n           END-IF\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [99, 149],
+        "ref_paragraphs": [
+          "RETURN-TO-PREV-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "SEND-BILLPAY-SCREEN",
+          "RECEIVE-BILLPAY-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "RETURN-TO-PREV-SCREEN",
+          "CLEAR-CURRENT-SCREEN",
+          "SEND-BILLPAY-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Sets initial flags and clears message fields.",
+          "Checks if the program invocation is initial or a re-entry and processes accordingly.",
+          "If initial invocation, calls [return to previous screen process]<RETURN-TO-PREV-SCREEN>.",
+          "If re-entered, populates necessary data fields and determines action based on the transaction selected.",
+          "Sends or receives the bill pay screen by calling [send bill pay screen]<SEND-BILLPAY-SCREEN> or [receive bill pay screen process]<RECEIVE-BILLPAY-SCREEN>.",
+          "Evaluates the function key pressed (Enter, PF3, PF4, Others) to perform corresponding sub-processes like [process enter key]<PROCESS-ENTER-KEY>, [return to previous screen process]<RETURN-TO-PREV-SCREEN>, or [clear current screen process]<CLEAR-CURRENT-SCREEN>."
+        ]
+      },
+      "PROCESS-ENTER-KEY": {
+        "paragraph_name": "PROCESS-ENTER-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-ENTER-KEY.\n\n           SET CONF-PAY-NO TO TRUE\n\n           EVALUATE TRUE\n               WHEN ACTIDINI OF COBIL0AI = SPACES OR LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Acct ID can NOT be empty...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE\n\n           IF NOT ERR-FLG-ON\n               MOVE ACTIDINI  OF COBIL0AI TO ACCT-ID\n                                             XREF-ACCT-ID\n\n               EVALUATE CONFIRMI OF COBIL0AI\n                   WHEN 'Y'\n                   WHEN 'y'\n                       SET CONF-PAY-YES TO TRUE\n                       PERFORM READ-ACCTDAT-FILE\n                   WHEN 'N'\n                   WHEN 'n'\n                       PERFORM CLEAR-CURRENT-SCREEN\n                       MOVE 'Y'     TO WS-ERR-FLG\n                   WHEN SPACES\n                   WHEN LOW-VALUES\n                       PERFORM READ-ACCTDAT-FILE\n                   WHEN OTHER\n                       MOVE 'Y'     TO WS-ERR-FLG\n                       MOVE 'Invalid value. Valid values are (Y/N)...'\n                                    TO WS-MESSAGE\n                       MOVE -1      TO CONFIRML OF COBIL0AI\n                       PERFORM SEND-BILLPAY-SCREEN\n               END-EVALUATE\n\n               MOVE ACCT-CURR-BAL TO WS-CURR-BAL\n               MOVE WS-CURR-BAL   TO CURBALI    OF COBIL0AI\n           END-IF\n\n           IF NOT ERR-FLG-ON\n               IF ACCT-CURR-BAL <= ZEROS AND\n                  ACTIDINI OF COBIL0AI NOT = SPACES AND LOW-VALUES\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'You have nothing to pay...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n               END-IF\n           END-IF\n\n           IF NOT ERR-FLG-ON\n\n               IF CONF-PAY-YES\n                   PERFORM READ-CXACAIX-FILE\n                   MOVE HIGH-VALUES TO TRAN-ID\n                   PERFORM STARTBR-TRANSACT-FILE\n                   PERFORM READPREV-TRANSACT-FILE\n                   PERFORM ENDBR-TRANSACT-FILE\n                   MOVE TRAN-ID     TO WS-TRAN-ID-NUM\n                   ADD 1 TO WS-TRAN-ID-NUM\n                   INITIALIZE TRAN-RECORD\n                   MOVE WS-TRAN-ID-NUM       TO TRAN-ID\n                   MOVE '02'                 TO TRAN-TYPE-CD\n                   MOVE 2                    TO TRAN-CAT-CD\n                   MOVE 'POS TERM'           TO TRAN-SOURCE\n                   MOVE 'BILL PAYMENT - ONLINE' TO TRAN-DESC\n                   MOVE ACCT-CURR-BAL        TO TRAN-AMT\n                   MOVE XREF-CARD-NUM        TO TRAN-CARD-NUM\n                   MOVE 999999999            TO TRAN-MERCHANT-ID\n                   MOVE 'BILL PAYMENT'       TO TRAN-MERCHANT-NAME\n                   MOVE 'N/A'                TO TRAN-MERCHANT-CITY\n                   MOVE 'N/A'                TO TRAN-MERCHANT-ZIP\n                   PERFORM GET-CURRENT-TIMESTAMP\n                   MOVE WS-TIMESTAMP         TO TRAN-ORIG-TS\n                                                TRAN-PROC-TS\n                   PERFORM WRITE-TRANSACT-FILE\n                   COMPUTE ACCT-CURR-BAL = ACCT-CURR-BAL - TRAN-AMT\n                   PERFORM UPDATE-ACCTDAT-FILE\n               ELSE\n                   MOVE 'Confirm to make a bill payment...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO CONFIRML OF COBIL0AI\n               END-IF\n\n               PERFORM SEND-BILLPAY-SCREEN\n\n           END-IF.\n\n",
+        "paragraph_lines": [154, 244],
+        "ref_paragraphs": [
+          "SEND-BILLPAY-SCREEN",
+          "READ-ACCTDAT-FILE",
+          "CLEAR-CURRENT-SCREEN",
+          "READ-ACCTDAT-FILE",
+          "SEND-BILLPAY-SCREEN",
+          "SEND-BILLPAY-SCREEN",
+          "READ-CXACAIX-FILE",
+          "STARTBR-TRANSACT-FILE",
+          "READPREV-TRANSACT-FILE",
+          "ENDBR-TRANSACT-FILE",
+          "GET-CURRENT-TIMESTAMP",
+          "WRITE-TRANSACT-FILE",
+          "UPDATE-ACCTDAT-FILE",
+          "SEND-BILLPAY-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Sets the confirm payment flag to true and validates the account ID; if invalid or empty, sets error flag, displays message, and sends the bill payment screen. <SEND-BILLPAY-SCREEN>",
+          "If no error, moves the account ID to the cross-reference account ID and checks the confirmation flag; if confirmed as Y or y, sets the confirm payment yes flag and reads the account data file. <READ-ACCTDAT-FILE>",
+          "If confirmation is N or n, clears the current screen, sets error flag, and sends the bill payment screen. <CLEAR-CURRENT-SCREEN> <SEND-BILLPAY-SCREEN>",
+          "Sets account current balance and validates; if balance is zero or less and account ID is valid, sets error flag, displays message, and sends the bill payment screen. <SEND-BILLPAY-SCREEN>",
+          "If no error and confirm payment yes is true, reads transaction files, processes transaction details, updates account balance, and writes transaction file; if not, requests confirmation to make a bill payment and sends the bill payment screen. <READ-CXACAIX-FILE> <STARTBR-TRANSACT-FILE> <READPREV-TRANSACT-FILE> <ENDBR-TRANSACT-FILE> <GET-CURRENT-TIMESTAMP> <WRITE-TRANSACT-FILE> <UPDATE-ACCTDAT-FILE> <SEND-BILLPAY-SCREEN>"
+        ]
+      },
+      "GET-CURRENT-TIMESTAMP": {
+        "paragraph_name": "GET-CURRENT-TIMESTAMP",
+        "section": "procedure division",
+        "paragraph_code": "GET-CURRENT-TIMESTAMP.\n\n           EXEC CICS ASKTIME\n             ABSTIME(WS-ABS-TIME)\n           END-EXEC\n\n           EXEC CICS FORMATTIME\n             ABSTIME(WS-ABS-TIME)\n             YYYYMMDD(WS-CUR-DATE-X10)\n             DATESEP('-')\n             TIME(WS-CUR-TIME-X08)\n             TIMESEP(':')\n           END-EXEC\n\n           INITIALIZE WS-TIMESTAMP\n           MOVE WS-CUR-DATE-X10 TO WS-TIMESTAMP(01:10)\n           MOVE WS-CUR-TIME-X08 TO WS-TIMESTAMP(12:08)\n           MOVE ZEROS           TO WS-TIMESTAMP-TM-MS6\n           .\n\n\n",
+        "paragraph_lines": [249, 267],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Calls CICS to get the current absolute time and stores it in WS-ABS-TIME.",
+          "Formats the absolute time into a date string (YYYY-MM-DD) and a time string (HH:MM:SS) using CICS FORMATTIME.",
+          "Initializes the working storage timestamp field (WS-TIMESTAMP).",
+          "Moves the formatted date to the first part of WS-TIMESTAMP.",
+          "Moves the formatted time to the time portion of WS-TIMESTAMP.",
+          "Sets the millisecond portion of WS-TIMESTAMP to zeros."
+        ]
+      },
+      "RETURN-TO-PREV-SCREEN": {
+        "paragraph_name": "RETURN-TO-PREV-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RETURN-TO-PREV-SCREEN.\n\n           IF CDEMO-TO-PROGRAM = LOW-VALUES OR SPACES\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n           END-IF\n           MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n           MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n           MOVE ZEROS        TO CDEMO-PGM-CONTEXT\n           EXEC CICS\n               XCTL PROGRAM(CDEMO-TO-PROGRAM)\n               COMMAREA(CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [273, 284],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the target program name is uninitialized and if so, sets it to a default value COSGN00C.",
+          "Moves the current transaction ID to the FROM-TRANID field in the communication area.",
+          "Moves the current program name to the FROM-PROGRAM field in the communication area.",
+          "Resets the program context field to zero.",
+          "Executes a CICS transfer control (XCTL) to the target program, passing the communication area."
+        ]
+      },
+      "SEND-BILLPAY-SCREEN": {
+        "paragraph_name": "SEND-BILLPAY-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "SEND-BILLPAY-SCREEN.\n\n           PERFORM POPULATE-HEADER-INFO\n\n           MOVE WS-MESSAGE TO ERRMSGO OF COBIL0AO\n\n           EXEC CICS SEND\n                     MAP('COBIL0A')\n                     MAPSET('COBIL00')\n                     FROM(COBIL0AO)\n                     ERASE\n                     CURSOR\n           END-EXEC.\n\n",
+        "paragraph_lines": [289, 301],
+        "ref_paragraphs": ["POPULATE-HEADER-INFO"],
+        "paragraph_logic": [
+          "Calls the [header information population process]<POPULATE-HEADER-INFO> to fill in header details before sending the screen.",
+          "Moves the message stored in WS-MESSAGE to the error message field of the map COBIL0AO.",
+          "Sends the COBIL0A map to the screen using CICS with the COBIL00 mapset.",
+          "Erases the screen before displaying the new map and sets the cursor position."
+        ]
+      },
+      "RECEIVE-BILLPAY-SCREEN": {
+        "paragraph_name": "RECEIVE-BILLPAY-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RECEIVE-BILLPAY-SCREEN.\n\n           EXEC CICS RECEIVE\n                     MAP('COBIL0A')\n                     MAPSET('COBIL00')\n                     INTO(COBIL0AI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC.\n\n",
+        "paragraph_lines": [306, 314],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the [RECEIVE command]<RECEIVE-BILLPAY-SCREEN> to receive data from the Bill Pay screen map COBIL0A.",
+          "Uses the specified mapset COBIL00 to align the incoming data with the correct map structure.",
+          "Loads received data into the COBIL0AI working storage area.",
+          "Handles the CICS response and response2 codes by storing them in WS-RESP-CD and WS-REAS-CD, respectively."
+        ]
+      },
+      "POPULATE-HEADER-INFO": {
+        "paragraph_name": "POPULATE-HEADER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-HEADER-INFO.\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF COBIL0AO\n           MOVE CCDA-TITLE02           TO TITLE02O OF COBIL0AO\n           MOVE WS-TRANID              TO TRNNAMEO OF COBIL0AO\n           MOVE WS-PGMNAME             TO PGMNAMEO OF COBIL0AO\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF COBIL0AO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF COBIL0AO.\n\n",
+        "paragraph_lines": [319, 338],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "plaintext",
+          "Moves the current date to a working storage variable for further manipulation.",
+          "Transfers the predefined titles to the corresponding output fields in COBIL0AO.",
+          "Moves the transaction ID and program name to their respective output fields.",
+          "Splits the current date into month, day, and year components before formatting it for display.",
+          "Transfers the formatted current date to the output field COBIL0AO.",
+          "Splits the current time into hours, minutes, and seconds before formatting it for display.",
+          "Transfers the formatted current time to the output field COBIL0AO."
+        ]
+      },
+      "READ-ACCTDAT-FILE": {
+        "paragraph_name": "READ-ACCTDAT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READ-ACCTDAT-FILE.\n\n           EXEC CICS READ\n                DATASET   (WS-ACCTDAT-FILE)\n                INTO      (ACCOUNT-RECORD)\n                LENGTH    (LENGTH OF ACCOUNT-RECORD)\n                RIDFLD    (ACCT-ID)\n                KEYLENGTH (LENGTH OF ACCT-ID)\n                UPDATE\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Account ID NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup Account...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [343, 372],
+        "ref_paragraphs": ["SEND-BILLPAY-SCREEN", "SEND-BILLPAY-SCREEN"],
+        "paragraph_logic": [
+          "Reads the account data file and loads an account record into the memory for processing.",
+          "Evaluates the read response code to determine the next steps.",
+          "If the read was successful, it continues with no further action.",
+          "If the account ID isnt found, it sets an error flag, prepares an error message, adjusts the input length, and calls the [Billpay screen sending process]<SEND-BILLPAY-SCREEN>.",
+          "If theres any other error, it logs the response and reason codes, sets an error flag, prepares a generic error message, adjusts the input length, and calls the [Billpay screen sending process]<SEND-BILLPAY-SCREEN>."
+        ]
+      },
+      "UPDATE-ACCTDAT-FILE": {
+        "paragraph_name": "UPDATE-ACCTDAT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "UPDATE-ACCTDAT-FILE.\n\n           EXEC CICS REWRITE\n                DATASET   (WS-ACCTDAT-FILE)\n                FROM      (ACCOUNT-RECORD)\n                LENGTH    (LENGTH OF ACCOUNT-RECORD)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Account ID NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to Update Account...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [377, 403],
+        "ref_paragraphs": ["SEND-BILLPAY-SCREEN", "SEND-BILLPAY-SCREEN"],
+        "paragraph_logic": [
+          "Rewrites the account data in the dataset using the provided account record.",
+          "Evaluates the response code (WS-RESP-CD) from the rewrite operation.",
+          "If the response code is normal, continues processing.",
+          "If the account ID is not found, sets an error flag and message, then calls the billing and payment screen process< SEND-BILLPAY-SCREEN>.",
+          "For other response codes, displays the response and reason codes, sets an error flag and message, then calls the billing and payment screen process< SEND-BILLPAY-SCREEN>."
+        ]
+      },
+      "READ-CXACAIX-FILE": {
+        "paragraph_name": "READ-CXACAIX-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READ-CXACAIX-FILE.\n\n           EXEC CICS READ\n                DATASET   (WS-CXACAIX-FILE)\n                INTO      (CARD-XREF-RECORD)\n                LENGTH    (LENGTH OF CARD-XREF-RECORD)\n                RIDFLD    (XREF-ACCT-ID)\n                KEYLENGTH (LENGTH OF XREF-ACCT-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Account ID NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup XREF AIX file...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [408, 436],
+        "ref_paragraphs": ["SEND-BILLPAY-SCREEN", "SEND-BILLPAY-SCREEN"],
+        "paragraph_logic": [
+          "Performs a CICS READ to retrieve data from the CXACAIX file into the CARD-XREF-RECORD structure, using XREF-ACCT-ID as the key.",
+          "Evaluates the response code (WS-RESP-CD) from the READ operation to determine the next action.",
+          "Continues processing if the response is NORMAL.",
+          "If the account ID is not found (DFHRESP(NOTFND)), sets an error flag, populates an error message, adjusts ACTIDINL, and calls the [screen sending process]<SEND-BILLPAY-SCREEN>.",
+          "Handles other response codes by displaying the response, setting an error flag, populating an error message, adjusting ACTIDINL, and calling the [screen sending process]<SEND-BILLPAY-SCREEN>."
+        ]
+      },
+      "STARTBR-TRANSACT-FILE": {
+        "paragraph_name": "STARTBR-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "STARTBR-TRANSACT-FILE.\n\n           EXEC CICS STARTBR\n                DATASET   (WS-TRANSACT-FILE)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Transaction ID NOT found...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup Transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [441, 467],
+        "ref_paragraphs": ["SEND-BILLPAY-SCREEN", "SEND-BILLPAY-SCREEN"],
+        "paragraph_logic": [
+          "Starts browsing through the transaction file dataset, beginning with the provided transaction ID.",
+          "Checks the response code after attempting to browse the dataset.",
+          "If the response is normal, continues processing without any issues.",
+          "If the transaction ID is not found, sets the error flag, prepares an error message, and performs the send billpay screen process.",
+          "For any other response, displays the response codes, sets the error flag, prepares a general error message, and performs the send billpay screen process."
+        ]
+      },
+      "READPREV-TRANSACT-FILE": {
+        "paragraph_name": "READPREV-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READPREV-TRANSACT-FILE.\n\n           EXEC CICS READPREV\n                DATASET   (WS-TRANSACT-FILE)\n                INTO      (TRAN-RECORD)\n                LENGTH    (LENGTH OF TRAN-RECORD)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(ENDFILE)\n                   MOVE ZEROS TO TRAN-ID\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup Transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [472, 496],
+        "ref_paragraphs": ["SEND-BILLPAY-SCREEN"],
+        "paragraph_logic": [
+          "Reads the previous transaction record from the WS-TRANSACT-FILE dataset into TRAN-RECORD.",
+          "Evaluates the response code (WS-RESP-CD) after attempting to read the record.",
+          "Continues if the response code indicates a successful read (DFHRESP(NORMAL)).",
+          "Moves zeroes to TRAN-ID if the end of the file is reached (DFHRESP(ENDFILE)).",
+          "Displays an error message, sets WS-ERR-FLG to Y, and sends an error message to the screen using SEND-BILLPAY-SCREEN if any other response code is encountered."
+        ]
+      },
+      "ENDBR-TRANSACT-FILE": {
+        "paragraph_name": "ENDBR-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "ENDBR-TRANSACT-FILE.\n\n           EXEC CICS ENDBR\n                DATASET   (WS-TRANSACT-FILE)\n           END-EXEC.\n\n",
+        "paragraph_lines": [501, 505],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "plaintext",
+          "Ends browsing the transaction file dataset to release any associated resources."
+        ]
+      },
+      "WRITE-TRANSACT-FILE": {
+        "paragraph_name": "WRITE-TRANSACT-FILE",
+        "section": "procedure division",
+        "paragraph_code": "WRITE-TRANSACT-FILE.\n\n           EXEC CICS WRITE\n                DATASET   (WS-TRANSACT-FILE)\n                FROM      (TRAN-RECORD)\n                LENGTH    (LENGTH OF TRAN-RECORD)\n                RIDFLD    (TRAN-ID)\n                KEYLENGTH (LENGTH OF TRAN-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   PERFORM INITIALIZE-ALL-FIELDS\n                   MOVE SPACES             TO WS-MESSAGE\n                   MOVE DFHGREEN           TO ERRMSGC  OF COBIL0AO\n                   STRING 'Payment successful. '     DELIMITED BY SIZE\n                     ' Your Transaction ID is ' DELIMITED BY SIZE\n                          TRAN-ID  DELIMITED BY SPACE\n                          '.' DELIMITED BY SIZE\n                     INTO WS-MESSAGE\n                   PERFORM SEND-BILLPAY-SCREEN\n               WHEN DFHRESP(DUPKEY)\n               WHEN DFHRESP(DUPREC)\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Tran ID already exist...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to Add Bill pay Transaction...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO ACTIDINL OF COBIL0AI\n                   PERFORM SEND-BILLPAY-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [510, 547],
+        "ref_paragraphs": [
+          "INITIALIZE-ALL-FIELDS",
+          "SEND-BILLPAY-SCREEN",
+          "SEND-BILLPAY-SCREEN",
+          "SEND-BILLPAY-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Initiates a CICS write operation to store the transaction record in the WS-TRANSACT-FILE dataset.",
+          "Evaluates the response code WS-RESP-CD to determine the result of the write operation.",
+          "If the response is normal, initializes the necessary fields, clears any error messages, and prepares a success message with the transaction ID.",
+          "Calls the SEND-BILLPAY-SCREEN paragraph to display the bill payment screen with the success message.",
+          "Handles duplicate key or record errors by setting error flags and preparing an error message before calling the SEND-BILLPAY-SCREEN paragraph.",
+          "For any other response, displays the error code and reason, sets error flags, and prepares a generic error message before calling the SEND-BILLPAY-SCREEN paragraph."
+        ]
+      },
+      "CLEAR-CURRENT-SCREEN": {
+        "paragraph_name": "CLEAR-CURRENT-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "CLEAR-CURRENT-SCREEN.\n\n           PERFORM INITIALIZE-ALL-FIELDS\n           PERFORM SEND-BILLPAY-SCREEN.\n\n",
+        "paragraph_lines": [552, 555],
+        "ref_paragraphs": ["INITIALIZE-ALL-FIELDS", "SEND-BILLPAY-SCREEN"],
+        "paragraph_logic": [
+          "Calls the [initialization process]<INITIALIZE-ALL-FIELDS> to set all screen fields to their initial states.",
+          "Calls the [screen sending process]<SEND-BILLPAY-SCREEN> to display the BillPay screen with the initialized fields."
+        ]
+      },
+      "INITIALIZE-ALL-FIELDS": {
+        "paragraph_name": "INITIALIZE-ALL-FIELDS",
+        "section": "procedure division",
+        "paragraph_code": "INITIALIZE-ALL-FIELDS.\n\n           MOVE -1              TO ACTIDINL OF COBIL0AI\n           MOVE SPACES          TO ACTIDINI OF COBIL0AI\n                                   CURBALI  OF COBIL0AI\n                                   CONFIRMI OF COBIL0AI\n                                   WS-MESSAGE.\n\n\n\n",
+        "paragraph_lines": [560, 566],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves -1 to the ACTIDINL field of the COBIL0AI structure to initialize it.",
+          "Moves spaces to the ACTIDINI, CURBALI, and CONFIRMI fields of the COBIL0AI structure for proper initialization.",
+          "Moves spaces to WS-MESSAGE field to clear any pre-existing messages."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COBIL00",
+        "program_type": "Copy",
+        "program_name": "COBIL00",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CVACT01Y",
+        "program_type": "Copy",
+        "program_name": "CVACT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "CVACT03Y",
+        "program_type": "Copy",
+        "program_name": "CVACT03Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "CVTRA05Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA05Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 8,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 9,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "workers"
+version = "0.1.0"
+description = ""
+authors = ["Hieu Tran <hieutrantrung.it@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+azure-storage-blob = "12.17.0"
+pandas = "^2.2.3"
+python-dotenv = "^1.0.1"
+antlr4-python3-runtime = "4.13.1"
+pydantic-settings = "^2.6.1"
+click = "^8.1.7"
+azure-core = "1.29.5"
+motor = "^3.6.0"
+tornado = "^6.4.2"
+loguru = "^0.7.3"
+dramatiq = "^1.17.1"
+structlog = "23.1.0"
+pika = "^1.3.2"
+langchain-openai = "^0.3.3"
+langchain = "^0.3.17"
+pygments-ibm-cobol-lexer = "^1.2"
+sqlglot = "^26.2.1"
+beautifulsoup4 = "^4.12.3"
+sqlparse = "^0.5.3"
+redis = "^5.2.1"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

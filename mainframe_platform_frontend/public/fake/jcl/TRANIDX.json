@@ -1,0 +1,75 @@
+{
+  "overview": {
+    "job_name": "TRANIDX",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM is used to execute a sequence of steps, each running programs like IDCAMS for tasks such as defining alternate indexes and building indexes in VSAM datasets."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP20",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DEFINE ALTERNATEINDEX (NAME(FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.AIX)-\r\n   RELATE(FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS)                    -\r\n   KEYS(26 304)                                                  -\r\n   NONUNIQUEKEY                                                  -\r\n   UPGRADE                                                       -\r\n   RECORDSIZE(350,350)                                           -\r\n   VOLUMES(AWSHJ1)                                               -\r\n   CYLINDERS(5,1))                                               -\r\n   DATA (NAME(FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.AIX.DATA))           -\r\n   INDEX (NAME(FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.AIX.INDEX))\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP25",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "  DEFINE PATH                                           -\r\n   (NAME(FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.AIX.PATH)        -\r\n    PATHENTRY(FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.AIX))\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP30",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   BLDINDEX                                                      -\r\n   INDATASET(FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS)                 -\r\n   OUTDATASET(FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.AIX)\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

@@ -1,0 +1,700 @@
+{
+  "id": "3d4ce87572094e95b1f0a78a894c0206",
+  "name": "COACTVWC",
+  "path": "DEMO.CARDDEMO.CBL/COACTVWC",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COACTVWC",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "CVCRD01Y",
+      "COCOM01Y",
+      "DFHBMSCA",
+      "DFHAID",
+      "COTTL01Y",
+      "COACTVW",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CSMSG02Y",
+      "CSUSR01Y",
+      "CVACT01Y",
+      "CVACT02Y",
+      "CVACT03Y",
+      "CVCUS01Y",
+      "'CSSTRPFY'"
+    ],
+    "call_files": [],
+    "summarization": "This COBOL program is primarily focused on processing inputs and handling account-related transactions within a CICS environment.\n\n### Main Sections:\n\n1. **0000-MAIN**:\n   - **Initialization**: Initializes various working storage areas (e.g., `CC-WORK-AREA`, `WS-MISC-STORAGE`, `WS-COMMAREA`) and sets up default values and flags.\n   - **Error Handling Setup**: Ensures that any error messages are cleared initially.\n   - **Parameter Handling**: Processes the `DFHCOMMAREA` to store passed data or initialize program areas as necessary.\n   - **PFKey Mapping**: Stores the mapped PF Key and validates the AID keys (e.g., `CCARD-AID-ENTER`, `CCARD-AID-PFK03`).\n   - **Decision Making**: Determines the next action based on the inputs received using an `EVALUATE` construct.\n   - **Return Handling**: Sets up the return message and CICS return.\n\n2. **1000-SEND-MAP**:\n   - **Subsections (`1100`, `1200`, `1300`, `1400`)**: Each performs tasks to initialize the screen, set up screen variables and attributes, and send the screen to the user.\n\n3. **2000-PROCESS-INPUTS**:\n   - **Subsections (`2100`, `2200`, `2210`)**: Receives and edits map inputs, checks individual field validity (e.g. account ID).\n\n4. **9000-READ-ACCT**:\n   - **Reads Records**: Performs read operations on account (`9300-GETACCTDATA-BYACCT`), customer (`9400-GETCUSTDATA-BYCUST`), and cross-reference (`9200-GETCARDXREF-BYACCT`) files.\n   - **Error Handling**: Handles not found and other read errors by setting appropriate flags and messages.\n\n5. **Utility Routines**:\n   - **SEND-PLAIN-TEXT and SEND-LONG-TEXT**: Utility sections for sending error/debugging messages as plain or long text.\n   - **ABEND-ROUTINE**: Handles abnormal ends (abends) by sending an error message and performing a CICS abend with a specific code.\n\n### Key Table Names:\n- **CARDDEMO-COMMAREA**: Communicates data between different COBOL programs.\n- **CACTVWAO, CACTVWAI**: Used in mapping and processing screen input/output areas.\n- **DFHCOMMAREA**: CICS communication area for passing data between transactions and programs.\n- **ACCOUNT-RECORD, CUSTOMER-RECORD, CARD-XREF-RECORD**: Represents account, customer, and cross-reference file structures.\n\nThis program encompasses transaction handling, screen interaction, input validation, and comprehensive error handling to facilitate robust multi-program COBOL environments.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "1",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   FILLER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "1",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "0000-MAIN": {
+        "paragraph_name": "0000-MAIN",
+        "section": "procedure division",
+        "paragraph_code": "0000-MAIN.\n\n           EXEC CICS HANDLE ABEND\n                     LABEL(ABEND-ROUTINE)\n           END-EXEC\n\n           INITIALIZE CC-WORK-AREA\n                      WS-MISC-STORAGE\n                      WS-COMMAREA\n      *****************************************************************\n      * Store our context\n      *****************************************************************\n           MOVE LIT-THISTRANID       TO WS-TRANID\n      *****************************************************************\n      * Ensure error message is cleared                               *\n      *****************************************************************\n           SET WS-RETURN-MSG-OFF  TO TRUE\n      *****************************************************************\n      * Store passed data if  any                *\n      *****************************************************************\n           IF EIBCALEN IS EQUAL TO 0\n               OR (CDEMO-FROM-PROGRAM = LIT-MENUPGM\n               AND NOT CDEMO-PGM-REENTER)\n              INITIALIZE CARDDEMO-COMMAREA\n                         WS-THIS-PROGCOMMAREA\n           ELSE\n              MOVE DFHCOMMAREA (1:LENGTH OF CARDDEMO-COMMAREA)  TO\n                                CARDDEMO-COMMAREA\n              MOVE DFHCOMMAREA(LENGTH OF CARDDEMO-COMMAREA + 1:\n                               LENGTH OF WS-THIS-PROGCOMMAREA ) TO\n                                WS-THIS-PROGCOMMAREA\n           END-IF\n\n      *****************************************************************\n      * Remap PFkeys as needed.\n      * Store the Mapped PF Key\n      *****************************************************************\n           PERFORM YYYY-STORE-PFKEY\n              THRU YYYY-STORE-PFKEY-EXIT\n      *****************************************************************\n      * Check the AID to see if its valid at this point               *\n      * F3 - Exit\n      * Enter show screen again\n      *****************************************************************\n           SET PFK-INVALID TO TRUE\n           IF CCARD-AID-ENTER OR\n              CCARD-AID-PFK03\n              SET PFK-VALID TO TRUE\n           END-IF\n\n           IF PFK-INVALID\n              SET CCARD-AID-ENTER TO TRUE\n           END-IF\n\n      *****************************************************************\n      * Decide what to do based on inputs received\n      *****************************************************************\n      *****************************************************************\n      *****************************************************************\n      * Decide what to do based on inputs received\n      *****************************************************************\n           EVALUATE TRUE\n              WHEN CCARD-AID-PFK03\n      ******************************************************************\n      *            XCTL TO CALLING PROGRAM OR MAIN MENU\n      ******************************************************************\n                   IF CDEMO-FROM-TRANID    EQUAL LOW-VALUES\n                   OR CDEMO-FROM-TRANID    EQUAL SPACES\n                      MOVE LIT-MENUTRANID  TO CDEMO-TO-TRANID\n                   ELSE\n                      MOVE CDEMO-FROM-TRANID  TO CDEMO-TO-TRANID\n                   END-IF\n                   IF CDEMO-FROM-PROGRAM   EQUAL LOW-VALUES\n                   OR CDEMO-FROM-PROGRAM   EQUAL SPACES\n                      MOVE LIT-MENUPGM     TO CDEMO-TO-PROGRAM\n                   ELSE\n                      MOVE CDEMO-FROM-PROGRAM TO CDEMO-TO-PROGRAM\n                   END-IF\n\n                   MOVE LIT-THISTRANID     TO CDEMO-FROM-TRANID\n                   MOVE LIT-THISPGM        TO CDEMO-FROM-PROGRAM\n\n                   SET  CDEMO-USRTYP-USER  TO TRUE\n                   SET  CDEMO-PGM-ENTER    TO TRUE\n                   MOVE LIT-THISMAPSET     TO CDEMO-LAST-MAPSET\n                   MOVE LIT-THISMAP        TO CDEMO-LAST-MAP\n      *\n                   EXEC CICS XCTL\n                             PROGRAM (CDEMO-TO-PROGRAM)\n                             COMMAREA(CARDDEMO-COMMAREA)\n                   END-EXEC\n              WHEN CDEMO-PGM-ENTER\n      ******************************************************************\n      *            COMING FROM SOME OTHER CONTEXT\n      *            SELECTION CRITERIA TO BE GATHERED\n      ******************************************************************\n                   PERFORM 1000-SEND-MAP THRU\n                           1000-SEND-MAP-EXIT\n                   GO TO COMMON-RETURN\n              WHEN CDEMO-PGM-REENTER\n                   PERFORM 2000-PROCESS-INPUTS\n                      THRU 2000-PROCESS-INPUTS-EXIT\n                   IF INPUT-ERROR\n                      PERFORM 1000-SEND-MAP\n                         THRU 1000-SEND-MAP-EXIT\n                      GO TO COMMON-RETURN\n                   ELSE\n                      PERFORM 9000-READ-ACCT\n                         THRU 9000-READ-ACCT-EXIT\n                      PERFORM 1000-SEND-MAP\n                         THRU 1000-SEND-MAP-EXIT\n                      GO TO COMMON-RETURN\n                   END-IF\n             WHEN OTHER\n                   MOVE LIT-THISPGM    TO ABEND-CULPRIT\n                   MOVE '0001'         TO ABEND-CODE\n                   MOVE SPACES         TO ABEND-REASON\n                   MOVE 'UNEXPECTED DATA SCENARIO'\n                                       TO WS-RETURN-MSG\n                   PERFORM SEND-PLAIN-TEXT\n                      THRU SEND-PLAIN-TEXT-EXIT\n           END-EVALUATE\n\n      * If we had an error setup error message that slipped through\n      * Display and return\n           IF INPUT-ERROR\n              MOVE WS-RETURN-MSG  TO CCARD-ERROR-MSG\n              PERFORM 1000-SEND-MAP\n                 THRU 1000-SEND-MAP-EXIT\n              GO TO COMMON-RETURN\n           END-IF\n           .\n",
+        "paragraph_lines": [262, 393],
+        "ref_paragraphs": [
+          "YYYY-STORE-PFKEY",
+          "YYYY-STORE-PFKEY-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP-EXIT",
+          "2000-PROCESS-INPUTS",
+          "2000-PROCESS-INPUTS-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP-EXIT",
+          "9000-READ-ACCT",
+          "9000-READ-ACCT-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP-EXIT",
+          "SEND-PLAIN-TEXT",
+          "SEND-PLAIN-TEXT-EXIT",
+          "1000-SEND-MAP",
+          "1000-SEND-MAP-EXIT"
+        ],
+        "paragraph_logic": [
+          "Handles abends by directing to the abend routine <ABEND-ROUTINE>.",
+          "Initializes work areas for application use and stores transaction context.",
+          "Performs the PF Key store process <YYYY-STORE-PFKEY> to remap PF keys as needed.",
+          "Decides actions based on input, including sending map <1000-SEND-MAP>, processing inputs <2000-PROCESS-INPUTS>, and reading accounts <9000-READ-ACCT>.",
+          "Handles unexpected scenarios with the abend program and sends error message using the plain text sender <SEND-PLAIN-TEXT>."
+        ]
+      },
+      "COMMON-RETURN": {
+        "paragraph_name": "COMMON-RETURN",
+        "section": "procedure division",
+        "paragraph_code": "COMMON-RETURN.\n           MOVE WS-RETURN-MSG     TO CCARD-ERROR-MSG\n\n           MOVE  CARDDEMO-COMMAREA    TO WS-COMMAREA\n           MOVE  WS-THIS-PROGCOMMAREA TO\n                  WS-COMMAREA(LENGTH OF CARDDEMO-COMMAREA + 1:\n                               LENGTH OF WS-THIS-PROGCOMMAREA )\n\n           EXEC CICS RETURN\n                TRANSID (LIT-THISTRANID)\n                COMMAREA (WS-COMMAREA)\n                LENGTH(LENGTH OF WS-COMMAREA)\n           END-EXEC\n           .\n",
+        "paragraph_lines": [394, 407],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the error message from working storage to the card error message field.",
+          "Copies the card demo communication area to a working storage variable for communication area.",
+          "Appends the current programs communication area to the copied card demo communication area.",
+          "Executes the CICS RETURN command to end the transaction and return control to CICS.",
+          "Transfers control along with the communication area and its length to the next transaction."
+        ]
+      },
+      "0000-MAIN-EXIT": {
+        "paragraph_name": "0000-MAIN-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "0000-MAIN-EXIT.\n           EXIT\n           .\n\n\n",
+        "paragraph_lines": [411, 413],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Exits the main program."]
+      },
+      "1000-SEND-MAP": {
+        "paragraph_name": "1000-SEND-MAP",
+        "section": "procedure division",
+        "paragraph_code": "1000-SEND-MAP.\n           PERFORM 1100-SCREEN-INIT\n              THRU 1100-SCREEN-INIT-EXIT\n           PERFORM 1200-SETUP-SCREEN-VARS\n              THRU 1200-SETUP-SCREEN-VARS-EXIT\n           PERFORM 1300-SETUP-SCREEN-ATTRS\n              THRU 1300-SETUP-SCREEN-ATTRS-EXIT\n           PERFORM 1400-SEND-SCREEN\n              THRU 1400-SEND-SCREEN-EXIT\n           .\n\n",
+        "paragraph_lines": [416, 425],
+        "ref_paragraphs": [
+          "1100-SCREEN-INIT",
+          "1100-SCREEN-INIT-EXIT",
+          "1200-SETUP-SCREEN-VARS",
+          "1200-SETUP-SCREEN-VARS-EXIT",
+          "1300-SETUP-SCREEN-ATTRS",
+          "1300-SETUP-SCREEN-ATTRS-EXIT",
+          "1400-SEND-SCREEN",
+          "1400-SEND-SCREEN-EXIT"
+        ],
+        "paragraph_logic": [
+          "Calls the [screen initialization process]<1100-SCREEN-INIT> to clear and prepare the screen for new data.",
+          "Calls the [screen variables setup process]<1200-SETUP-SCREEN-VARS> to initialize variables needed for the screen display.",
+          "Calls the [screen attribute setup process]<1300-SETUP-SCREEN-ATTRS> to prepare screen attributes, such as positioning and field length.",
+          "Calls the [screen sending process]<1400-SEND-SCREEN> to send the screen map to the user, showing the updated data."
+        ]
+      },
+      "1000-SEND-MAP-EXIT": {
+        "paragraph_name": "1000-SEND-MAP-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1000-SEND-MAP-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [427, 429],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 1000-SEND-MAP paragraph gracefully, indicating the end of this procedure."
+        ]
+      },
+      "1100-SCREEN-INIT": {
+        "paragraph_name": "1100-SCREEN-INIT",
+        "section": "procedure division",
+        "paragraph_code": "1100-SCREEN-INIT.\n           MOVE LOW-VALUES             TO CACTVWAO\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF CACTVWAO\n           MOVE CCDA-TITLE02           TO TITLE02O OF CACTVWAO\n           MOVE LIT-THISTRANID         TO TRNNAMEO OF CACTVWAO\n           MOVE LIT-THISPGM            TO PGMNAMEO OF CACTVWAO\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF CACTVWAO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF CACTVWAO\n\n           .\n\n",
+        "paragraph_lines": [431, 455],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initializes the screen by clearing it with low values.",
+          "Captures the current date and stores it in working storage.",
+          "Sets the screens title and transaction/program identifiers using predefined literals.",
+          "Formats the current date into separate day, month, and year fields for display.",
+          "Formats the current time into separate hour, minute, and second fields for display.",
+          "Updates the screen fields with the formatted current date and time values."
+        ]
+      },
+      "1100-SCREEN-INIT-EXIT": {
+        "paragraph_name": "1100-SCREEN-INIT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1100-SCREEN-INIT-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [457, 459],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the screen initialization process, ending this section of the code flow."
+        ]
+      },
+      "1200-SETUP-SCREEN-VARS": {
+        "paragraph_name": "1200-SETUP-SCREEN-VARS",
+        "section": "procedure division",
+        "paragraph_code": "1200-SETUP-SCREEN-VARS.\n      *    INITIALIZE SEARCH CRITERIA\n           IF EIBCALEN = 0\n              SET  WS-PROMPT-FOR-INPUT TO TRUE\n           ELSE\n              IF FLG-ACCTFILTER-BLANK\n                 MOVE LOW-VALUES   TO ACCTSIDO OF CACTVWAO\n              ELSE\n                 MOVE CC-ACCT-ID   TO ACCTSIDO OF CACTVWAO\n              END-IF\n\n              IF FOUND-ACCT-IN-MASTER\n              OR FOUND-CUST-IN-MASTER\n                 MOVE ACCT-ACTIVE-STATUS  TO ACSTTUSO OF CACTVWAO\n\n                 MOVE ACCT-CURR-BAL       TO ACURBALO OF CACTVWAO\n\n                 MOVE ACCT-CREDIT-LIMIT   TO ACRDLIMO OF CACTVWAO\n\n                 MOVE ACCT-CASH-CREDIT-LIMIT\n                                          TO ACSHLIMO OF CACTVWAO\n\n                 MOVE ACCT-CURR-CYC-CREDIT\n                                          TO ACRCYCRO OF CACTVWAO\n\n                 MOVE ACCT-CURR-CYC-DEBIT TO ACRCYDBO OF CACTVWAO\n\n                 MOVE ACCT-OPEN-DATE      TO ADTOPENO OF CACTVWAO\n                 MOVE ACCT-EXPIRAION-DATE TO AEXPDTO  OF CACTVWAO\n                 MOVE ACCT-REISSUE-DATE   TO AREISDTO OF CACTVWAO\n                 MOVE ACCT-GROUP-ID       TO AADDGRPO OF CACTVWAO\n              END-IF\n\n              IF FOUND-CUST-IN-MASTER\n                MOVE CUST-ID              TO ACSTNUMO OF CACTVWAO\n      *         MOVE CUST-SSN             TO ACSTSSNO OF CACTVWAO\n                STRING\n                    CUST-SSN(1:3)\n                    '-'\n                    CUST-SSN(4:2)\n                    '-'\n                    CUST-SSN(6:4)\n                    DELIMITED BY SIZE\n                    INTO ACSTSSNO OF CACTVWAO\n                END-STRING\n                MOVE CUST-FICO-CREDIT-SCORE\n                                          TO ACSTFCOO OF CACTVWAO\n                MOVE CUST-DOB-YYYY-MM-DD  TO ACSTDOBO OF CACTVWAO\n                MOVE CUST-FIRST-NAME      TO ACSFNAMO OF CACTVWAO\n                MOVE CUST-MIDDLE-NAME     TO ACSMNAMO OF CACTVWAO\n                MOVE CUST-LAST-NAME       TO ACSLNAMO OF CACTVWAO\n                MOVE CUST-ADDR-LINE-1     TO ACSADL1O OF CACTVWAO\n                MOVE CUST-ADDR-LINE-2     TO ACSADL2O OF CACTVWAO\n                MOVE CUST-ADDR-LINE-3     TO ACSCITYO OF CACTVWAO\n                MOVE CUST-ADDR-STATE-CD   TO ACSSTTEO OF CACTVWAO\n                MOVE CUST-ADDR-ZIP        TO ACSZIPCO OF CACTVWAO\n                MOVE CUST-ADDR-COUNTRY-CD TO ACSCTRYO OF CACTVWAO\n                MOVE CUST-PHONE-NUM-1     TO ACSPHN1O OF CACTVWAO\n                MOVE CUST-PHONE-NUM-2     TO ACSPHN2O OF CACTVWAO\n                MOVE CUST-GOVT-ISSUED-ID  TO ACSGOVTO OF CACTVWAO\n                MOVE CUST-EFT-ACCOUNT-ID  TO ACSEFTCO OF CACTVWAO\n                MOVE CUST-PRI-CARD-HOLDER-IND\n                                          TO ACSPFLGO OF CACTVWAO\n              END-IF\n\n            END-IF\n\n      *    SETUP MESSAGE\n           IF WS-NO-INFO-MESSAGE\n             SET WS-PROMPT-FOR-INPUT TO TRUE\n           END-IF\n\n           MOVE WS-RETURN-MSG          TO ERRMSGO OF CACTVWAO\n\n           MOVE WS-INFO-MSG            TO INFOMSGO OF CACTVWAO\n           .\n\n",
+        "paragraph_lines": [460, 535],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if its the first execution by examining EIBCALEN. If true, it prompts for input; else it processes account filters.",
+          "Initializes account variables based on found account status in the master record and moves various account details.",
+          "Transfers customer information into screen fields if the customer is found in the master record, including SSN, credit score, and contact details.",
+          "Handles formatted string construction for customer SSN and moves additional customer data into screen fields.",
+          "Sets up error and info messages to be displayed on the screen."
+        ]
+      },
+      "1200-SETUP-SCREEN-VARS-EXIT": {
+        "paragraph_name": "1200-SETUP-SCREEN-VARS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1200-SETUP-SCREEN-VARS-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [537, 539],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the paragraph to prevent any further processing since its explicitly designed as an exit point."
+        ]
+      },
+      "1300-SETUP-SCREEN-ATTRS": {
+        "paragraph_name": "1300-SETUP-SCREEN-ATTRS",
+        "section": "procedure division",
+        "paragraph_code": "1300-SETUP-SCREEN-ATTRS.\n      *    PROTECT OR UNPROTECT BASED ON CONTEXT\n           MOVE DFHBMFSE               TO ACCTSIDA OF CACTVWAI\n\n      *    POSITION CURSOR\n           EVALUATE TRUE\n              WHEN FLG-ACCTFILTER-NOT-OK\n              WHEN FLG-ACCTFILTER-BLANK\n                   MOVE -1             TO ACCTSIDL OF CACTVWAI\n              WHEN OTHER\n                   MOVE -1             TO ACCTSIDL OF CACTVWAI\n           END-EVALUATE\n\n      *    SETUP COLOR\n           MOVE DFHDFCOL               TO ACCTSIDC OF CACTVWAO\n\n           IF FLG-ACCTFILTER-NOT-OK\n              MOVE DFHRED              TO ACCTSIDC OF CACTVWAO\n           END-IF\n\n           IF  FLG-ACCTFILTER-BLANK\n           AND CDEMO-PGM-REENTER\n               MOVE '*'                TO ACCTSIDO OF CACTVWAO\n               MOVE DFHRED             TO ACCTSIDC OF CACTVWAO\n           END-IF\n\n           IF  WS-NO-INFO-MESSAGE\n               MOVE DFHBMDAR           TO INFOMSGC OF CACTVWAO\n           ELSE\n               MOVE DFHNEUTR           TO INFOMSGC OF CACTVWAO\n           END-IF\n           .\n\n",
+        "paragraph_lines": [541, 572],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Protects or unprotects fields based on context by moving appropriate values to screen attributes.",
+          "Positions the cursor according to filter statuses with an EVALUATE statement that sets a screen fields value.",
+          "Sets up the screen color by moving default color values and adapting based on filter flags.",
+          "If account filter is not OK or blank, specific colors and indicators are adjusted.",
+          "Checks for message flags and adjusts the screen color for information messages as needed."
+        ]
+      },
+      "1300-SETUP-SCREEN-ATTRS-EXIT": {
+        "paragraph_name": "1300-SETUP-SCREEN-ATTRS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1300-SETUP-SCREEN-ATTRS-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [574, 576],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the 1300-SETUP-SCREEN-ATTRS paragraph, marking the end of the setup screen attributes process."
+        ]
+      },
+      "1400-SEND-SCREEN": {
+        "paragraph_name": "1400-SEND-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "1400-SEND-SCREEN.\n\n           MOVE LIT-THISMAPSET         TO CCARD-NEXT-MAPSET\n           MOVE LIT-THISMAP            TO CCARD-NEXT-MAP\n           SET  CDEMO-PGM-REENTER TO TRUE\n\n           EXEC CICS SEND MAP(CCARD-NEXT-MAP)\n                          MAPSET(CCARD-NEXT-MAPSET)\n                          FROM(CACTVWAO)\n                          CURSOR\n                          ERASE\n                          FREEKB\n                          RESP(WS-RESP-CD)\n           END-EXEC\n           .\n",
+        "paragraph_lines": [577, 591],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the constant value of the current mapset to the next mapset field.",
+          "Moves the constant value of the current map to the next map field.",
+          "Sets the program re-entry flag to true to allow re-entry into the program after the screen is sent.",
+          "Executes a CICS command to send the screen map, erase the screen, and free the keyboard, ensuring the map is updated for the user."
+        ]
+      },
+      "1400-SEND-SCREEN-EXIT": {
+        "paragraph_name": "1400-SEND-SCREEN-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1400-SEND-SCREEN-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [592, 594],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Exits the 1400-SEND-SCREEN paragraph."]
+      },
+      "2000-PROCESS-INPUTS": {
+        "paragraph_name": "2000-PROCESS-INPUTS",
+        "section": "procedure division",
+        "paragraph_code": "2000-PROCESS-INPUTS.\n           PERFORM 2100-RECEIVE-MAP\n              THRU 2100-RECEIVE-MAP-EXIT\n           PERFORM 2200-EDIT-MAP-INPUTS\n              THRU 2200-EDIT-MAP-INPUTS-EXIT\n           MOVE WS-RETURN-MSG  TO CCARD-ERROR-MSG\n           MOVE LIT-THISPGM    TO CCARD-NEXT-PROG\n           MOVE LIT-THISMAPSET TO CCARD-NEXT-MAPSET\n           MOVE LIT-THISMAP    TO CCARD-NEXT-MAP\n           .\n\n",
+        "paragraph_lines": [596, 605],
+        "ref_paragraphs": [
+          "2100-RECEIVE-MAP",
+          "2100-RECEIVE-MAP-EXIT",
+          "2200-EDIT-MAP-INPUTS",
+          "2200-EDIT-MAP-INPUTS-EXIT"
+        ],
+        "paragraph_logic": [
+          "Calls the [map receiving process]<2100-RECEIVE-MAP> to gather input data from the user interaction screen.",
+          "Calls the [map input editing process]<2200-EDIT-MAP-INPUTS> to validate and edit the inputs received from the map.",
+          "Moves the return message to the error message field.",
+          "Sets the next program, mapset, and map to execute by moving predefined literals to the corresponding fields."
+        ]
+      },
+      "2000-PROCESS-INPUTS-EXIT": {
+        "paragraph_name": "2000-PROCESS-INPUTS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2000-PROCESS-INPUTS-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [607, 609],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the [process inputs] section to signify the end of input processing and return control to the calling paragraph or section."
+        ]
+      },
+      "2100-RECEIVE-MAP": {
+        "paragraph_name": "2100-RECEIVE-MAP",
+        "section": "procedure division",
+        "paragraph_code": "2100-RECEIVE-MAP.\n           EXEC CICS RECEIVE MAP(LIT-THISMAP)\n                     MAPSET(LIT-THISMAPSET)\n                     INTO(CACTVWAI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC\n           .\n\n",
+        "paragraph_lines": [610, 617],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Receives the specified map (LIT-THISMAP) from the terminal into the working-storage area (CACTVWAI).",
+          "Indicates which mapset (LIT-THISMAPSET) the map belongs to.",
+          "Checks the response code (WS-RESP-CD) to handle any CICS command errors.",
+          "Monitors additional response (WS-REAS-CD) for more specific error information.",
+          "Ensures the received data is ready for further processing in subsequent logic."
+        ]
+      },
+      "2100-RECEIVE-MAP-EXIT": {
+        "paragraph_name": "2100-RECEIVE-MAP-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2100-RECEIVE-MAP-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [619, 621],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the exit command to terminate the paragraph <2100-RECEIVE-MAP-EXIT> execution."
+        ]
+      },
+      "2200-EDIT-MAP-INPUTS": {
+        "paragraph_name": "2200-EDIT-MAP-INPUTS",
+        "section": "procedure division",
+        "paragraph_code": "2200-EDIT-MAP-INPUTS.\n\n           SET INPUT-OK                  TO TRUE\n           SET FLG-ACCTFILTER-ISVALID    TO TRUE\n\n      *    REPLACE * WITH LOW-VALUES\n           IF  ACCTSIDI OF CACTVWAI = '*'\n           OR  ACCTSIDI OF CACTVWAI = SPACES\n               MOVE LOW-VALUES           TO  CC-ACCT-ID\n           ELSE\n               MOVE ACCTSIDI OF CACTVWAI TO  CC-ACCT-ID\n           END-IF\n\n      *    INDIVIDUAL FIELD EDITS\n           PERFORM 2210-EDIT-ACCOUNT\n              THRU 2210-EDIT-ACCOUNT-EXIT\n\n      *    CROSS FIELD EDITS\n           IF  FLG-ACCTFILTER-BLANK\n               SET NO-SEARCH-CRITERIA-RECEIVED TO TRUE\n           END-IF\n           .\n\n",
+        "paragraph_lines": [622, 643],
+        "ref_paragraphs": ["2210-EDIT-ACCOUNT", "2210-EDIT-ACCOUNT-EXIT"],
+        "paragraph_logic": [
+          "Sets initial conditions indicating that the input and account filter are valid.",
+          "Checks the account ID: if it is * or blank, replaces it with low values; otherwise, moves the provided account ID.",
+          "Calls the [account field edit process]<2210-EDIT-ACCOUNT> to perform validation and processing of the account field.",
+          "Checks cross-field conditions to determine if no search criteria were received, setting a corresponding flag if true."
+        ]
+      },
+      "2200-EDIT-MAP-INPUTS-EXIT": {
+        "paragraph_name": "2200-EDIT-MAP-INPUTS-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2200-EDIT-MAP-INPUTS-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [645, 647],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Marks the exit point of the map input editing process.",
+          "Ends the execution of the paragraph 2200-EDIT-MAP-INPUTS-EXIT."
+        ]
+      },
+      "2210-EDIT-ACCOUNT": {
+        "paragraph_name": "2210-EDIT-ACCOUNT",
+        "section": "procedure division",
+        "paragraph_code": "2210-EDIT-ACCOUNT.\n           SET FLG-ACCTFILTER-NOT-OK TO TRUE\n\n      *    Not supplied\n           IF CC-ACCT-ID   EQUAL LOW-VALUES\n           OR CC-ACCT-ID   EQUAL SPACES\n              SET INPUT-ERROR           TO TRUE\n              SET FLG-ACCTFILTER-BLANK  TO TRUE\n              IF WS-RETURN-MSG-OFF\n                 SET WS-PROMPT-FOR-ACCT TO TRUE\n              END-IF\n              MOVE ZEROES       TO CDEMO-ACCT-ID\n              GO TO  2210-EDIT-ACCOUNT-EXIT\n           END-IF\n      *\n      *    Not numeric\n      *    Not 11 characters\n           IF CC-ACCT-ID  IS NOT NUMERIC\n           OR CC-ACCT-ID  EQUAL ZEROES\n              SET INPUT-ERROR TO TRUE\n              SET FLG-ACCTFILTER-NOT-OK TO TRUE\n              IF WS-RETURN-MSG-OFF\n                MOVE\n              'Account Filter must  be a non-zero 11 digit number'      00\n                              TO WS-RETURN-MSG\n              END-IF\n              MOVE ZERO       TO CDEMO-ACCT-ID\n              GO TO",
+        "paragraph_lines": [649, 676],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Sets account filter flag to not OK initially.",
+          "Checks if the account ID is not supplied (either low values or spaces) and sets input error and account filter blank flags.",
+          "If WS-RETURN-MSG is off, prompts for account ID and exits paragraph.",
+          "Checks if the account ID is not numeric or equal to zeroes and sets input error and account filter not OK flags.",
+          "If WS-RETURN-MSG is off, sets return message indicating that the account filter must be a non-zero 11 digit number."
+        ]
+      },
+      "2210-EDIT-ACCOUNT-EXIT": {
+        "paragraph_name": "2210-EDIT-ACCOUNT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2210-EDIT-ACCOUNT-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [683, 685],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Terminates the 2210-EDIT-ACCOUNT paragraph and returns control to the calling logic."
+        ]
+      },
+      "9000-READ-ACCT": {
+        "paragraph_name": "9000-READ-ACCT",
+        "section": "procedure division",
+        "paragraph_code": "9000-READ-ACCT.\n\n           SET  WS-NO-INFO-MESSAGE  TO TRUE\n\n           MOVE CDEMO-ACCT-ID TO WS-CARD-RID-ACCT-ID\n\n           PERFORM 9200-GETCARDXREF-BYACCT\n              THRU 9200-GETCARDXREF-BYACCT-EXIT\n\n      *    IF DID-NOT-FIND-ACCT-IN-CARDXREF\n           IF FLG-ACCTFILTER-NOT-OK\n              GO TO 9000-READ-ACCT-EXIT\n           END-IF\n\n           PERFORM 9300-GETACCTDATA-BYACCT\n              THRU 9300-GETACCTDATA-BYACCT-EXIT\n\n           IF DID-NOT-FIND-ACCT-IN-ACCTDAT\n              GO TO 9000-READ-ACCT-EXIT\n           END-IF\n\n           MOVE CDEMO-CUST-ID TO WS-CARD-RID-CUST-ID\n\n           PERFORM 9400-GETCUSTDATA-BYCUST\n              THRU 9400-GETCUSTDATA-BYCUST-EXIT\n\n           IF DID-NOT-FIND-CUST-IN-CUSTDAT\n              GO TO 9000-READ-ACCT-EXIT\n           END-IF\n\n\n           .\n\n",
+        "paragraph_lines": [687, 718],
+        "ref_paragraphs": [
+          "9200-GETCARDXREF-BYACCT",
+          "9200-GETCARDXREF-BYACCT-EXIT",
+          "9300-GETACCTDATA-BYACCT",
+          "9300-GETACCTDATA-BYACCT-EXIT",
+          "9400-GETCUSTDATA-BYCUST",
+          "9400-GETCUSTDATA-BYCUST-EXIT"
+        ],
+        "paragraph_logic": [
+          "Initializes the process by setting a flag that no account information message will be displayed.",
+          "Moves the account ID into a working storage field.",
+          "Calls the [card cross-reference process]<9200-GETCARDXREF-BYACCT> to retrieve card information based on the account ID.",
+          "If the account is not found in the cross-reference, or the account filter is not okay, exits the read process.",
+          "Calls the [account data retrieval process]<9300-GETACCTDATA-BYACCT> to fetch account data.",
+          "If the account is not found in the account data, exits the read process.",
+          "Moves the customer ID into a working storage field.",
+          "Calls the [customer data retrieval process]<9400-GETCUSTDATA-BYCUST> to fetch customer information.",
+          "If the customer is not found in the customer data, exits the read process."
+        ]
+      },
+      "9000-READ-ACCT-EXIT": {
+        "paragraph_name": "9000-READ-ACCT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9000-READ-ACCT-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [720, 722],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the current paragraph to the next higher-level paragraph or to the calling paragraph.",
+          "Marks the end of the 9000-READ-ACCT-EXIT paragraph."
+        ]
+      },
+      "9200-GETCARDXREF-BYACCT": {
+        "paragraph_name": "9200-GETCARDXREF-BYACCT",
+        "section": "procedure division",
+        "paragraph_code": "9200-GETCARDXREF-BYACCT.\n\n      *    Read the Card file. Access via alternate index ACCTID\n      *\n           EXEC CICS READ\n                DATASET   (LIT-CARDXREFNAME-ACCT-PATH)\n                RIDFLD    (WS-CARD-RID-ACCT-ID-X)\n                KEYLENGTH (LENGTH OF WS-CARD-RID-ACCT-ID-X)\n                INTO      (CARD-XREF-RECORD)\n                LENGTH    (LENGTH OF CARD-XREF-RECORD)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                  MOVE XREF-CUST-ID               TO CDEMO-CUST-ID\n                  MOVE XREF-CARD-NUM              TO CDEMO-CARD-NUM\n               WHEN DFHRESP(NOTFND)\n                  SET INPUT-ERROR                 TO TRUE\n                  SET FLG-ACCTFILTER-NOT-OK       TO TRUE\n                  IF WS-RETURN-MSG-OFF\n                    MOVE WS-RESP-CD               TO ERROR-RESP\n                    MOVE WS-REAS-CD               TO ERROR-RESP2\n                    STRING\n                    'Account:'\n                     WS-CARD-RID-ACCT-ID-X\n                    ' not found in'\n                    ' Cross ref file.  Resp:'\n                    ERROR-RESP\n                    ' Reas:'\n                    ERROR-RESP2\n                    DELIMITED BY SIZE\n                    INTO WS-RETURN-MSG\n                    END-STRING\n                  END-IF\n               WHEN OTHER\n                  SET INPUT-ERROR                 TO TRUE\n                  SET FLG-ACCTFILTER-NOT-OK                TO TRUE\n                  MOVE 'READ'                     TO ERROR-OPNAME\n                  MOVE LIT-CARDXREFNAME-ACCT-PATH TO ERROR-FILE\n                  MOVE WS-RESP-CD                 TO ERROR-RESP\n                  MOVE WS-REAS-CD                 TO ERROR-RESP2\n                  MOVE WS-FILE-ERROR-MESSAGE      TO WS-RETURN-MSG\n      *                                              WS-LONG-MSG\n      *          PERFORM SEND-LONG-TEXT\n           END-EVALUATE\n           .\n",
+        "paragraph_lines": [723, 770],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Reads the Card file using an alternate index based on the account ID.",
+          "Evaluates the read response to determine if the read operation was successful, not found, or encountered another issue.",
+          "When the read response is normal, moves the customer ID and card number from the cross-reference record to the screen fields.",
+          "When the read response indicates the record is not found, sets input error flags and constructs an error message for the user.",
+          "In case of other response codes, sets input error flags and populates error details into the error reporting fields."
+        ]
+      },
+      "9200-GETCARDXREF-BYACCT-EXIT": {
+        "paragraph_name": "9200-GETCARDXREF-BYACCT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9200-GETCARDXREF-BYACCT-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [771, 773],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "The paragraph 9200-GETCARDXREF-BYACCT-EXIT is an exit point for the procedure and contains an EXIT statement. This marks the end of the procedure and returns control to the calling paragraph."
+        ]
+      },
+      "9300-GETACCTDATA-BYACCT": {
+        "paragraph_name": "9300-GETACCTDATA-BYACCT",
+        "section": "procedure division",
+        "paragraph_code": "9300-GETACCTDATA-BYACCT.\n\n           EXEC CICS READ\n                DATASET   (LIT-ACCTFILENAME)\n                RIDFLD    (WS-CARD-RID-ACCT-ID-X)\n                KEYLENGTH (LENGTH OF WS-CARD-RID-ACCT-ID-X)\n                INTO      (ACCOUNT-RECORD)\n                LENGTH    (LENGTH OF ACCOUNT-RECORD)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                  SET FOUND-ACCT-IN-MASTER        TO TRUE\n               WHEN DFHRESP(NOTFND)\n                  SET INPUT-ERROR                 TO TRUE\n                  SET FLG-ACCTFILTER-NOT-OK       TO TRUE\n      *           SET DID-NOT-FIND-ACCT-IN-ACCTDAT TO TRUE\n                  IF WS-RETURN-MSG-OFF\n                    MOVE WS-RESP-CD               TO ERROR-RESP\n                    MOVE WS-REAS-CD               TO ERROR-RESP2\n                    STRING\n                    'Account:'\n                     WS-CARD-RID-ACCT-ID-X\n                    ' not found in'\n                    ' Acct Master file.Resp:'\n                    ERROR-RESP\n                    ' Reas:'\n                    ERROR-RESP2\n                    DELIMITED BY SIZE\n                    INTO WS-RETURN-MSG\n                    END-STRING\n                  END-IF\n      *\n               WHEN OTHER\n                  SET INPUT-ERROR                 TO TRUE\n                  SET FLG-ACCTFILTER-NOT-OK                TO TRUE\n                  MOVE 'READ'                     TO ERROR-OPNAME\n                  MOVE LIT-ACCTFILENAME           TO ERROR-FILE\n                  MOVE WS-RESP-CD                 TO ERROR-RESP\n                  MOVE WS-REAS-CD                 TO ERROR-RESP2\n                  MOVE WS-FILE-ERROR-MESSAGE      TO WS-RETURN-MSG\n      *                                              WS-LONG-MSG\n      *           PERFORM SEND-LONG-TEXT\n           END-EVALUATE\n           .\n",
+        "paragraph_lines": [774, 820],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes a CICS READ command to fetch account data based on the account ID provided.",
+          "Evaluates the response code from the CICS READ operation.",
+          "If the response is NORMAL, sets a flag indicating the account was found in the master file.",
+          "If the response is NOTFND, sets several flags indicating an input error and account filter failure, and constructs an error message string.",
+          "For any other response, sets an input error flag, logs error details, and prepares a general error message."
+        ]
+      },
+      "9300-GETACCTDATA-BYACCT-EXIT": {
+        "paragraph_name": "9300-GETACCTDATA-BYACCT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9300-GETACCTDATA-BYACCT-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [821, 823],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Marks the end of the 9300-GETACCTDATA-BYACCT procedure.",
+          "Executes an EXIT statement to return control to the calling paragraph."
+        ]
+      },
+      "9400-GETCUSTDATA-BYCUST": {
+        "paragraph_name": "9400-GETCUSTDATA-BYCUST",
+        "section": "procedure division",
+        "paragraph_code": "9400-GETCUSTDATA-BYCUST.\n           EXEC CICS READ\n                DATASET   (LIT-CUSTFILENAME)\n                RIDFLD    (WS-CARD-RID-CUST-ID-X)\n                KEYLENGTH (LENGTH OF WS-CARD-RID-CUST-ID-X)\n                INTO      (CUSTOMER-RECORD)\n                LENGTH    (LENGTH OF CUSTOMER-RECORD)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                  SET FOUND-CUST-IN-MASTER        TO TRUE\n               WHEN DFHRESP(NOTFND)\n                  SET INPUT-ERROR                 TO TRUE\n                  SET FLG-CUSTFILTER-NOT-OK       TO TRUE\n      *           SET DID-NOT-FIND-CUST-IN-CUSTDAT TO TRUE\n                  MOVE WS-RESP-CD               TO ERROR-RESP\n                  MOVE WS-REAS-CD               TO ERROR-RESP2\n                  IF WS-RETURN-MSG-OFF\n                    STRING\n                    'CustId:'\n                     WS-CARD-RID-CUST-ID-X\n                    ' not found'\n                    ' in customer master.Resp: '\n                    ERROR-RESP\n                    ' REAS:'\n                    ERROR-RESP2\n                    DELIMITED BY SIZE\n                    INTO WS-RETURN-MSG\n                    END-STRING\n                  END-IF\n               WHEN OTHER\n                  SET INPUT-ERROR                 TO TRUE\n                  SET FLG-CUSTFILTER-NOT-OK                TO TRUE\n                  MOVE 'READ'                     TO ERROR-OPNAME\n                  MOVE LIT-CUSTFILENAME           TO ERROR-FILE\n                  MOVE WS-RESP-CD                 TO ERROR-RESP\n                  MOVE WS-REAS-CD                 TO ERROR-RESP2\n                  MOVE WS-FILE-ERROR-MESSAGE      TO WS-RETURN-MSG\n      *                                              WS-LONG-MSG\n      *           PERFORM SEND-LONG-TEXT\n           END-EVALUATE\n           .\n",
+        "paragraph_lines": [825, 869],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Reads the customer data file using the provided customer ID.",
+          "Evaluates the response code to determine if the customer data is found or not.",
+          "If the customer data is found, sets a flag indicating the customer is found in the master file.",
+          "If the customer data is not found, sets error flags and constructs an error message indicating the customer was not found.",
+          "Handles other response codes by setting error flags and recording the operation and file that caused the error, along with an error message."
+        ]
+      },
+      "9400-GETCUSTDATA-BYCUST-EXIT": {
+        "paragraph_name": "9400-GETCUSTDATA-BYCUST-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "9400-GETCUSTDATA-BYCUST-EXIT.\n           EXIT\n           .\n\n",
+        "paragraph_lines": [870, 872],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the exit procedure for the 9400-GETCUSTDATA-BYCUST paragraph."
+        ]
+      },
+      "SEND-PLAIN-TEXT": {
+        "paragraph_name": "SEND-PLAIN-TEXT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-PLAIN-TEXT.\n           EXEC CICS SEND TEXT\n                     FROM(WS-RETURN-MSG)\n                     LENGTH(LENGTH OF WS-RETURN-MSG)\n                     ERASE\n                     FREEKB\n           END-EXEC\n\n           EXEC CICS RETURN\n           END-EXEC\n           .\n",
+        "paragraph_lines": [877, 887],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes a CICS command to send a text message from the working-storage variable WS-RETURN-MSG.",
+          "Specifies the message length using the LENGTH OF WS-RETURN-MSG command.",
+          "Erases the previous screen content before displaying the new message.",
+          "Frees the keyboard by using the FREEKB option to enable user input.",
+          "Finalizes the operation with a CICS RETURN command to hand control back to CICS for further processing."
+        ]
+      },
+      "SEND-PLAIN-TEXT-EXIT": {
+        "paragraph_name": "SEND-PLAIN-TEXT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-PLAIN-TEXT-EXIT.\n           EXIT\n           .\n",
+        "paragraph_lines": [888, 890],
+        "ref_paragraphs": [],
+        "paragraph_logic": ["Exits the SEND-PLAIN-TEXT-EXIT paragraph, concluding its operations."]
+      },
+      "SEND-LONG-TEXT": {
+        "paragraph_name": "SEND-LONG-TEXT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-LONG-TEXT.\n           EXEC CICS SEND TEXT\n                     FROM(WS-LONG-MSG)\n                     LENGTH(LENGTH OF WS-LONG-MSG)\n                     ERASE\n                     FREEKB\n           END-EXEC\n\n           EXEC CICS RETURN\n           END-EXEC\n           .\n",
+        "paragraph_lines": [896, 906],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Prepares to send a long message using CICS.",
+          "Executes the CICS SEND TEXT command to send the text from the WS-LONG-MSG field, erasing the screen and freeing the keyboard for input.",
+          "Executes the CICS RETURN command to return control to CICS after the message is sent."
+        ]
+      },
+      "SEND-LONG-TEXT-EXIT": {
+        "paragraph_name": "SEND-LONG-TEXT-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "SEND-LONG-TEXT-EXIT.\n           EXIT\n           .\n      *****************************************************************\n      *Common code to store PFKey\n      ******************************************************************\n       COPY 'CSSTRPFY'\n           .\n\n",
+        "paragraph_lines": [907, 914],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the current paragraph, effectively ending the current process.",
+          "Copies the common code for storing the PF Key, denoted by CSSTRPFY, for use in subsequent operations or routines."
+        ]
+      },
+      "ABEND-ROUTINE": {
+        "paragraph_name": "ABEND-ROUTINE",
+        "section": "procedure division",
+        "paragraph_code": "ABEND-ROUTINE.\n\n           IF ABEND-MSG EQUAL LOW-VALUES\n              MOVE 'UNEXPECTED ABEND OCCURRED.' TO ABEND-MSG\n           END-IF\n\n           MOVE LIT-THISPGM       TO ABEND-CULPRIT\n\n           EXEC CICS SEND\n                            FROM (ABEND-DATA)\n                            LENGTH(LENGTH OF ABEND-DATA)\n                            NOHANDLE\n           END-EXEC\n\n           EXEC CICS HANDLE ABEND\n                CANCEL\n           END-EXEC\n\n           EXEC CICS ABEND\n                ABCODE('9999')\n           END-EXEC\n           .\n\n",
+        "paragraph_lines": [916, 937],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the ABEND-MSG is empty; if so, sets a default ABEND message (UNEXPECTED ABEND OCCURRED.).",
+          "Moves program identifier to ABEND-CULPRIT to log which program caused the issue.",
+          "Sends the ABEND-DATA to CICS with NOHANDLE option to prevent handling.",
+          "Cancels any existing ABEND condition for the transaction.",
+          "Triggers a CICS ABEND with ABCODE set to 9999."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CVCRD01Y",
+        "program_type": "Copy",
+        "program_name": "CVCRD01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "COACTVW",
+        "program_type": "Copy",
+        "program_name": "COACTVW",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 8,
+        "program_id": "CSMSG02Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 9,
+        "program_id": "CSUSR01Y",
+        "program_type": "Copy",
+        "program_name": "CSUSR01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 10,
+        "program_id": "CVACT01Y",
+        "program_type": "Copy",
+        "program_name": "CVACT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 11,
+        "program_id": "CVACT02Y",
+        "program_type": "Copy",
+        "program_name": "CVACT02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 12,
+        "program_id": "CVACT03Y",
+        "program_type": "Copy",
+        "program_name": "CVACT03Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 13,
+        "program_id": "CVCUS01Y",
+        "program_type": "Copy",
+        "program_name": "CVCUS01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 14,
+        "program_id": "'CSSTRPFY'",
+        "program_type": "Copy",
+        "program_name": "'CSSTRPFY'",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

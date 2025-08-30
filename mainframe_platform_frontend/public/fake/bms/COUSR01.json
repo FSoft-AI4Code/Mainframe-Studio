@@ -1,0 +1,318 @@
+{
+  "overview": {
+    "name": "COUSR01",
+    "file_name": "COUSR01",
+    "related_pgms": ["COUSR01C"]
+  },
+  "data": [
+    {
+      "name": "COUSR01",
+      "item_type": "DFHMSD",
+      "position": null,
+      "size": null,
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "COUSR1A",
+      "item_type": "DFHMDI",
+      "position": null,
+      "size": [24, 80],
+      "length": 0,
+      "attribute": "",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [1, 1],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Tran:",
+      "comment": ""
+    },
+    {
+      "name": "TRNNAME",
+      "item_type": "DFHMDF",
+      "position": [1, 21],
+      "size": null,
+      "length": 40,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [1, 65],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Date:",
+      "comment": ""
+    },
+    {
+      "name": "CURDATE",
+      "item_type": "DFHMDF",
+      "position": [1, 71],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "mm/dd/yy",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [2, 1],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Prog:",
+      "comment": ""
+    },
+    {
+      "name": "PGMNAME",
+      "item_type": "DFHMDF",
+      "position": [2, 21],
+      "size": null,
+      "length": 40,
+      "attribute": "",
+      "color": "YELLOW",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [2, 65],
+      "size": null,
+      "length": 5,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "Time:",
+      "comment": ""
+    },
+    {
+      "name": "CURTIME",
+      "item_type": "DFHMDF",
+      "position": [2, 71],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,FSET,NORM)",
+      "color": "BLUE",
+      "initial_value": "hh:mm:ss",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [4, 35],
+      "size": null,
+      "length": 9,
+      "attribute": "(ASKIP,BRT)",
+      "color": "NEUTRAL",
+      "initial_value": "Add User",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [8, 6],
+      "size": null,
+      "length": 11,
+      "attribute": "",
+      "color": "TURQUOISE",
+      "initial_value": "First Name:",
+      "comment": ""
+    },
+    {
+      "name": "FNAME",
+      "item_type": "DFHMDF",
+      "position": [8, 18],
+      "size": null,
+      "length": 20,
+      "attribute": "(FSET,IC,NORM,UNPROT)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [8, 39],
+      "size": null,
+      "length": 0,
+      "attribute": "(ASKIP,NORM)",
+      "color": "",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [8, 45],
+      "size": null,
+      "length": 10,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "Last Name:",
+      "comment": ""
+    },
+    {
+      "name": "LNAME",
+      "item_type": "DFHMDF",
+      "position": [8, 56],
+      "size": null,
+      "length": 20,
+      "attribute": "(FSET,NORM,UNPROT)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [8, 77],
+      "size": null,
+      "length": 0,
+      "attribute": "(ASKIP,NORM)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [11, 6],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "User ID:",
+      "comment": ""
+    },
+    {
+      "name": "USERID",
+      "item_type": "DFHMDF",
+      "position": [11, 15],
+      "size": null,
+      "length": 8,
+      "attribute": "(FSET,NORM,UNPROT)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [11, 24],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "(8 Char)",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [11, 45],
+      "size": null,
+      "length": 9,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "Password:",
+      "comment": ""
+    },
+    {
+      "name": "PASSWD",
+      "item_type": "DFHMDF",
+      "position": [11, 55],
+      "size": null,
+      "length": 8,
+      "attribute": "(DRK,FSET,UNPROT)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [11, 64],
+      "size": null,
+      "length": 8,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "(8 Char)",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [14, 6],
+      "size": null,
+      "length": 11,
+      "attribute": "(ASKIP,NORM)",
+      "color": "TURQUOISE",
+      "initial_value": "User Type: ",
+      "comment": ""
+    },
+    {
+      "name": "USRTYPE",
+      "item_type": "DFHMDF",
+      "position": [14, 17],
+      "size": null,
+      "length": 1,
+      "attribute": "(FSET,NORM,UNPROT)",
+      "color": "GREEN",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [14, 19],
+      "size": null,
+      "length": 17,
+      "attribute": "(ASKIP,NORM)",
+      "color": "BLUE",
+      "initial_value": "(A=Admin, U=User)",
+      "comment": ""
+    },
+    {
+      "name": "ERRMSG",
+      "item_type": "DFHMDF",
+      "position": [23, 1],
+      "size": null,
+      "length": 78,
+      "attribute": "(ASKIP,BRT,FSET)",
+      "color": "RED",
+      "initial_value": "",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "item_type": "DFHMDF",
+      "position": [24, 1],
+      "size": null,
+      "length": 43,
+      "attribute": "(ASKIP,NORM)",
+      "color": "YELLOW",
+      "initial_value": "ENTER=Add User  F3=Back  F4=Clear  F12=Exit",
+      "comment": ""
+    }
+  ],
+  "screen_string": "Tran:               XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Date: mm/dd/yy  \nProg:               XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Time: hh:mm:ss  \n                                                                                \n                                  Add User                                      \n                                                                                \n                                                                                \n                                                                                \n     First Name: XXXXXXXXXXXXXXXXXXXX       Last Name: XXXXXXXXXXXXXXXXXXXX     \n                                                                                \n                                                                                \n     User ID: XXXXXXXX (8 Char)             Password: XXXXXXXX (8 Char)         \n                                                                                \n                                                                                \n     User Type: X (A=Admin, U=User)                                             \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  \nENTER=Add User  F3=Back  F4=Clear  F12=Exit                                     "
+}

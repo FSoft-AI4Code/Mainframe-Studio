@@ -1,0 +1,76 @@
+services:
+  mainframe_worker:
+    image: ${MAINFRAME_WORKERS_IMAGE}
+    env_file: ".env"
+    restart: always
+    networks:
+    - cobol-network
+    - rabbit-network
+    command: "poetry run python src/worker.py all"
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 8gb
+    logging:
+      driver: "loki"
+      options:
+        loki-url: ${LOKI_URL}
+        loki-retries: "3"
+        loki-batch-size: "400"
+        loki-external-labels: |
+          app=${JOB_NAME},env=${ENV}
+
+  extended-jcl:
+    image: ${MAINFRAME_WORKERS_IMAGE}
+    env_file: ".env"
+    restart: always
+    networks:
+    - cobol-network
+    - rabbit-network
+    command: "poetry run python src/worker.py jcl"
+    deploy:
+      mode: replicated
+      replicas:  4
+      resources:
+        limits:
+          cpus: 2
+          memory: 8gb
+
+  extended-copybookibm:
+    image: ${MAINFRAME_WORKERS_IMAGE}
+    env_file: ".env"
+    restart: always
+    networks:
+    - cobol-network
+    - rabbit-network
+    command: "poetry run python src/worker.py copybookibm"
+    deploy:
+      mode: replicated
+      replicas: 4
+      resources:
+        limits:
+          cpus: 2
+          memory: 8gb
+
+  extended-cobolibm:
+    image: ${MAINFRAME_WORKERS_IMAGE}
+    env_file: ".env"
+    restart: always
+    networks:
+    - cobol-network
+    - rabbit-network
+    command: "poetry run python src/worker.py cobolibm"
+    deploy:
+      mode: replicated
+      replicas: 8
+      resources:
+        limits:
+          cpus: 2
+          memory: 8gb
+
+networks:
+  rabbit-network:
+    external: true
+  cobol-network:
+    external: true

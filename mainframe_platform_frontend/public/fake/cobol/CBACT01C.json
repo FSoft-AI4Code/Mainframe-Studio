@@ -1,0 +1,180 @@
+{
+  "id": "4e4370744eb74705aee51851289cd98c",
+  "name": "CBACT01C",
+  "path": "DEMO.CARDDEMO.CBL/CBACT01C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBACT01C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": ["CVACT01Y"],
+    "call_files": ["'CEE3ABD'::static"],
+    "summarization": "This COBOL program, named CBACT01C, processes a VSAM KSDS (Key-Sequenced Data Set) named `ACCTFILE-FILE` to read and display account records. The main flow of the program is as follows:\n\n1. **Initialization and File Open**:\n    - The program starts execution by displaying a start message.\n    - It performs the routine `0000-ACCTFILE-OPEN` to open the `ACCTFILE-FILE` for input. The file open status is checked, and if an error occurs, appropriate error handling routines are called.\n\n2. **Reading and Displaying Records**:\n    - Using a `PERFORM UNTIL` loop, the program continuously reads records from the file until the end-of-file condition (`END-OF-FILE = 'Y'`) is reached.\n    - For each record:\n        - The routine `1000-ACCTFILE-GET-NEXT` is called to read the next account record into `ACCOUNT-RECORD`.\n        - If a record is successfully read (`ACCTFILE-STATUS = '00'`), the program calls `1100-DISPLAY-ACCT-RECORD` to display the account details (such as account ID, status, balance, credit limits, and various dates).\n        - If an end-of-file status (`ACCTFILE-STATUS = '10'`) is encountered, it sets the `END-OF-FILE` flag to 'Y'.\n        - For other file read errors, it displays an error message and abends the program using the routine `9999-ABEND-PROGRAM`.\n\n3. **File Close and Termination**:\n    - After processing all records, the program performs the routine `9000-ACCTFILE-CLOSE` to close the `ACCTFILE-FILE`. Similar to the open routine, it checks the close status and handles any errors accordingly.\n    - Finally, the program displays an end message and terminates.\n\n4. **Supporting Subroutines**:\n    - `1100-DISPLAY-ACCT-RECORD` - Displays detailed information about each account record.\n    - `9999-ABEND-PROGRAM` - Handles abnormal termination of the program.\n    - `9910-DISPLAY-IO-STATUS` - Displays detailed I/O status for error diagnosis.\n\nThis structured approach ensures that the account records are systematically read and displayed, with robust error handling for file operations.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "ACCTFILE-FILE",
+        "physical_name": "ACCTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "1000-ACCTFILE-GET-NEXT": {
+        "paragraph_name": "1000-ACCTFILE-GET-NEXT",
+        "section": "procedure division",
+        "paragraph_code": "1000-ACCTFILE-GET-NEXT.\n           READ ACCTFILE-FILE INTO ACCOUNT-RECORD.\n           IF  ACCTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n               PERFORM 1100-DISPLAY-ACCT-RECORD\n           ELSE\n               IF  ACCTFILE-STATUS = '10'\n                   MOVE 16 TO APPL-RESULT\n               ELSE\n                   MOVE 12 TO APPL-RESULT\n               END-IF\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               IF  APPL-EOF\n                   MOVE 'Y' TO END-OF-FILE\n               ELSE\n                   DISPLAY 'ERROR READING ACCOUNT FILE'\n                   MOVE ACCTFILE-STATUS TO IO-STATUS\n                   PERFORM 9910-DISPLAY-IO-STATUS\n                   PERFORM 9999-ABEND-PROGRAM\n               END-IF\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [92, 116],
+        "ref_paragraphs": [
+          "1100-DISPLAY-ACCT-RECORD",
+          "9910-DISPLAY-IO-STATUS",
+          "9999-ABEND-PROGRAM"
+        ],
+        "paragraph_logic": [
+          "Reads the next record from the account file into the account record area.",
+          "Checks if the read operation was successful with ACCTFILE-STATUS being 00; if successful, move 0 to APPL-RESULT and call [account display process]<1100-DISPLAY-ACCT-RECORD>.",
+          "If the read status is 10, move 16 to APPL-RESULT; otherwise, move 12 to APPL-RESULT.",
+          "If application result is okay, continue processing; otherwise, if it\u2019s the end of file, mark END-OF-FILE.",
+          "If an error occurs during the read, display an error message, move the status to IO-STATUS, and call [IO status display process]<9910-DISPLAY-IO-STATUS> and [program abend process]<9999-ABEND-PROGRAM>."
+        ]
+      },
+      "1100-DISPLAY-ACCT-RECORD": {
+        "paragraph_name": "1100-DISPLAY-ACCT-RECORD",
+        "section": "procedure division",
+        "paragraph_code": "1100-DISPLAY-ACCT-RECORD.\n           DISPLAY 'ACCT-ID                 :'   ACCT-ID\n           DISPLAY 'ACCT-ACTIVE-STATUS      :'   ACCT-ACTIVE-STATUS\n           DISPLAY 'ACCT-CURR-BAL           :'   ACCT-CURR-BAL\n           DISPLAY 'ACCT-CREDIT-LIMIT       :'   ACCT-CREDIT-LIMIT\n           DISPLAY 'ACCT-CASH-CREDIT-LIMIT  :'   ACCT-CASH-CREDIT-LIMIT\n           DISPLAY 'ACCT-OPEN-DATE          :'   ACCT-OPEN-DATE\n           DISPLAY 'ACCT-EXPIRAION-DATE     :'   ACCT-EXPIRAION-DATE\n           DISPLAY 'ACCT-REISSUE-DATE       :'   ACCT-REISSUE-DATE\n           DISPLAY 'ACCT-CURR-CYC-CREDIT    :'   ACCT-CURR-CYC-CREDIT\n           DISPLAY 'ACCT-CURR-CYC-DEBIT     :'   ACCT-CURR-CYC-DEBIT\n           DISPLAY 'ACCT-GROUP-ID           :'   ACCT-GROUP-ID\n           DISPLAY '-------------------------------------------------'\n           EXIT.\n",
+        "paragraph_lines": [118, 131],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays the account ID.<ACCT-ID>",
+          "Displays the active status of the account.<ACCT-ACTIVE-STATUS>",
+          "Displays the current balance of the account.<ACCT-CURR-BAL>",
+          "Displays the credit limit of the account.<ACCT-CREDIT-LIMIT>",
+          "Displays the cash credit limit of the account.<ACCT-CASH-CREDIT-LIMIT>"
+        ]
+      },
+      "0000-ACCTFILE-OPEN": {
+        "paragraph_name": "0000-ACCTFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0000-ACCTFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT ACCTFILE-FILE\n           IF  ACCTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING ACCTFILE'\n               MOVE ACCTFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [133, 149],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves 8 to APPL-RESULT, marking the initial state for file opening.",
+          "Attempts to open the ACCTFILE-FILE for input access.",
+          "If the ACCTFILE-STATUS is 00, indicating success, moves 0 to APPL-RESULT.",
+          "If the ACCTFILE-STATUS is not 00, indicating failure, moves 12 to APPL-RESULT.",
+          "If APPL-AOK indicates no errors, continues processing.",
+          "If APPL-AOK indicates errors, displays an error message, moves ACCTFILE-STATUS to IO-STATUS, calls [IO status display routine]<9910-DISPLAY-IO-STATUS>, and calls [program abend routine]<9999-ABEND-PROGRAM>."
+        ]
+      },
+      "9000-ACCTFILE-CLOSE": {
+        "paragraph_name": "9000-ACCTFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9000-ACCTFILE-CLOSE.\n           ADD 8 TO ZERO GIVING APPL-RESULT.\n           CLOSE ACCTFILE-FILE\n           IF  ACCTFILE-STATUS = '00'\n               SUBTRACT APPL-RESULT FROM APPL-RESULT\n           ELSE\n               ADD 12 TO ZERO GIVING APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING ACCOUNT FILE'\n               MOVE ACCTFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [151, 167],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Calculates the initial result for application result handling.",
+          "Closes the account file after operations are completed.",
+          "Checks if the account file was closed successfully and resets the application result if so.",
+          "Handles errors by reporting the error and updating the IO status.",
+          "Calls the [display IO status process]<9910-DISPLAY-IO-STATUS> to show the current IO status in case of an error.",
+          "Calls the [abend program process]<9999-ABEND-PROGRAM> to terminate the program if the account file could not be closed properly."
+        ]
+      },
+      "9999-ABEND-PROGRAM": {
+        "paragraph_name": "9999-ABEND-PROGRAM",
+        "section": "procedure division",
+        "paragraph_code": "9999-ABEND-PROGRAM.\n           DISPLAY 'ABENDING PROGRAM'\n           MOVE 0 TO TIMING\n           MOVE 999 TO ABCODE\n           CALL 'CEE3ABD'.\n\n",
+        "paragraph_lines": [169, 173],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays the message ABENDING PROGRAM to indicate an abnormal program termination.",
+          "Resets the timing indicator by moving zero to the TIMING variable.",
+          "Sets the abnormal termination code by moving 999 to the ABCODE variable.",
+          "Calls the CEE3ABD routine to abend (abnormally end) the program."
+        ]
+      },
+      "9910-DISPLAY-IO-STATUS": {
+        "paragraph_name": "9910-DISPLAY-IO-STATUS",
+        "section": "procedure division",
+        "paragraph_code": "9910-DISPLAY-IO-STATUS.\n           IF  IO-STATUS NOT NUMERIC\n           OR  IO-STAT1 = '9'\n               MOVE IO-STAT1 TO IO-STATUS-04(1:1)\n               MOVE 0        TO TWO-BYTES-BINARY\n               MOVE IO-STAT2 TO TWO-BYTES-RIGHT\n               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           ELSE\n               MOVE '0000' TO IO-STATUS-04\n               MOVE IO-STATUS TO IO-STATUS-04(3:2)\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [176, 189],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the IO-STATUS is non-numeric or if IO-STAT1 is 9.",
+          "If either condition is true, updates IO-STATUS to reflect non-numeric status, moves status parts to appropriate fields, and displays the non-numeric file status.",
+          "If neither condition is true, sets IO-STATUS to 0000, updates it with the appropriate numeric status, and displays the numeric file status."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CEE3ABD",
+        "program_type": "Cobol",
+        "program_name": "CEE3ABD",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "9999-ABEND-PROGRAM",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "CVACT01Y",
+        "program_type": "Copy",
+        "program_name": "CVACT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

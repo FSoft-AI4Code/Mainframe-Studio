@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels: 
+    app: {{ .Release.Name }}-frontend
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-frontend
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      containers:
+      - name: frontend
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        ports:
+        - containerPort: 3000
+          name: frontend
+        volumeMounts:
+        - name: config-volume
+          subPath: config
+          mountPath: /app/.env
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: frontend
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        #   periodSeconds: 60
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: frontend
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        #   periodSeconds: 60
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ .Release.Name }}-frontend-configmap
+        
+       

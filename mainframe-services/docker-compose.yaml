@@ -1,0 +1,65 @@
+services:
+  mainframe_services:
+    image: ${MAINFRAME_SERVICES_IMAGE}
+    env_file: ".env"
+    ports:
+      - '16168:8000'
+    restart: always
+    
+    networks:
+    - cobol-network
+    - milvus-network
+    - nebula-network
+    - rabbit-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c 'import requests; exit(0) if requests.get(\"http://localhost:8000/\").status_code == 200 else exit(1)'"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+    logging:
+      driver: "loki"
+      options:
+        loki-url: ${LOKI_URL}
+        loki-retries: "3"
+        loki-batch-size: "400"
+        loki-external-labels: |
+          app=${JOB_NAME},env=${ENV}
+    
+  mainframe_worker:
+    image: ${MAINFRAME_SERVICES_IMAGE}
+    env_file: ".env"
+    command: ["poetry", "run", "python", "-m", "saq", "app.worker.settings"]
+    restart: always
+    networks:
+    - cobol-network
+    - milvus-network
+    - nebula-network
+    - rabbit-network
+    logging:
+      driver: "loki"
+      options:
+        loki-url: ${LOKI_URL}
+        loki-retries: "3"
+        loki-batch-size: "400"
+        loki-external-labels: |
+          app=${JOB_NAME}-redis,env=${ENV}
+        
+
+  redis:
+    image: redis:6.2
+    restart: always
+    networks:
+    - cobol-network
+
+networks:
+  cobol-network:
+    external: true
+  milvus-network:
+    external: true
+  nebula-network:
+    external: true
+  rabbit-network:
+    external: true

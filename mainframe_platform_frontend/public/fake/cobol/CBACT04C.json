@@ -1,0 +1,792 @@
+{
+  "id": "b77552005e6a4f5a9ddfe27ec4b468fa",
+  "name": "CBACT04C",
+  "path": "DEMO.CARDDEMO.CBL/CBACT04C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBACT04C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": ["CVTRA01Y", "CVACT03Y", "CVTRA02Y", "CVACT01Y", "CVTRA05Y"],
+    "call_files": ["'CEE3ABD'::static"],
+    "summarization": "The provided COBOL code represents a financial transaction processing program with multiple steps for opening, reading, processing, and updating files, followed by cleanup operations. Here is a concise summary of the main flow:\n\n### Summary of COBOL Code Sections\n\n1. **Initialization and Open Files:**\n   - The program starts execution and opens several key files required for processing:\n     - `TCATBAL-FILE` (Transaction Category Balance File)\n     - `XREF-FILE` (Cross Reference File)\n     - `DISCGRP-FILE` (Disclosure Group File)\n     - `ACCOUNT-FILE`\n     - `TRANSACT-FILE`\n     \n     Each file opening operation checks for successful opening; otherwise, it displays an error message and performs an error handling routine.\n\n2. **Main Processing Loop:**\n   - The program enters a loop that continues until `END-OF-FILE` is set to 'Y'.\n   - Inside the loop:\n     - It performs the `1000-TCATBALF-GET-NEXT` subroutine to read the next record from `TCATBAL-FILE`.\n     - If a new record is read, it:\n       - Updates the workload processing count.\n       - Displays the transaction category balance record.\n       - Checks if the account ID has changed, and if so:\n         - Updates account data if necessary.\n         - Retrieves account data (`1100-GET-ACCT-DATA`) and cross-reference data (`1110-GET-XREF-DATA`) for the new account ID.\n         - Prepares necessary data fields for further processing.\n     - Retrieves the interest rate (`1200-GET-INTEREST-RATE`).\n     - If a non-zero interest rate is found:\n       - Computes interest (`1300-COMPUTE-INTEREST`).\n       - Computes fees (routine `1400-COMPUTE-FEES`).\n\n3. **File Closures:**\n   - Upon completion of processing all records, the program closes all the files:\n     - `TCATBAL-FILE`\n     - `XREF-FILE`\n     - `DISCGRP-FILE`\n     - `ACCOUNT-FILE`\n     - `TRANSACT-FILE`\n     \n     Each closing operation ensures proper handling by checking for successful closure and displaying appropriate error messages if needed.\n\n4. **Helper Operations:**\n   - Subroutines for reading and processing records from the files include specific checks and appropriate actions based on file statuses.\n   - Error handling and display subroutines (e.g., `9910-DISPLAY-IO-STATUS` and `9999-ABEND-PROGRAM`) are used to handle and report errors.\n   - A subroutine `Z-GET-DB2-FORMAT-TIMESTAMP` formats timestamp data for database operations.\n\nIn summary, the COBOL program CBACT04C processes transaction category balances by reading records from multiple input files, updating account balances, computing interest, and handling errors through various subroutines before closing all files and terminating the program. The tables involved include `TCATBAL-FILE`, `XREF-FILE`, `DISCGRP-FILE`, `ACCOUNT-FILE`, and `TRANSACT-FILE`.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "TCATBAL-FILE",
+        "physical_name": "TCATBALF",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "XREF-FILE",
+        "physical_name": "XREFFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "ACCOUNT-FILE",
+        "physical_name": "ACCTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "DISCGRP-FILE",
+        "physical_name": "DISCGRP",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "TRANSACT-FILE",
+        "physical_name": "TRANSACT",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "EXTERNAL-PARMS",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   PARM-LENGTH",
+        "cobol_level": "05",
+        "cobol_dtype": "S9",
+        "length": "04",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "   PARM-DATE",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "10",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "EXTERNAL-PARMS",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   PARM-LENGTH",
+        "cobol_level": "05",
+        "cobol_dtype": "S9",
+        "length": "04",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "   PARM-DATE",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "10",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "0000-TCATBALF-OPEN": {
+        "paragraph_name": "0000-TCATBALF-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0000-TCATBALF-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT TCATBAL-FILE\n           IF  TCATBALF-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING TRANSACTION CATEGORY BALANCE'\n               MOVE TCATBALF-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [234, 250],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets a default error code for opening the transaction category balance file.",
+          "Attempts to open the transaction category balance file and checks the status.",
+          "If the file opens successfully, sets the result code to 0.",
+          "If the file fails to open, sets the result code to 12.",
+          "Based on the result code, either continues processing or handles the error by:",
+          "1. Displaying an error message.",
+          "2. Calling the [IO status display process]<9910-DISPLAY-IO-STATUS> to show detailed IO status.",
+          "3. Calling the [program termination process]<9999-ABEND-PROGRAM> to terminate the program."
+        ]
+      },
+      "0100-XREFFILE-OPEN": {
+        "paragraph_name": "0100-XREFFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0100-XREFFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT XREF-FILE\n           IF  XREFFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING CROSS REF FILE'   XREFFILE-STATUS\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [252, 268],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets the initial application result to 8.",
+          "Opens the cross-reference file for input.",
+          "If the file opens successfully, sets the application result to 0; otherwise, sets it to 12.",
+          "If theres an application error (APPL-AOK is false), displays an error message and updates IO status.",
+          "Calls the [display IO status process]<9910-DISPLAY-IO-STATUS> to show the current IO status.",
+          "Calls the [abend program process]<9999-ABEND-PROGRAM> to terminate the program due to the error."
+        ]
+      },
+      "0200-DISCGRP-OPEN": {
+        "paragraph_name": "0200-DISCGRP-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0200-DISCGRP-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT DISCGRP-FILE\n           IF  DISCGRP-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING DALY REJECTS FILE'\n               MOVE DISCGRP-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [270, 286],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets initial application result to 8 to handle any potential errors.",
+          "Opens the file DISCGRP-FILE for input to read daily reject records.",
+          "Checks if the file opened successfully; if yes, sets application result to 0, otherwise sets it to 12.",
+          "Verifies if the application result indicates success; if not, handles the error.",
+          "Displays an error message if unable to open the file, capturing the file status.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to show the I/O error status.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program due to the error."
+        ]
+      },
+      "0300-ACCTFILE-OPEN": {
+        "paragraph_name": "0300-ACCTFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0300-ACCTFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN I-O ACCOUNT-FILE\n           IF  ACCTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING ACCOUNT MASTER FILE'\n               MOVE ACCTFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [289, 305],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets the initial application result code to 8 to indicate an unknown state.",
+          "Attempts to open the account file in input-output mode.",
+          "Checks if the account file status is 00 (success); if true, sets the application result code to 0 (success), otherwise sets it to 12 (failure).",
+          "If the application result indicates success, continues without any action.",
+          "If the application result indicates failure, displays an error message regarding the account master file.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to display the error status.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program due to the error."
+        ]
+      },
+      "0400-TRANFILE-OPEN": {
+        "paragraph_name": "0400-TRANFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0400-TRANFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN OUTPUT TRANSACT-FILE\n           IF  TRANFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING TRANSACTION FILE'\n               MOVE TRANFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [307, 323],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Initializes the process by setting a default result code.",
+          "Attempts to open the transaction file in output mode.",
+          "Checks if the transaction file opened successfully, updating the application result code accordingly.",
+          "If the file opens successfully, continues processing; otherwise, displays an error message.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to display the I/O status upon failure.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program if the file opening fails."
+        ]
+      },
+      "1000-TCATBALF-GET-NEXT": {
+        "paragraph_name": "1000-TCATBALF-GET-NEXT",
+        "section": "procedure division",
+        "paragraph_code": "1000-TCATBALF-GET-NEXT.\n           READ TCATBAL-FILE INTO TRAN-CAT-BAL-RECORD.\n           IF  TCATBALF-STATUS  = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               IF  TCATBALF-STATUS  = '10'\n                   MOVE 16 TO APPL-RESULT\n               ELSE\n                   MOVE 12 TO APPL-RESULT\n               END-IF\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               IF  APPL-EOF\n                   MOVE 'Y' TO END-OF-FILE\n               ELSE\n                   DISPLAY 'ERROR READING TRANSACTION CATEGORY FILE'\n                   MOVE TCATBALF-STATUS TO IO-STATUS\n                   PERFORM 9910-DISPLAY-IO-STATUS\n                   PERFORM 9999-ABEND-PROGRAM\n               END-IF\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [325, 348],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads the next record from the TCATBAL file into the TRAN-CAT-BAL-RECORD structure.",
+          "Checks the status of the file read operation and sets the application result code based on the status value.",
+          "If the read status is 00, sets the application result to 0 indicating success; otherwise, checks for specific error codes 10 or general error.",
+          "If the application check indicates AOK, continues processing; if not, checks if the end of the file has been reached and marks it.",
+          "If errors other than EOF are encountered, displays an error message, logs the IO status, and performs error display and termination routines via <9910-DISPLAY-IO-STATUS> and <9999-ABEND-PROGRAM>."
+        ]
+      },
+      "1050-UPDATE-ACCOUNT": {
+        "paragraph_name": "1050-UPDATE-ACCOUNT",
+        "section": "procedure division",
+        "paragraph_code": "1050-UPDATE-ACCOUNT.\n      * Update the balances in account record to reflect posted trans.\n           ADD WS-TOTAL-INT  TO ACCT-CURR-BAL\n           MOVE 0 TO ACCT-CURR-CYC-CREDIT\n           MOVE 0 TO ACCT-CURR-CYC-DEBIT\n\n           REWRITE FD-ACCTFILE-REC FROM  ACCOUNT-RECORD\n           IF  ACCTFILE-STATUS  = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR RE-WRITING ACCOUNT FILE'\n               MOVE ACCTFILE-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [350, 370],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Adds the total interest to the current balance of the account, and resets the cycle credit and debit.",
+          "Rewrites the account record in the account file with the updated data.",
+          "Checks the status of the file operation, setting the application result to 0 if successful, otherwise 12.",
+          "If the operation is successful (application result is OK), continues processing.",
+          "If the operation fails, displays an error message and moves the file status to IO status.",
+          "Calls the [display I/O status process]<9910-DISPLAY-IO-STATUS> to show detailed error information.",
+          "Calls the [abnormal program termination process]<9999-ABEND-PROGRAM> to end the program due to the error."
+        ]
+      },
+      "1100-GET-ACCT-DATA": {
+        "paragraph_name": "1100-GET-ACCT-DATA",
+        "section": "procedure division",
+        "paragraph_code": "1100-GET-ACCT-DATA.\n           READ ACCOUNT-FILE INTO ACCOUNT-RECORD\n               INVALID KEY\n                  DISPLAY 'ACCOUNT NOT FOUND: ' FD-ACCT-ID\n           END-READ\n\n           DISPLAY ' LEN ACCOUNT-RECORD: ' LENGTH OF ACCOUNT-RECORD\n           DISPLAY '$' ACCOUNT-RECORD '$'\n\n           IF  ACCTFILE-STATUS  = '00' OR '04'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR READING ACCOUNT FILE: ' ACCTFILE-STATUS\n               MOVE ACCTFILE-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [372, 394],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads the account file into the account record. If the account key is invalid, displays an error message.",
+          "Displays the length and content of the account record for debugging or verification purposes.",
+          "Checks the account file status; if its 00 or 04, moves 0 to the application result, otherwise moves 12.",
+          "If the application status is okay, continues; otherwise, displays an error message and moves the file status to I/O status.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to show the I/O status if theres an error.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program if an error occurs."
+        ]
+      },
+      "1110-GET-XREF-DATA": {
+        "paragraph_name": "1110-GET-XREF-DATA",
+        "section": "procedure division",
+        "paragraph_code": "1110-GET-XREF-DATA.\n           READ XREF-FILE INTO CARD-XREF-RECORD\n            KEY IS FD-XREF-ACCT-ID\n               INVALID KEY\n                  DISPLAY 'ACCOUNT NOT FOUND: ' FD-XREF-ACCT-ID\n           END-READ\n\n           IF  XREFFILE-STATUS   = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR READING XREF FILE'\n               MOVE XREFFILE-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [396, 416],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads from the cross-reference file (XREF-FILE) using the account ID (FD-XREF-ACCT-ID) as the key.",
+          "Displays ACCOUNT NOT FOUND message if the account ID is invalid.",
+          "If the read is successful (XREFFILE-STATUS = 00), sets the application result to 0; otherwise, sets it to 12.",
+          "If the application result is OK (APPL-AOK), continues processing.",
+          "If the application result is not OK, displays an error message and moves the file status to the I/O status field.",
+          "Calls the [I/O Status display process]<9910-DISPLAY-IO-STATUS>.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program."
+        ]
+      },
+      "1200-GET-INTEREST-RATE": {
+        "paragraph_name": "1200-GET-INTEREST-RATE",
+        "section": "procedure division",
+        "paragraph_code": "1200-GET-INTEREST-RATE.\n           READ DISCGRP-FILE INTO DIS-GROUP-RECORD\n                INVALID KEY\n                   DISPLAY 'DISCLOSURE GROUP RECORD MISSING'\n                   DISPLAY 'TRY WITH DEFAULT GROUP CODE'\n           END-READ.\n\n           IF  DISCGRP-STATUS  = '00'  OR '23'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR READING DISCLOSURE GROUP FILE'\n               MOVE DISCGRP-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           IF  DISCGRP-STATUS  = '23'\n               MOVE 'DEFAULT' TO FD-DIS-ACCT-GROUP-ID\n               PERFORM 1200-A-GET-DEFAULT-INT-RATE\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [418, 443],
+        "ref_paragraphs": [
+          "9910-DISPLAY-IO-STATUS",
+          "9999-ABEND-PROGRAM",
+          "1200-A-GET-DEFAULT-INT-RATE"
+        ],
+        "paragraph_logic": [
+          "Reads the DISCGRP-FILE to fetch the discount group record, prints error messages if the record is missing.",
+          "Checks the DISCGRP-STATUS and sets APPL-RESULT to 0 or 12 based on the read result.",
+          "If the application status is OK, continues; otherwise, displays error messages and performs error handling by calling <9910-DISPLAY-IO-STATUS> and <9999-ABEND-PROGRAM>.",
+          "If the DISCGRP-STATUS is 23, assigns DEFAULT to FD-DIS-ACCT-GROUP-ID and calls <1200-A-GET-DEFAULT-INT-RATE> to retrieve the default interest rate."
+        ]
+      },
+      "1200-A-GET-DEFAULT-INT-RATE": {
+        "paragraph_name": "1200-A-GET-DEFAULT-INT-RATE",
+        "section": "procedure division",
+        "paragraph_code": "1200-A-GET-DEFAULT-INT-RATE.\n           READ DISCGRP-FILE INTO DIS-GROUP-RECORD\n\n           IF  DISCGRP-STATUS  = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR READING DEFAULT DISCLOSURE GROUP'\n               MOVE DISCGRP-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [446, 463],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads the DISCGRP-FILE into the DIS-GROUP-RECORD structure.<READ DISCGRP-FILE INTO DIS-GROUP-RECORD>",
+          "Checks the DISCGRP-STATUS value. If it equals 00, sets APPL-RESULT to 0; otherwise, sets it to 12.<IF DISCGRP-STATUS = 00 MOVE ELSE MOVE>",
+          "Continues processing if APPL-AOK is true.<IF APPL-AOK CONTINUE>",
+          "Displays an error message and sets IO-STATUS to DISCGRP-STATUS if APPL-AOK is false.<DISPLAY ERROR READING DEFAULT DISCLOSURE GROUP MOVE DISCGRP-STATUS TO IO-STATUS>",
+          "Calls the [IO status display process]<9910-DISPLAY-IO-STATUS> and [program abend process]<9999-ABEND-PROGRAM>."
+        ]
+      },
+      "1300-COMPUTE-INTEREST": {
+        "paragraph_name": "1300-COMPUTE-INTEREST",
+        "section": "procedure division",
+        "paragraph_code": "1300-COMPUTE-INTEREST.\n\n           COMPUTE WS-MONTHLY-INT\n            = ( TRAN-CAT-BAL * DIS-INT-RATE) / 1200\n\n           ADD WS-MONTHLY-INT  TO WS-TOTAL-INT\n           PERFORM 1300-B-WRITE-TX.\n\n           EXIT.\n\n",
+        "paragraph_lines": [465, 473],
+        "ref_paragraphs": ["1300-B-WRITE-TX"],
+        "paragraph_logic": [
+          "Computes the monthly interest by multiplying the transaction category balance with the discounted interest rate and dividing by 1200.",
+          "Adds the computed monthly interest to the total interest accumulated so far.",
+          "Calls the [transaction writing process]<1300-B-WRITE-TX> to record the computed interest transaction."
+        ]
+      },
+      "1300-B-WRITE-TX": {
+        "paragraph_name": "1300-B-WRITE-TX",
+        "section": "procedure division",
+        "paragraph_code": "1300-B-WRITE-TX.\n           ADD 1 TO WS-TRANID-SUFFIX\n\n           STRING PARM-DATE,\n                  WS-TRANID-SUFFIX\n             DELIMITED BY SIZE\n             INTO TRAN-ID\n           END-STRING.\n\n           MOVE '01'                 TO TRAN-TYPE-CD\n           MOVE '05'                 TO TRAN-CAT-CD\n           MOVE 'System'             TO TRAN-SOURCE\n           STRING 'Int. for a/c ' ,\n                  ACCT-ID\n                  DELIMITED BY SIZE\n            INTO TRAN-DESC\n           END-STRING\n           MOVE WS-MONTHLY-INT       TO TRAN-AMT\n           MOVE 0                    TO TRAN-MERCHANT-ID\n           MOVE SPACES               TO TRAN-MERCHANT-NAME\n           MOVE SPACES               TO TRAN-MERCHANT-CITY\n           MOVE SPACES               TO TRAN-MERCHANT-ZIP\n           MOVE XREF-CARD-NUM        TO TRAN-CARD-NUM\n           PERFORM Z-GET-DB2-FORMAT-TIMESTAMP\n           MOVE DB2-FORMAT-TS        TO TRAN-ORIG-TS\n           MOVE DB2-FORMAT-TS        TO TRAN-PROC-TS\n\n           WRITE FD-TRANFILE-REC FROM TRAN-RECORD\n           IF  TRANFILE-STATUS   = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR WRITING TRANSACTION RECORD'\n               MOVE TRANFILE-STATUS   TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [476, 518],
+        "ref_paragraphs": [
+          "Z-GET-DB2-FORMAT-TIMESTAMP",
+          "9910-DISPLAY-IO-STATUS",
+          "9999-ABEND-PROGRAM"
+        ],
+        "paragraph_logic": [
+          "Increment the transaction ID suffix to generate a new transaction ID.",
+          "Concatenate the date and transaction ID suffix to create the final transaction ID.",
+          "Set various transaction fields including type, category, source, description, and amount.",
+          "Fetch the current timestamp from DB2 for the transactions original and processing timestamps using [Z-GET-DB2-FORMAT-TIMESTAMP].",
+          "Write the transaction record to the file and check the file status to determine success or failure.",
+          "If the write operation fails, display an error message, update the I/O status, and perform error handling procedures including [9910-DISPLAY-IO-STATUS] and [9999-ABEND-PROGRAM]."
+        ]
+      },
+      "1400-COMPUTE-FEES": {
+        "paragraph_name": "1400-COMPUTE-FEES",
+        "section": "procedure division",
+        "paragraph_code": "1400-COMPUTE-FEES.\n      * To be implemented\n           EXIT.\n",
+        "paragraph_lines": [521, 523],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Placeholder for fee computation logic<1400-COMPUTE-FEES> to calculate various fees applicable (to be implemented in future)."
+        ]
+      },
+      "9000-TCATBALF-CLOSE": {
+        "paragraph_name": "9000-TCATBALF-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9000-TCATBALF-CLOSE.\n           MOVE 8 TO  APPL-RESULT.\n           CLOSE TCATBAL-FILE\n           IF  TCATBALF-STATUS = '00'\n               MOVE 0 TO  APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING TRANSACTION BALANCE FILE'\n               MOVE TCATBALF-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [525, 541],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves the value 8 to the application result field.",
+          "Closes the transaction balance file (TCATBAL-FILE).",
+          "Checks the status of the file closure and adjusts the application result field accordingly (0 if successful, 12 if not).",
+          "If the operation is successful, continues execution. Otherwise, displays an error message and updates I/O status.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to show detailed I/O status if an error occurs.",
+          "If an error is detected, calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program gracefully."
+        ]
+      },
+      "9100-XREFFILE-CLOSE": {
+        "paragraph_name": "9100-XREFFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9100-XREFFILE-CLOSE.\n           MOVE 8 TO APPL-RESULT.\n           CLOSE XREF-FILE\n           IF  XREFFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CROSS REF FILE'\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [544, 560],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets the initial application result code to 8.",
+          "Closes the cross-reference file.",
+          "Checks if the file was successfully closed; sets the result code to 0 if successful or to 12 if not.",
+          "Continues if there are no application errors; otherwise, displays an error message and sets the I/O status.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to show the current I/O status.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program in case of errors."
+        ]
+      },
+      "9200-DISCGRP-CLOSE": {
+        "paragraph_name": "9200-DISCGRP-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9200-DISCGRP-CLOSE.\n           MOVE 8 TO APPL-RESULT.\n           CLOSE DISCGRP-FILE\n           IF  DISCGRP-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING DISCLOSURE GROUP FILE'\n               MOVE DISCGRP-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [562, 578],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets the application result code to 8 before attempting to close the DISCGRP file.",
+          "Closes the DISCGRP file and checks if the file status is 00 (successful); updates the application result code accordingly.",
+          "If the file closure is successful, continues processing; otherwise, handles the error.",
+          "If an error is detected, displays an error message including the file status code.",
+          "Calls the [display I/O status process]<9910-DISPLAY-IO-STATUS> to show detailed I/O status information.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program due to the error."
+        ]
+      },
+      "9300-ACCTFILE-CLOSE": {
+        "paragraph_name": "9300-ACCTFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9300-ACCTFILE-CLOSE.\n           MOVE 8 TO APPL-RESULT.\n           CLOSE ACCOUNT-FILE\n           IF  ACCTFILE-STATUS  = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING ACCOUNT FILE'\n               MOVE ACCTFILE-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [580, 596],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Attempts to close the account file and sets the initial result to indicate a close operation.<9300-ACCTFILE-CLOSE>.",
+          "If the account file status is 00, indicating success, sets the application result to zero.",
+          "If there is an error in closing, sets the application result to 12 and logs the error.",
+          "If the application is not okay (APPL-AOK is false), displays an error message and sets the I/O status.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to display the detailed I/O status.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program due to the error."
+        ]
+      },
+      "9400-TRANFILE-CLOSE": {
+        "paragraph_name": "9400-TRANFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9400-TRANFILE-CLOSE.\n           MOVE 8 TO APPL-RESULT.\n           CLOSE TRANSACT-FILE\n           IF  TRANFILE-STATUS  = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING TRANSACTION FILE'\n               MOVE TRANFILE-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [598, 614],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets a preliminary application result code for the transaction file close operation.",
+          "Attempts to close the transaction file by moving a success or error code based on the closure status.",
+          "Checks if the transaction file was closed successfully and updates the application result code accordingly.",
+          "If the application status indicates a problem, displays an error message, and calls <9910-DISPLAY-IO-STATUS> to display IO status.",
+          "If a critical error occurs, invokes <9999-ABEND-PROGRAM> to terminate the program with error handling."
+        ]
+      },
+      "Z-GET-DB2-FORMAT-TIMESTAMP": {
+        "paragraph_name": "Z-GET-DB2-FORMAT-TIMESTAMP",
+        "section": "procedure division",
+        "paragraph_code": "Z-GET-DB2-FORMAT-TIMESTAMP.\n           MOVE FUNCTION CURRENT-DATE TO COBOL-TS\n           MOVE COB-YYYY TO DB2-YYYY\n           MOVE COB-MM   TO DB2-MM\n           MOVE COB-DD   TO DB2-DD\n           MOVE COB-HH   TO DB2-HH\n           MOVE COB-MIN  TO DB2-MIN\n           MOVE COB-SS   TO DB2-SS\n           MOVE COB-MIL  TO DB2-MIL\n           MOVE '0000'   TO DB2-REST\n           MOVE '-' TO DB2-STREEP-1 DB2-STREEP-2 DB2-STREEP-3\n           MOVE '.' TO DB2-DOT-1 DB2-DOT-2 DB2-DOT-3\n      *    DISPLAY 'DB2-TIMESTAMP = ' DB2-FORMAT-TS\n           EXIT.\n\n",
+        "paragraph_lines": [616, 629],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "- Moves the current date and time to the COBOL-TS variable.",
+          "- Moves year, month, and day parts from COBOL format to DB2 format fields DB2-YYYY, DB2-MM, and DB2-DD.",
+          "- Moves hour, minute, and second parts from COBOL format to DB2 format fields DB2-HH, DB2-MIN, and DB2-SS.",
+          "- Moves milliseconds part from COBOL format to DB2-MIL and sets the remaining part to 0000.",
+          "- Sets the separator characters (- and .) in the appropriate fields in DB2-FORMAT-TS."
+        ]
+      },
+      "9999-ABEND-PROGRAM": {
+        "paragraph_name": "9999-ABEND-PROGRAM",
+        "section": "procedure division",
+        "paragraph_code": "9999-ABEND-PROGRAM.\n           DISPLAY 'ABENDING PROGRAM'\n           MOVE 0 TO TIMING\n           MOVE 999 TO ABCODE\n           CALL 'CEE3ABD'.\n\n",
+        "paragraph_lines": [631, 635],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays the message indicating the program is abending.",
+          "Moves a value of 0 to the TIMING field.",
+          "Sets the ABCODE field to 999 to signify an abnormal ending.",
+          "Calls the CEE3ABD routine to abend the program."
+        ]
+      },
+      "9910-DISPLAY-IO-STATUS": {
+        "paragraph_name": "9910-DISPLAY-IO-STATUS",
+        "section": "procedure division",
+        "paragraph_code": "9910-DISPLAY-IO-STATUS.\n           IF  IO-STATUS NOT NUMERIC\n           OR  IO-STAT1 = '9'\n               MOVE IO-STAT1 TO IO-STATUS-04(1:1)\n               MOVE 0        TO TWO-BYTES-BINARY\n               MOVE IO-STAT2 TO TWO-BYTES-RIGHT\n               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           ELSE\n               MOVE '0000' TO IO-STATUS-04\n               MOVE IO-STATUS TO IO-STATUS-04(3:2)\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [638, 651],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the IO-STATUS is not numeric or if the first character is 9.",
+          "Moves IO-STAT1 to the first position of IO-STATUS-04 and initializes TWO-BYTES-BINARY.",
+          "Moves IO-STAT2 to TWO-BYTES-RIGHT and converts it to binary for IO-STATUS-0403.",
+          "Displays FILE STATUS IS: NNNN concatenated with the updated IO-STATUS-04.",
+          "If IO-STATUS is numeric, sets IO-STATUS-04 to 0000 and updates the status in its third and fourth positions.",
+          "Displays FILE STATUS IS: NNNN concatenated with the updated IO-STATUS-04."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CEE3ABD",
+        "program_type": "Cobol",
+        "program_name": "CEE3ABD",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "9999-ABEND-PROGRAM",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "CVTRA01Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "CVACT03Y",
+        "program_type": "Copy",
+        "program_name": "CVACT03Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "CVTRA02Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CVACT01Y",
+        "program_type": "Copy",
+        "program_name": "CVACT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CVTRA05Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA05Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

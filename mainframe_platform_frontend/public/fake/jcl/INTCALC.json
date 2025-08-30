@@ -1,0 +1,144 @@
+{
+  "overview": {
+    "job_name": "INTCALC",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The JCL job INTCALC efficiently executes the program CBACT04C with multiple input and output datasets, mainly using VSAM files and a dynamically allocated transaction file."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP15",
+      "program_executed": "CBACT04C",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.LOADLIB" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "program_id": "CBACT04C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "TCATBALF",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS",
+              "variable_name": "TCATBALF",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS",
+              "program_id": "CBACT04C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "XREFFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "variable_name": "XREFFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "program_id": "CBACT04C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "XREFFIL1",
+          "parameters_map": {
+            "DISP": "SHR",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.AIX.PATH"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.AIX.PATH",
+              "variable_name": "XREFFIL1",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.AIX.PATH",
+              "program_id": "CBACT04C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "ACCTFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS",
+              "variable_name": "ACCTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS",
+              "program_id": "CBACT04C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "DISCGRP",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.DISCGRP.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.DISCGRP.VSAM.KSDS",
+              "variable_name": "DISCGRP",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.DISCGRP.VSAM.KSDS",
+              "program_id": "CBACT04C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "TRANSACT",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "F",
+            "RECFM": "F",
+            "LRECL": "F",
+            "BLKSIZE": "F",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.SYSTRAN(+1)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.SYSTRAN(+1)",
+              "variable_name": "TRANSACT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.SYSTRAN(+1)",
+              "program_id": "CBACT04C"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB\n",
+        "TCATBALF: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS\n",
+        "XREFFILE: DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS\n",
+        "XREFFIL1: DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.AIX.PATH\n",
+        "ACCTFILE: DSN=FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS\n",
+        "DISCGRP: DSN=FPTLT01.DEMO.CARDDEMO.DISCGRP.VSAM.KSDS\n",
+        "TRANSACT: DSN=FPTLT01.DEMO.CARDDEMO.SYSTRAN(+1)\n"
+      ],
+      "property": "JCL STEP15 executes program CBACT04C with multiple input and output datasets, primarily using VSAM files and a dynamically allocated transaction file."
+    }
+  ]
+}

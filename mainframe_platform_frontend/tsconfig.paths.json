@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@pages/*": ["src/pages/*"],
+      "@assets/*": ["src/assets/*"],
+      "@class": ["src/class"],
+      "@layouts/*": ["src/layouts/*"],
+      "@components": ["src/components"],
+      "@services": ["src/services"],
+      "@store": ["src/store"],
+      "@style": ["src/style"],
+      "@router": ["src/router"],
+      "@api": ["src/api"],
+      "@broadcast": ["src/broadcast.ts"],
+      "@types": ["src/types"],
+      "@hooks": ["src/hooks"],
+      "@defines": ["src/defines"],
+      "@providers": ["src/providers"],
+      "@theme": ["src/theme"],
+      "@theme/*": ["src/theme/*"],
+      "@utils": ["src/utils"],
+      "@configs": ["src/configs/app.ts"]
+    }
+  }
+}

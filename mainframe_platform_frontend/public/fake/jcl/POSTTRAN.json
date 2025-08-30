@@ -1,0 +1,141 @@
+{
+  "overview": {
+    "job_name": "POSTTRAN",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM facilitates efficient job control by managing job execution, step execution, and dataset handling seamlessly."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP15",
+      "program_executed": "CBTRN02C",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.LOADLIB" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "program_id": "CBTRN02C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "TRANFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS",
+              "variable_name": "TRANFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS",
+              "program_id": "CBTRN02C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "DALYTRAN",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.DALYTRAN.PS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.DALYTRAN.PS",
+              "variable_name": "DALYTRAN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.DALYTRAN.PS",
+              "program_id": "CBTRN02C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "XREFFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "variable_name": "XREFFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "program_id": "CBTRN02C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "DALYREJS",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "F",
+            "RECFM": "F",
+            "LRECL": "F",
+            "BLKSIZE": "F",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.DALYREJS(+1)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.DALYREJS(+1)",
+              "variable_name": "DALYREJS",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.DALYREJS(+1)",
+              "program_id": "CBTRN02C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "ACCTFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS",
+              "variable_name": "ACCTFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS",
+              "program_id": "CBTRN02C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "TCATBALF",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS",
+              "variable_name": "TCATBALF",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS",
+              "program_id": "CBTRN02C"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB\n",
+        "TRANFILE: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.VSAM.KSDS\n",
+        "DALYTRAN: DSN=FPTLT01.DEMO.CARDDEMO.DALYTRAN.PS\n",
+        "XREFFILE: DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS\n",
+        "DALYREJS: DSN=FPTLT01.DEMO.CARDDEMO.DALYREJS(+1)\n",
+        "ACCTFILE: DSN=FPTLT01.DEMO.CARDDEMO.ACCTDATA.VSAM.KSDS\n",
+        "TCATBALF: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS\n"
+      ],
+      "property": "STEP15 executes program CBTRN02C, using specified datasets for input and output processing."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "overview": {
+    "job_name": "DEFCUST",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM facilitates the execution of complex job streams by managing resources, job priorities, and execution conditions efficiently."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DEFINE CLUSTER (NAME(AWS.CUSTDATA.CLUSTER) -\r\n          CYLINDERS(1 5) -\r\n          KEYS(10 0) -\r\n          RECORDSIZE(500 500) -\r\n          SHAREOPTIONS(1 4) -\r\n          ERASE -\r\n          INDEXED -\r\n          ) -\r\n          DATA (NAME(AWS.CUSTDATA.CLUSTER.DATA) -\r\n          ) -\r\n          INDEX (NAME(AWS.CUSTDATA.CLUSTER.INDEX) -\r\n          )\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

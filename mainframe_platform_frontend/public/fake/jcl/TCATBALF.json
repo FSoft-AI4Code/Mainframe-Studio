@@ -1,0 +1,104 @@
+{
+  "overview": {
+    "job_name": "TCATBALF",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM allows precise control over batch job execution, including program execution sequences and dataset handling, demonstrated here by the IDCAMS steps to manage VSAM datasets."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DELETE FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS -\r\n          CLUSTER\r\n   SET    MAXCC = 0\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP10",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   DEFINE CLUSTER (NAME(FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS) -\r\n          CYLINDERS(1 5) -\r\n          VOLUMES(USER04 -\r\n          ) -\r\n          KEYS(17 0) -\r\n          RECORDSIZE(50 50) -\r\n          SHAREOPTIONS(2 3) -\r\n          ERASE -\r\n          INDEXED -\r\n          ) -\r\n          DATA (NAME(FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS.DAT) -\r\n          ) -\r\n          INDEX (NAME(FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS.IDX) -\r\n          )\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP15",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "TCATBAL",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.PS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.PS",
+              "variable_name": "TCATBAL",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.PS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "TCATBALV",
+          "parameters_map": { "DISP": "OLD", "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS",
+              "variable_name": "TCATBALV",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "   REPRO INFILE(TCATBAL) OUTFILE(TCATBALV)\r\n"
+        }
+      ],
+      "io_statements": [
+        "TCATBAL: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.PS\n",
+        "TCATBALV: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS\n"
+      ],
+      "property": "In JCL IBM, STEP15 executes the IDCAMS program to perform Access Method Services, copying data from a physical sequential file (TCATBAL) to a VSAM KSDS file (TCATBALV)."
+    }
+  ]
+}

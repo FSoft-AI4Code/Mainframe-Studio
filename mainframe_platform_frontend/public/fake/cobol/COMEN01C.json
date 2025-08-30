@@ -1,0 +1,283 @@
+{
+  "id": "a923b286c288418e8cc392d3e4c74764",
+  "name": "COMEN01C",
+  "path": "DEMO.CARDDEMO.CBL/COMEN01C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COMEN01C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "COCOM01Y",
+      "COMEN02Y",
+      "COMEN01",
+      "COTTL01Y",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CSUSR01Y",
+      "DFHAID",
+      "DFHBMSCA"
+    ],
+    "call_files": [],
+    "summarization": "This COBOL script is a CICS program designed to handle a user interface for a menu selection system. Below is the summary of its main flow and functionalities:\n\n1. **MAIN-PARA (Main Routine):**\n   - Initializes by resetting error flags and clearing message fields.\n   - Checks if the `EIBCALEN` (Communication Area Length) is zero:\n     - If true, it moves 'COSGN00C' to indicate returning to the sign-on screen.\n     - Otherwise, moves the communication area content and initializes the application if it is not re-entered.\n   - Depending on the `EIBAID` (Attention Identifier), it processes the entered key:\n     - For ENTER key, invokes `PROCESS-ENTER-KEY`.\n     - For PF3 key, returns to the sign-on screen.\n     - For other keys, sets an error flag and sends an error message.\n\n2. **PROCESS-ENTER-KEY:**\n   - Parses and validates the user-entered menu option.\n     - If invalid, updates the error message and resends the menu screen.\n   - Checks user access rights for the selected option.\n     - If unauthorized (admin-only access), sets an error flag and sends an error message.\n   - If no errors, checks if the program name associated with the selected option is not a placeholder ('DUMMY') and then executes the respective program by passing control.\n\n3. **RETURN-TO-SIGNON-SCREEN:**\n   - Ensures the target program is set and transfers control back to the sign-on screen program using `XCTL`.\n\n4. **SEND-MENU-SCREEN:**\n   - Prepares and populates header and menu information.\n   - Sends the menu screen to the user through CICS `SEND` command.\n\n5. **RECEIVE-MENU-SCREEN:**\n   - Retrieves user input from the menu screen using CICS `RECEIVE` command.\n\n6. **POPULATE-HEADER-INFO:**\n   - Populates header information such as current date, time, transaction ID, and program name into the screen map fields.\n\n7. **BUILD-MENU-OPTIONS:**\n   - Constructs and populates the textual menu options.\n   - Uses a loop and `EVALUATE` statement to populate corresponding screen fields for each menu option based on its index.\n\nOverall, this program efficiently handles interactions with a menu-based user interface, processes user inputs, validates options, manages control transfers between programs, and handles user access levels. It makes extensive use of CICS commands for screen handling and control flow management.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n\n           SET ERR-FLG-OFF TO TRUE\n\n           MOVE SPACES TO WS-MESSAGE\n                          ERRMSGO OF COMEN1AO\n\n           IF EIBCALEN = 0\n               MOVE 'COSGN00C' TO CDEMO-FROM-PROGRAM\n               PERFORM RETURN-TO-SIGNON-SCREEN\n           ELSE\n               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA\n               IF NOT CDEMO-PGM-REENTER\n                   SET CDEMO-PGM-REENTER    TO TRUE\n                   MOVE LOW-VALUES          TO COMEN1AO\n                   PERFORM SEND-MENU-SCREEN\n               ELSE\n                   PERFORM RECEIVE-MENU-SCREEN\n                   EVALUATE EIBAID\n                       WHEN DFHENTER\n                           PERFORM PROCESS-ENTER-KEY\n                       WHEN DFHPF3\n                           MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n                           PERFORM RETURN-TO-SIGNON-SCREEN\n                       WHEN OTHER\n                           MOVE 'Y'                       TO WS-ERR-FLG\n                           MOVE CCDA-MSG-INVALID-KEY      TO WS-MESSAGE\n                           PERFORM SEND-MENU-SCREEN\n                   END-EVALUATE\n               END-IF\n           END-IF\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [75, 110],
+        "ref_paragraphs": [
+          "RETURN-TO-SIGNON-SCREEN",
+          "SEND-MENU-SCREEN",
+          "RECEIVE-MENU-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "RETURN-TO-SIGNON-SCREEN",
+          "SEND-MENU-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Initializes error flag and prepares message workspace by setting error flag to off and clearing the message fields.",
+          "Checks the length of the communication area; if zero, sets the program to return to the sign-on screen.",
+          "If CALEN is not zero, moves the communication area and checks re-entry; if not re-entering, sets it to true and clears the screen, then performs the [menu screen sending process]<SEND-MENU-SCREEN>.",
+          "If re-entering, performs the [menu screen receiving process]<RECEIVE-MENU-SCREEN> and evaluates the action ID.",
+          "Processes the ENTER key by performing the [enter key processing logic]<PROCESS-ENTER-KEY>, or returns to sign-on screen if PF3 is pressed, or sets an error flag and prepares the error message, then sends the menu screen.",
+          "Returns control to CICS with the transaction ID and communication area updated."
+        ]
+      },
+      "PROCESS-ENTER-KEY": {
+        "paragraph_name": "PROCESS-ENTER-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-ENTER-KEY.\n\n           PERFORM VARYING WS-IDX\n                   FROM LENGTH OF OPTIONI OF COMEN1AI BY -1 UNTIL\n                   OPTIONI OF COMEN1AI(WS-IDX:1) NOT = SPACES OR\n                   WS-IDX = 1\n           END-PERFORM\n           MOVE OPTIONI OF COMEN1AI(1:WS-IDX) TO WS-OPTION-X\n           INSPECT WS-OPTION-X REPLACING ALL ' ' BY '0'\n           MOVE WS-OPTION-X              TO WS-OPTION\n           MOVE WS-OPTION                TO OPTIONO OF COMEN1AO\n\n           IF WS-OPTION IS NOT NUMERIC OR\n              WS-OPTION > CDEMO-MENU-OPT-COUNT OR\n              WS-OPTION = ZEROS\n               MOVE 'Y'     TO WS-ERR-FLG\n               MOVE 'Please enter a valid option number...' TO\n                               WS-MESSAGE\n               PERFORM SEND-MENU-SCREEN\n           END-IF\n\n           IF CDEMO-USRTYP-USER AND\n              CDEMO-MENU-OPT-USRTYPE(WS-OPTION) = 'A'\n               SET ERR-FLG-ON          TO TRUE\n               MOVE SPACES             TO WS-MESSAGE\n               MOVE 'No access - Admin Only option... ' TO\n                                       WS-MESSAGE\n               PERFORM SEND-MENU-SCREEN\n           END-IF\n\n           IF NOT ERR-FLG-ON\n               IF CDEMO-MENU-OPT-PGMNAME(WS-OPTION)(1:5) NOT = 'DUMMY'\n                   MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n                   MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n      *            MOVE WS-USER-ID   TO CDEMO-USER-ID\n      *            MOVE SEC-USR-TYPE TO CDEMO-USER-TYPE\n                   MOVE ZEROS        TO CDEMO-PGM-CONTEXT\n                   EXEC CICS\n                       XCTL PROGRAM(CDEMO-MENU-OPT-PGMNAME(WS-OPTION))\n                       COMMAREA(CARDDEMO-COMMAREA)\n                   END-EXEC\n               END-IF\n               MOVE SPACES             TO WS-MESSAGE\n               MOVE DFHGREEN           TO ERRMSGC  OF COMEN1AO\n               STRING 'This option '       DELIMITED BY SIZE\n                       CDEMO-MENU-OPT-NAME(WS-OPTION)\n                                       DELIMITED BY SPACE\n                       'is coming soon ...'   DELIMITED BY SIZE\n                  INTO WS-MESSAGE\n               PERFORM SEND-MENU-SCREEN\n           END-IF.\n\n",
+        "paragraph_lines": [115, 165],
+        "ref_paragraphs": ["SEND-MENU-SCREEN", "SEND-MENU-SCREEN", "SEND-MENU-SCREEN"],
+        "paragraph_logic": [
+          "Validates the user input option by trimming spaces and ensuring it is numeric and within the allowed range.",
+          "If the option is invalid, sets an error flag, prepares an error message, and calls the [menu screen sending process]<SEND-MENU-SCREEN>.",
+          "Checks if the user has the required access level for the chosen option. If not, sets an error flag, and calls the [menu screen sending process]<SEND-MENU-SCREEN>.",
+          "If no errors are detected and the user has access, navigates to the chosen program if it is not marked as DUMMY via an EXEC CICS XCTL command.",
+          "If the option is not immediately executable, prepares a coming soon message and calls the [menu screen sending process]<SEND-MENU-SCREEN>."
+        ]
+      },
+      "RETURN-TO-SIGNON-SCREEN": {
+        "paragraph_name": "RETURN-TO-SIGNON-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RETURN-TO-SIGNON-SCREEN.\n\n           IF CDEMO-TO-PROGRAM = LOW-VALUES OR SPACES\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n           END-IF\n           EXEC CICS\n               XCTL PROGRAM(CDEMO-TO-PROGRAM)\n           END-EXEC.\n\n",
+        "paragraph_lines": [170, 177],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the transition program identifier is either uninitialized or blank.",
+          "If the program identifier is uninitialized or blank, assigns a default program ID COSGN00C.",
+          "Transfers control to the specified or default sign-on program using the CICS XCTL command."
+        ]
+      },
+      "SEND-MENU-SCREEN": {
+        "paragraph_name": "SEND-MENU-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "SEND-MENU-SCREEN.\n\n           PERFORM POPULATE-HEADER-INFO\n           PERFORM BUILD-MENU-OPTIONS\n\n           MOVE WS-MESSAGE TO ERRMSGO OF COMEN1AO\n\n           EXEC CICS SEND\n                     MAP('COMEN1A')\n                     MAPSET('COMEN01')\n                     FROM(COMEN1AO)\n                     ERASE\n           END-EXEC.\n\n",
+        "paragraph_lines": [182, 194],
+        "ref_paragraphs": ["POPULATE-HEADER-INFO", "BUILD-MENU-OPTIONS"],
+        "paragraph_logic": [
+          "Calls the [header information population process]<POPULATE-HEADER-INFO> to set up the screen header with relevant details.",
+          "Calls the [menu options building process]<BUILD-MENU-OPTIONS> to create and format the menu options to be displayed on the screen.",
+          "Moves the message stored in WS-MESSAGE to the error message field on the screen.",
+          "Sends the COMEN1A map from the COMEN01 mapset to the user screen, clearing any previous content."
+        ]
+      },
+      "RECEIVE-MENU-SCREEN": {
+        "paragraph_name": "RECEIVE-MENU-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RECEIVE-MENU-SCREEN.\n\n           EXEC CICS RECEIVE\n                     MAP('COMEN1A')\n                     MAPSET('COMEN01')\n                     INTO(COMEN1AI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC.\n\n",
+        "paragraph_lines": [199, 207],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Receives the menu screen from the terminal using CICS command for the specified map (COMEN1A) and mapset (COMEN01).",
+          "Stores the received data into the COMEN1AI data structure.",
+          "Handles CICS response codes via WS-RESP-CD and additional reason codes via WS-REAS-CD."
+        ]
+      },
+      "POPULATE-HEADER-INFO": {
+        "paragraph_name": "POPULATE-HEADER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-HEADER-INFO.\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF COMEN1AO\n           MOVE CCDA-TITLE02           TO TITLE02O OF COMEN1AO\n           MOVE WS-TRANID              TO TRNNAMEO OF COMEN1AO\n           MOVE WS-PGMNAME             TO PGMNAMEO OF COMEN1AO\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF COMEN1AO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF COMEN1AO.\n\n",
+        "paragraph_lines": [212, 231],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the current date to working storage variable WS-CURDATE-DATA.",
+          "Populates titles, transaction name, and program name from their respective variables to the COMEN1AO structure.",
+          "Extracts and formats the current date components (month, day, year) to separate fields in the working storage.",
+          "Combines formatted date components and moves them to the CURDATEO field of the COMEN1AO structure.",
+          "Extracts and formats the current time components (hours, minutes, seconds) to separate fields in the working storage.",
+          "Combines formatted time components and moves them to the CURTIMEO field of the COMEN1AO structure."
+        ]
+      },
+      "BUILD-MENU-OPTIONS": {
+        "paragraph_name": "BUILD-MENU-OPTIONS",
+        "section": "procedure division",
+        "paragraph_code": "BUILD-MENU-OPTIONS.\n\n           PERFORM VARYING WS-IDX FROM 1 BY 1 UNTIL\n                           WS-IDX > CDEMO-MENU-OPT-COUNT\n\n               MOVE SPACES             TO WS-MENU-OPT-TXT\n\n               STRING CDEMO-MENU-OPT-NUM(WS-IDX)  DELIMITED BY SIZE\n                      '. '                         DELIMITED BY SIZE\n                      CDEMO-MENU-OPT-NAME(WS-IDX) DELIMITED BY SIZE\n                 INTO WS-MENU-OPT-TXT\n\n               EVALUATE WS-IDX\n                   WHEN 1\n                       MOVE WS-MENU-OPT-TXT TO OPTN001O\n                   WHEN 2\n                       MOVE WS-MENU-OPT-TXT TO OPTN002O\n                   WHEN 3\n                       MOVE WS-MENU-OPT-TXT TO OPTN003O\n                   WHEN 4\n                       MOVE WS-MENU-OPT-TXT TO OPTN004O\n                   WHEN 5\n                       MOVE WS-MENU-OPT-TXT TO OPTN005O\n                   WHEN 6\n                       MOVE WS-MENU-OPT-TXT TO OPTN006O\n                   WHEN 7\n                       MOVE WS-MENU-OPT-TXT TO OPTN007O\n                   WHEN 8\n                       MOVE WS-MENU-OPT-TXT TO OPTN008O\n                   WHEN 9\n                       MOVE WS-MENU-OPT-TXT TO OPTN009O\n                   WHEN 10\n                       MOVE WS-MENU-OPT-TXT TO OPTN010O\n                   WHEN 11\n                       MOVE WS-MENU-OPT-TXT TO OPTN011O\n                   WHEN 12\n                       MOVE WS-MENU-OPT-TXT TO OPTN012O\n                   WHEN OTHER\n                       CONTINUE\n               END-EVALUATE\n\n           END-PERFORM.\n\n\n",
+        "paragraph_lines": [236, 277],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Iterates through each menu option from 1 to the total menu option count <CDEMO-MENU-OPT-COUNT>.",
+          "Initializes the menu option text variable <WS-MENU-OPT-TXT> to spaces at the start of each iteration.",
+          "Constructs a string combining the menu option number and name for the current index and stores it in <WS-MENU-OPT-TXT>.",
+          "Uses EVALUATE to determine the index and moves the constructed string to the corresponding option text variable (e.g., <OPTN001O>, <OPTN002O>, etc.).",
+          "Continues this process until all menu options have been processed, assigning each to its respective text variable."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COMEN02Y",
+        "program_type": "Copy",
+        "program_name": "COMEN02Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "COMEN01",
+        "program_type": "Copy",
+        "program_name": "COMEN01",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "CSUSR01Y",
+        "program_type": "Copy",
+        "program_name": "CSUSR01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 8,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

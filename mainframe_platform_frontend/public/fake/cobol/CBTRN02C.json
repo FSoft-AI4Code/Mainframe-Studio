@@ -1,0 +1,850 @@
+{
+  "id": "7521282ec6964b3580b767e89ea5dbaf",
+  "name": "CBTRN02C",
+  "path": "DEMO.CARDDEMO.CBL/CBTRN02C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBTRN02C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": ["CVTRA06Y", "CVTRA05Y", "CVACT03Y", "CVACT01Y", "CVTRA01Y"],
+    "call_files": ["'CEE3ABD'::static"],
+    "summarization": "The provided COBOL code outlines the main flow of a batch processing program named `CBTRN02C` which processes daily transactions. Here\u2019s a summary of the key steps involved:\n\n1. **Program Initialization**:\n    - Displays the start message for the execution of the program.\n\n2. **File Operations**:\n    - **Opening Files**:\n      - `0000-DALYTRAN-OPEN`: Opens `DALYTRAN-FILE` for input, handling any initialization errors.\n      - `0100-TRANFILE-OPEN`: Opens `TRANSACT-FILE` for output.\n      - `0200-XREFFILE-OPEN`: Opens `XREF-FILE` for input.\n      - `0300-DALYREJS-OPEN`: Opens `DALYREJS-FILE` for output.\n      - `0400-ACCTFILE-OPEN`: Opens `ACCOUNT-FILE` for I-O operations.\n      - `0500-TCATBALF-OPEN`: Opens `TCATBAL-FILE` for I-O operations.\n\n3. **Transaction Processing Loop**:\n    - Iteratively performs transactions processing until `END-OF-FILE` is set to 'Y'.\n    - Reads the next transaction record from `DALYTRAN-FILE` into `DALYTRAN-RECORD`.\n    - Validates the transaction through `1500-VALIDATE-TRAN`:\n      - Checks cross-reference in `1500-A-LOOKUP-XREF`.\n      - Checks account in `1500-B-LOOKUP-ACCT`.\n    - Posts valid transactions using `2000-POST-TRANSACTION`, which updates balances and writes to files.\n    - Writes rejected transactions using `2500-WRITE-REJECT-REC`.\n\n4. **File Closing Operations**:\n    - **Closing Files**:\n      - `9000-DALYTRAN-CLOSE`: Closes the `DALYTRAN-FILE`.\n      - `9100-TRANFILE-CLOSE`: Closes the `TRANSACT-FILE`.\n      - `9200-XREFFILE-CLOSE`: Closes the `XREF-FILE`.\n      - `9300-DALYREJS-CLOSE`: Closes the `DALYREJS-FILE`.\n      - `9400-ACCTFILE-CLOSE`: Closes the `ACCOUNT-FILE`.\n      - `9500-TCATBALF-CLOSE`: Closes the `TCATBAL-FILE`.\n\n5. **Final Display and Exit**:\n    - Displays processed and rejected transaction counts.\n    - Sets an error code if there were any rejected transactions.\n    - Displays the end message for the execution of the program and concludes the program with `GOBACK`.\n\n6. **Error Handling and Miscellaneous Tasks**:\n    - Various error handlers (`9910-DISPLAY-IO-STATUS`, `9999-ABEND-PROGRAM`) for IO status displays and program abend actions.\n    - Utility section `Z-GET-DB2-FORMAT-TIMESTAMP` to get current timestamp formatted for DB2.\n\nThe code efficiently organizes the sequence of operations to read, validate, process, and handle transactions while ensuring robust error handling mechanisms.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "DALYTRAN-FILE",
+        "physical_name": "DALYTRAN",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "TRANSACT-FILE",
+        "physical_name": "TRANFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "XREF-FILE",
+        "physical_name": "XREFFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "DALYREJS-FILE",
+        "physical_name": "DALYREJS",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "ACCOUNT-FILE",
+        "physical_name": "ACCTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "TCATBAL-FILE",
+        "physical_name": "TCATBALF",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "0000-DALYTRAN-OPEN": {
+        "paragraph_name": "0000-DALYTRAN-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0000-DALYTRAN-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT DALYTRAN-FILE\n           IF  DALYTRAN-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING DALYTRAN'\n               MOVE DALYTRAN-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [236, 252],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Opens the DALYTRAN-FILE for input and checks the status.",
+          "If DALYTRAN-STATUS is 00, sets APPL-RESULT to 0; otherwise, sets APPL-RESULT to 12.",
+          "If APPL-RESULT indicates success, the program continues without issue.",
+          "If theres an error opening DALYTRAN, displays an error message and moves DALYTRAN-STATUS to IO-STATUS.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to show the error status, then aborts the program via [abort process]<9999-ABEND-PROGRAM>."
+        ]
+      },
+      "0100-TRANFILE-OPEN": {
+        "paragraph_name": "0100-TRANFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0100-TRANFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN OUTPUT TRANSACT-FILE\n           IF  TRANFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING TRANSACTION FILE'\n               MOVE TRANFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [254, 270],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets the initial application result code to 8 before attempting to open the transaction file.",
+          "Opens the transaction file for output operations.",
+          "If the file opens successfully (status code 00), updates the application result to 0.",
+          "If the file fails to open, updates the application result to 12.",
+          "If the application result indicates success, continues processing; otherwise,",
+          "Displays an error message and moves the file status to the IO status variable.",
+          "Calls the [display IO status process]<9910-DISPLAY-IO-STATUS> to display detailed IO status.",
+          "Calls the [abnormal end process]<9999-ABEND-PROGRAM> to terminate the program."
+        ]
+      },
+      "0200-XREFFILE-OPEN": {
+        "paragraph_name": "0200-XREFFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0200-XREFFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN INPUT XREF-FILE\n           IF  XREFFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING CROSS REF FILE'\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [273, 289],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Checks the cross-reference file status and sets the application result based on whether it successfully opened.",
+          "If the file opens successfully (XREFFILE-STATUS = 00), the APPL-RESULT is set to 0; otherwise, its set to 12.",
+          "If opening the file is successful (APPL-AOK), the program continues; if not, it displays an error message and terminates the program.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to show what the specific I/O status code is.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program due to a failure in file opening."
+        ]
+      },
+      "0300-DALYREJS-OPEN": {
+        "paragraph_name": "0300-DALYREJS-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0300-DALYREJS-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN OUTPUT DALYREJS-FILE\n           IF  DALYREJS-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING DALY REJECTS FILE'\n               MOVE DALYREJS-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [291, 307],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Initializes the application result to 8 and attempts to open the DALY rejects file for output.",
+          "Checks for a successful file open by examining the status code 00; if successful, resets the application result to 0.",
+          "If the file fails to open, sets the application result to 12 and prepares to handle the error condition.",
+          "If successful, continues processing; otherwise, displays an error message and captures the I/O status.",
+          "Calls the [display I/O status process]<9910-DISPLAY-IO-STATUS> to show detailed I/O error information.",
+          "Calls the [abend program process]<9999-ABEND-PROGRAM> to terminate the program execution due to critical error."
+        ]
+      },
+      "0400-ACCTFILE-OPEN": {
+        "paragraph_name": "0400-ACCTFILE-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0400-ACCTFILE-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN I-O  ACCOUNT-FILE\n           IF  ACCTFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING ACCOUNT MASTER FILE'\n               MOVE ACCTFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [309, 325],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Attempts to open the Account Master File for Input-Output operations.",
+          "Initializes the application result to 8 before attempting to open the file.",
+          "Checks if the file open operation was successful by examining the ACCTFILE-STATUS; updates the application result accordingly.",
+          "If the file open operation is successful, it continues the execution; otherwise, handles the error by:",
+          "Displays an error message indicating the file couldnt be opened.",
+          "Moves the file status to IO-STATUS for further processing.",
+          "Performs the [display IO status process]<9910-DISPLAY-IO-STATUS> to show detailed file I/O status on the screen.",
+          "Performs the [abend program process]<9999-ABEND-PROGRAM> to terminate the program due to the critical error."
+        ]
+      },
+      "0500-TCATBALF-OPEN": {
+        "paragraph_name": "0500-TCATBALF-OPEN",
+        "section": "procedure division",
+        "paragraph_code": "0500-TCATBALF-OPEN.\n           MOVE 8 TO APPL-RESULT.\n           OPEN I-O  TCATBAL-FILE\n           IF  TCATBALF-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR OPENING TRANSACTION BALANCE FILE'\n               MOVE TCATBALF-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [327, 343],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves the value 8 to APPL-RESULT indicating a default failure assumption.",
+          "Attempts to open the TCATBAL file for input-output operations.",
+          "Updates APPL-RESULT to 0 if opening the file is successful, otherwise sets it to 12.",
+          "If the application status (APPL-AOK) indicates success, continues processing.",
+          "If not, displays an error message and moves the file status to IO-STATUS.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to display the current I/O status.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to halt the program due to the error."
+        ]
+      },
+      "1000-DALYTRAN-GET-NEXT": {
+        "paragraph_name": "1000-DALYTRAN-GET-NEXT",
+        "section": "procedure division",
+        "paragraph_code": "1000-DALYTRAN-GET-NEXT.\n           READ DALYTRAN-FILE INTO DALYTRAN-RECORD.\n           IF  DALYTRAN-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n      *        DISPLAY DALYTRAN-RECORD\n           ELSE\n               IF  DALYTRAN-STATUS = '10'\n                   MOVE 16 TO APPL-RESULT\n               ELSE\n                   MOVE 12 TO APPL-RESULT\n               END-IF\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               IF  APPL-EOF\n                   MOVE 'Y' TO END-OF-FILE\n               ELSE\n                   DISPLAY 'ERROR READING DALYTRAN FILE'\n                   MOVE DALYTRAN-STATUS TO IO-STATUS\n                   PERFORM 9910-DISPLAY-IO-STATUS\n                   PERFORM 9999-ABEND-PROGRAM\n               END-IF\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [345, 369],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Reads the next record from the DALYTRAN file into the DALYTRAN-RECORD.",
+          "Checks if the file status is 00 (success) and sets the application result to 0, otherwise checks for other status codes and sets different application results.",
+          "Continues processing if no application error is encountered; otherwise, checks for end-of-file or handles errors.",
+          "If end-of-file is reached, sets the END-OF-FILE indicator to Y.",
+          "If an error occurs, displays an error message, moves the DALYTRAN status to IO-STATUS, and calls the [IO status display process]<9910-DISPLAY-IO-STATUS>.",
+          "Calls the [program-abend process]<9999-ABEND-PROGRAM> to handle any severe errors and terminate the program gracefully."
+        ]
+      },
+      "1500-VALIDATE-TRAN": {
+        "paragraph_name": "1500-VALIDATE-TRAN",
+        "section": "procedure division",
+        "paragraph_code": "1500-VALIDATE-TRAN.\n           PERFORM 1500-A-LOOKUP-XREF.\n           IF WS-VALIDATION-FAIL-REASON = 0\n              PERFORM 1500-B-LOOKUP-ACCT\n           ELSE\n              CONTINUE\n           END-IF\n      * ADD MORE VALIDATIONS HERE\n           EXIT.\n\n",
+        "paragraph_lines": [370, 378],
+        "ref_paragraphs": ["1500-A-LOOKUP-XREF", "1500-B-LOOKUP-ACCT"],
+        "paragraph_logic": [
+          "Calls the [cross-reference lookup process]<1500-A-LOOKUP-XREF> to match transaction data with reference data.",
+          "Checks if the cross-reference lookup was successful by examining the validation reason code.",
+          "If the validation passes, calls the [account lookup process]<1500-B-LOOKUP-ACCT> to validate the account information.",
+          "If the validation fails, the control continues to the next step without further action.",
+          "Comments indicate that more validation processes can be added in this section for additional checks."
+        ]
+      },
+      "1500-A-LOOKUP-XREF": {
+        "paragraph_name": "1500-A-LOOKUP-XREF",
+        "section": "procedure division",
+        "paragraph_code": "1500-A-LOOKUP-XREF.\n      *    DISPLAY 'CARD NUMBER: ' DALYTRAN-CARD-NUM\n           MOVE DALYTRAN-CARD-NUM TO FD-XREF-CARD-NUM\n           READ XREF-FILE INTO CARD-XREF-RECORD\n              INVALID KEY\n                MOVE 100 TO WS-VALIDATION-FAIL-REASON\n                MOVE 'INVALID CARD NUMBER FOUND'\n                  TO WS-VALIDATION-FAIL-REASON-DESC\n              NOT INVALID KEY\n      *           DISPLAY 'ACCOUNT RECORD FOUND'\n                  CONTINUE\n           END-READ\n           EXIT.\n",
+        "paragraph_lines": [380, 392],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the transaction card number to the cross-reference card number field.",
+          "Reads the cross-reference file into the card cross-reference record.",
+          "If the card number is invalid (invalid key), sets the validation failure reason to 100 and updates the failure reason description.",
+          "If the card number is valid, continues processing without any error.",
+          "Exits the paragraph after completing the read operation."
+        ]
+      },
+      "1500-B-LOOKUP-ACCT": {
+        "paragraph_name": "1500-B-LOOKUP-ACCT",
+        "section": "procedure division",
+        "paragraph_code": "1500-B-LOOKUP-ACCT.\n           MOVE XREF-ACCT-ID TO FD-ACCT-ID\n           READ ACCOUNT-FILE INTO ACCOUNT-RECORD\n              INVALID KEY\n                MOVE 101 TO WS-VALIDATION-FAIL-REASON\n                MOVE 'ACCOUNT RECORD NOT FOUND'\n                  TO WS-VALIDATION-FAIL-REASON-DESC\n              NOT INVALID KEY\n      *         DISPLAY 'ACCT-CREDIT-LIMIT:' ACCT-CREDIT-LIMIT\n      *         DISPLAY 'TRAN-AMT         :' DALYTRAN-AMT\n                COMPUTE WS-TEMP-BAL = ACCT-CURR-CYC-CREDIT\n                                    - ACCT-CURR-CYC-DEBIT\n                                    + DALYTRAN-AMT\n\n                IF ACCT-CREDIT-LIMIT >= WS-TEMP-BAL\n                  CONTINUE\n                ELSE\n                  MOVE 102 TO WS-VALIDATION-FAIL-REASON\n                  MOVE 'OVERLIMIT TRANSACTION'\n                    TO WS-VALIDATION-FAIL-REASON-DESC\n                END-IF\n                IF ACCT-EXPIRAION-DATE >= DALYTRAN-ORIG-TS (1:10)\n                  CONTINUE\n                ELSE\n                  MOVE 103 TO WS-VALIDATION-FAIL-REASON\n                  MOVE 'TRANSACTION RECEIVED AFTER ACCT EXPIRATION'\n                    TO WS-VALIDATION-FAIL-REASON-DESC\n                END-IF\n           END-READ\n           EXIT.\n",
+        "paragraph_lines": [393, 422],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the cross-reference account ID to the account file descriptor ID before reading from the account file.",
+          "Attempts to read the account record and handles the invalid key case by setting a failure reason and description if the account is not found.",
+          "If the read is successful, calculates the temporary balance by adjusting the current cycles credit and debit amounts with the daily transaction amount.",
+          "Checks if the account credit limit is sufficient for the computed temporary balance and sets a corresponding validation failure reason and description if not.",
+          "Verifies that the transaction date is earlier than the account expiration date and sets a corresponding validation failure reason and description if the account is expired.",
+          "Ends the read operation and exits the paragraph."
+        ]
+      },
+      "2000-POST-TRANSACTION": {
+        "paragraph_name": "2000-POST-TRANSACTION",
+        "section": "procedure division",
+        "paragraph_code": "2000-POST-TRANSACTION.\n           MOVE  DALYTRAN-ID            TO    TRAN-ID\n           MOVE  DALYTRAN-TYPE-CD       TO    TRAN-TYPE-CD\n           MOVE  DALYTRAN-CAT-CD        TO    TRAN-CAT-CD\n           MOVE  DALYTRAN-SOURCE        TO    TRAN-SOURCE\n           MOVE  DALYTRAN-DESC          TO    TRAN-DESC\n           MOVE  DALYTRAN-AMT           TO    TRAN-AMT\n           MOVE  DALYTRAN-MERCHANT-ID   TO    TRAN-MERCHANT-ID\n           MOVE  DALYTRAN-MERCHANT-NAME TO    TRAN-MERCHANT-NAME\n           MOVE  DALYTRAN-MERCHANT-CITY TO    TRAN-MERCHANT-CITY\n           MOVE  DALYTRAN-MERCHANT-ZIP  TO    TRAN-MERCHANT-ZIP\n           MOVE  DALYTRAN-CARD-NUM      TO    TRAN-CARD-NUM\n           MOVE  DALYTRAN-ORIG-TS       TO    TRAN-ORIG-TS\n           PERFORM Z-GET-DB2-FORMAT-TIMESTAMP\n           MOVE  DB2-FORMAT-TS          TO    TRAN-PROC-TS\n\n           PERFORM 2700-UPDATE-TCATBAL\n           PERFORM 2800-UPDATE-ACCOUNT-REC\n           PERFORM 2900-WRITE-TRANSACTION-FILE\n\n           EXIT.\n\n",
+        "paragraph_lines": [424, 444],
+        "ref_paragraphs": [
+          "Z-GET-DB2-FORMAT-TIMESTAMP",
+          "2700-UPDATE-TCATBAL",
+          "2800-UPDATE-ACCOUNT-REC",
+          "2900-WRITE-TRANSACTION-FILE"
+        ],
+        "paragraph_logic": [
+          "Moves daily transaction ID and types to transaction fields for processing.",
+          "Calls the [DB2 timestamp formatting process]<Z-GET-DB2-FORMAT-TIMESTAMP> to get the current formatted timestamp.",
+          "Sets the processed timestamp field to the formatted DB2 timestamp value.",
+          "Calls the [transaction category balance update process]<2700-UPDATE-TCATBAL> to update the balance for the transaction category.",
+          "Calls the [account record update process]<2800-UPDATE-ACCOUNT-REC> to update the associated account record.",
+          "Calls the [transaction file writing process]<2900-WRITE-TRANSACTION-FILE> to commit the updated transactions to the transaction file."
+        ]
+      },
+      "2500-WRITE-REJECT-REC": {
+        "paragraph_name": "2500-WRITE-REJECT-REC",
+        "section": "procedure division",
+        "paragraph_code": "2500-WRITE-REJECT-REC.\n           MOVE DALYTRAN-RECORD TO REJECT-TRAN-DATA\n           MOVE WS-VALIDATION-TRAILER TO VALIDATION-TRAILER\n      *     DISPLAY '***' REJECT-RECORD\n           MOVE 8 TO APPL-RESULT\n           WRITE FD-REJS-RECORD FROM REJECT-RECORD\n           IF DALYREJS-STATUS = '00'\n               MOVE 0 TO  APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR WRITING TO REJECTS FILE'\n               MOVE DALYREJS-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [446, 465],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves the DALYTRAN-RECORD to REJECT-TRAN-DATA to prepare the rejected transaction data.",
+          "Moves WS-VALIDATION-TRAILER to VALIDATION-TRAILER for record validation purposes.",
+          "Writes the REJECT-RECORD to the FD-REJS-RECORD file and sets the application result.",
+          "If the DALYREJS-STATUS equals 00, sets the application result to 0; otherwise, sets it to 12.",
+          "If no errors occur, continues execution; if an error happens, logs the status and calls the [IO status display process]<9910-DISPLAY-IO-STATUS> followed by aborting the program with [abend process]<9999-ABEND-PROGRAM>."
+        ]
+      },
+      "2700-UPDATE-TCATBAL": {
+        "paragraph_name": "2700-UPDATE-TCATBAL",
+        "section": "procedure division",
+        "paragraph_code": "2700-UPDATE-TCATBAL.\n      * Update the balances in transaction balance file.\n           MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID\n           MOVE DALYTRAN-TYPE-CD TO FD-TRANCAT-TYPE-CD\n           MOVE DALYTRAN-CAT-CD TO FD-TRANCAT-CD\n\n           MOVE 'N' TO WS-CREATE-TRANCAT-REC\n           READ TCATBAL-FILE INTO TRAN-CAT-BAL-RECORD\n              INVALID KEY\n                DISPLAY 'TCATBAL record not found for key : '\n                   FD-TRAN-CAT-KEY '.. Creating.'\n                MOVE 'Y' TO WS-CREATE-TRANCAT-REC\n           END-READ.\n\n           IF  TCATBALF-STATUS = '00'  OR '23'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR READING TRANSACTION BALANCE FILE'\n               MOVE TCATBALF-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n           IF WS-CREATE-TRANCAT-REC = 'Y'\n              PERFORM 2700-A-CREATE-TCATBAL-REC\n           ELSE\n              PERFORM 2700-B-UPDATE-TCATBAL-REC\n           END-IF\n\n           EXIT.\n",
+        "paragraph_lines": [467, 501],
+        "ref_paragraphs": [
+          "9910-DISPLAY-IO-STATUS",
+          "9999-ABEND-PROGRAM",
+          "2700-A-CREATE-TCATBAL-REC",
+          "2700-B-UPDATE-TCATBAL-REC"
+        ],
+        "paragraph_logic": [
+          "Calls the [record reading process]<READ TCATBAL-FILE> to check if the transaction category balance record already exists.",
+          "Verifies the status of the record read and sets the application result code accordingly.",
+          "If an error occurs while reading, displays an error message and performs error handling via [display IO status]<9910-DISPLAY-IO-STATUS> and [program abort]<9999-ABEND-PROGRAM>.",
+          "When a new transaction category balance record is needed, calls the [create record process]<2700-A-CREATE-TCATBAL-REC>.",
+          "If updating an existing record, calls the [update record process]<2700-B-UPDATE-TCATBAL-REC>."
+        ]
+      },
+      "2700-A-CREATE-TCATBAL-REC": {
+        "paragraph_name": "2700-A-CREATE-TCATBAL-REC",
+        "section": "procedure division",
+        "paragraph_code": "2700-A-CREATE-TCATBAL-REC.\n           INITIALIZE TRAN-CAT-BAL-RECORD\n           MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID\n           MOVE DALYTRAN-TYPE-CD TO TRANCAT-TYPE-CD\n           MOVE DALYTRAN-CAT-CD TO TRANCAT-CD\n           ADD DALYTRAN-AMT TO TRAN-CAT-BAL\n\n           WRITE FD-TRAN-CAT-BAL-RECORD FROM TRAN-CAT-BAL-RECORD\n\n           IF  TCATBALF-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR WRITING TRANSACTION BALANCE FILE'\n               MOVE TCATBALF-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n",
+        "paragraph_lines": [503, 524],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Initializes the transaction category balance record.",
+          "Moves the account ID, transaction type code, and category code to their respective fields in the transaction record.",
+          "Adds the daily transaction amount to the transaction category balance.",
+          "Writes the transaction category balance record to the file.",
+          "Checks the status of the write operation and sets the application result accordingly (0 for success, 12 for failure).",
+          "If the write operation fails, performs error handling, including displaying an error message, calling the [display IO status process]<9910-DISPLAY-IO-STATUS>, and calling the [abend program process]<9999-ABEND-PROGRAM> to terminate the program."
+        ]
+      },
+      "2700-B-UPDATE-TCATBAL-REC": {
+        "paragraph_name": "2700-B-UPDATE-TCATBAL-REC",
+        "section": "procedure division",
+        "paragraph_code": "2700-B-UPDATE-TCATBAL-REC.\n           ADD DALYTRAN-AMT TO TRAN-CAT-BAL\n           REWRITE FD-TRAN-CAT-BAL-RECORD FROM TRAN-CAT-BAL-RECORD\n\n           IF  TCATBALF-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR REWRITING TRANSACTION BALANCE FILE'\n               MOVE TCATBALF-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF.\n\n",
+        "paragraph_lines": [526, 542],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Updates the transaction category balance by adding the daily transaction amount to the balance.",
+          "Rewrites the updated balance record to the file.",
+          "Checks if the file operation status is successful; if successful, sets application result to 0, otherwise sets it to 12.",
+          "If the application is not okay, displays an error message.",
+          "Performs error handling by calling the [status display process]<9910-DISPLAY-IO-STATUS> to show I/O status.",
+          "Performs the [program termination process]<9999-ABEND-PROGRAM> if there is an error."
+        ]
+      },
+      "2800-UPDATE-ACCOUNT-REC": {
+        "paragraph_name": "2800-UPDATE-ACCOUNT-REC",
+        "section": "procedure division",
+        "paragraph_code": "2800-UPDATE-ACCOUNT-REC.\n      * Update the balances in account record to reflect posted trans.\n           ADD DALYTRAN-AMT  TO ACCT-CURR-BAL\n           IF DALYTRAN-AMT >= 0\n              ADD DALYTRAN-AMT TO ACCT-CURR-CYC-CREDIT\n           ELSE\n              ADD DALYTRAN-AMT TO ACCT-CURR-CYC-DEBIT\n           END-IF\n\n           REWRITE FD-ACCTFILE-REC FROM  ACCOUNT-RECORD\n              INVALID KEY\n                MOVE 109 TO WS-VALIDATION-FAIL-REASON\n                MOVE 'ACCOUNT RECORD NOT FOUND'\n                  TO WS-VALIDATION-FAIL-REASON-DESC\n           END-REWRITE.\n           EXIT.\n",
+        "paragraph_lines": [545, 560],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Adds the daily transaction amount to the current balance of the account.",
+          "If the daily transaction amount is positive, adds it to the current cycle credit balance.",
+          "If the daily transaction amount is negative, adds it to the current cycle debit balance.",
+          "Rewrites the updated account record to the account file.",
+          "If the rewrite operation fails due to an invalid key, sets the validation failure reason and description accordingly.",
+          "Exits the update account record process."
+        ]
+      },
+      "2900-WRITE-TRANSACTION-FILE": {
+        "paragraph_name": "2900-WRITE-TRANSACTION-FILE",
+        "section": "procedure division",
+        "paragraph_code": "2900-WRITE-TRANSACTION-FILE.\n           MOVE 8 TO  APPL-RESULT.\n           WRITE FD-TRANFILE-REC FROM TRAN-RECORD\n\n           IF  TRANFILE-STATUS = '00'\n               MOVE 0 TO  APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR WRITING TO TRANSACTION FILE'\n               MOVE TRANFILE-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [562, 579],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets the initial application result to 8 before attempting to write to the transaction file.",
+          "Writes the transaction record to the transaction file.",
+          "Checks the transaction file status; if successful, sets the application result to 0, otherwise to 12.",
+          "If everything is okay (APPL-AOK), continues processing; if not, displays an error message.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to display the I/O status in case of an error.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to handle the abnormal program termination if theres an error."
+        ]
+      },
+      "9000-DALYTRAN-CLOSE": {
+        "paragraph_name": "9000-DALYTRAN-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9000-DALYTRAN-CLOSE.\n           MOVE 8 TO  APPL-RESULT.\n           CLOSE DALYTRAN-FILE\n           IF  DALYTRAN-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING DALYTRAN FILE'\n               MOVE DALYTRAN-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [582, 598],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets the application result code to indicate the file close operation is pending.",
+          "Attempts to close the DALYTRAN file.",
+          "If the DALYTRAN file closes successfully, updates the application result code to indicate success.",
+          "If the DALYTRAN file close fails, updates the application result code to indicate failure.",
+          "Checks if the overall application state is OK; continues if true.",
+          "If the application state is not OK, displays an error message and logs the IO status.",
+          "Calls the [IO status display process]<9910-DISPLAY-IO-STATUS> to show detailed IO status information.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to handle the abnormal end of the program."
+        ]
+      },
+      "9100-TRANFILE-CLOSE": {
+        "paragraph_name": "9100-TRANFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9100-TRANFILE-CLOSE.\n           MOVE 8 TO  APPL-RESULT.\n           CLOSE TRANSACT-FILE\n           IF  TRANFILE-STATUS = '00'\n               MOVE 0 TO  APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING TRANSACTION FILE'\n               MOVE TRANFILE-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [600, 616],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves 8 to APPL-RESULT to initially indicate an error status.",
+          "Closes the TRANSACT-FILE and checks the TRANFILE-STATUS for a successful close.",
+          "If the file is closed successfully (TRANFILE-STATUS is 00), moves 0 to APPL-RESULT; otherwise, moves 12 to APPL-RESULT.",
+          "Checks if the application is in an acceptable state (APPL-AOK). If not, displays an error message and moves the transaction file status to IO-STATUS.",
+          "Performs the [I/O status display process]<9910-DISPLAY-IO-STATUS> to display the current I/O status.",
+          "Performs the [program abend process]<9999-ABEND-PROGRAM> to terminate the program abnormally if there is an error."
+        ]
+      },
+      "9200-XREFFILE-CLOSE": {
+        "paragraph_name": "9200-XREFFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9200-XREFFILE-CLOSE.\n           MOVE 8 TO APPL-RESULT.\n           CLOSE XREF-FILE\n           IF  XREFFILE-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING CROSS REF FILE'\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [619, 635],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets the APPL-RESULT to 8 initially and attempts to close the XREF-FILE.",
+          "Checks if the XREF-FILE closed successfully; if yes, sets APPL-RESULT to 0, otherwise sets it to 12.",
+          "If APPL-RESULT indicates success, continues without any action.",
+          "If there is an error closing the file, it displays an error message and moves the XREFFILE-STATUS to IO-STATUS.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to display the current I/O status.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to handle abnormal end conditions."
+        ]
+      },
+      "9300-DALYREJS-CLOSE": {
+        "paragraph_name": "9300-DALYREJS-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9300-DALYREJS-CLOSE.\n           MOVE 8 TO APPL-RESULT.\n           CLOSE DALYREJS-FILE\n           IF  DALYREJS-STATUS = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING DAILY REJECTS FILE'\n               MOVE XREFFILE-STATUS TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n",
+        "paragraph_lines": [637, 653],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets an initial application result code to 8.",
+          "Closes the DALYREJS file.",
+          "Checks the DALYREJS file close status and updates the application result code accordingly.",
+          "If the application result indicates success, continues without action.",
+          "If an error occurred, displays an error message and moves the detailed status to IO-STATUS.",
+          "Calls the [I/O status display process]<9910-DISPLAY-IO-STATUS> to show the current I/O status.",
+          "Calls the [program abend process]<9999-ABEND-PROGRAM> to terminate the program due to an error."
+        ]
+      },
+      "9400-ACCTFILE-CLOSE": {
+        "paragraph_name": "9400-ACCTFILE-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9400-ACCTFILE-CLOSE.\n           MOVE 8 TO APPL-RESULT.\n           CLOSE ACCOUNT-FILE\n           IF  ACCTFILE-STATUS  = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING ACCOUNT FILE'\n               MOVE ACCTFILE-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [655, 671],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Sets initial application result to indicate pending file operation outcome.",
+          "Attempts to close the ACCOUNT-FILE.",
+          "Checks if the file close operation was successful; sets application result accordingly.",
+          "Displays an error message if the file close operation fails, invoking [Display I/O status]<9910-DISPLAY-IO-STATUS>.",
+          "Abnormal program termination is performed on failure by calling [Program abend process]<9999-ABEND-PROGRAM>."
+        ]
+      },
+      "9500-TCATBALF-CLOSE": {
+        "paragraph_name": "9500-TCATBALF-CLOSE",
+        "section": "procedure division",
+        "paragraph_code": "9500-TCATBALF-CLOSE.\n           MOVE 8 TO APPL-RESULT.\n           CLOSE TCATBAL-FILE\n           IF  TCATBALF-STATUS  = '00'\n               MOVE 0 TO APPL-RESULT\n           ELSE\n               MOVE 12 TO APPL-RESULT\n           END-IF\n           IF  APPL-AOK\n               CONTINUE\n           ELSE\n               DISPLAY 'ERROR CLOSING TRANSACTION BALANCE FILE'\n               MOVE TCATBALF-STATUS  TO IO-STATUS\n               PERFORM 9910-DISPLAY-IO-STATUS\n               PERFORM 9999-ABEND-PROGRAM\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [674, 690],
+        "ref_paragraphs": ["9910-DISPLAY-IO-STATUS", "9999-ABEND-PROGRAM"],
+        "paragraph_logic": [
+          "Moves 8 to APPL-RESULT and attempts to close the TCATBAL file.",
+          "Checks the TCATBALF-STATUS to determine if the file was closed successfully.",
+          "If the file was closed successfully, moves 0 to APPL-RESULT; otherwise, moves 12 to APPL-RESULT.",
+          "If the application is in an A-OK state, continues processing without issues.",
+          "If there is an error, displays an error message, moves TCATBALF-STATUS to IO-STATUS, and performs [displaying I/O status]<9910-DISPLAY-IO-STATUS> and [program abend process]<9999-ABEND-PROGRAM>."
+        ]
+      },
+      "Z-GET-DB2-FORMAT-TIMESTAMP": {
+        "paragraph_name": "Z-GET-DB2-FORMAT-TIMESTAMP",
+        "section": "procedure division",
+        "paragraph_code": "Z-GET-DB2-FORMAT-TIMESTAMP.\n           MOVE FUNCTION CURRENT-DATE TO COBOL-TS\n           MOVE COB-YYYY TO DB2-YYYY\n           MOVE COB-MM   TO DB2-MM\n           MOVE COB-DD   TO DB2-DD\n           MOVE COB-HH   TO DB2-HH\n           MOVE COB-MIN  TO DB2-MIN\n           MOVE COB-SS   TO DB2-SS\n           MOVE COB-MIL  TO DB2-MIL\n           MOVE '0000'   TO DB2-REST\n           MOVE '-' TO DB2-STREEP-1 DB2-STREEP-2 DB2-STREEP-3\n           MOVE '.' TO DB2-DOT-1 DB2-DOT-2 DB2-DOT-3\n      *    DISPLAY 'DB2-TIMESTAMP = ' DB2-FORMAT-TS\n           EXIT.\n\n",
+        "paragraph_lines": [692, 705],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Fetches the current date and time using the CURRENT-DATE function and stores it in COBOL-TS.",
+          "Moves the year from COBOL date to the corresponding field in DB2 format.",
+          "Moves the month from COBOL date to the corresponding field in DB2 format.",
+          "Moves the day from COBOL date to the corresponding field in DB2 format.",
+          "Moves the hour, minute, second, and millisecond from COBOL date to corresponding fields in DB2 format.",
+          "Adds separators (- and .) to the DB2 timestamp fields.",
+          "Moves 0000 to the rest of the DB2 timestamp field for padding."
+        ]
+      },
+      "9999-ABEND-PROGRAM": {
+        "paragraph_name": "9999-ABEND-PROGRAM",
+        "section": "procedure division",
+        "paragraph_code": "9999-ABEND-PROGRAM.\n           DISPLAY 'ABENDING PROGRAM'\n           MOVE 0 TO TIMING\n           MOVE 999 TO ABCODE\n           CALL 'CEE3ABD'.\n\n",
+        "paragraph_lines": [707, 711],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Displays a message to indicate that the program is abending.",
+          "Moves the value 0 to the TIMING variable as part of abending preparations.",
+          "Moves the value 999 to the ABCODE variable to set the abend code.",
+          "Calls the CEE3ABD routine to perform the abend operation."
+        ]
+      },
+      "9910-DISPLAY-IO-STATUS": {
+        "paragraph_name": "9910-DISPLAY-IO-STATUS",
+        "section": "procedure division",
+        "paragraph_code": "9910-DISPLAY-IO-STATUS.\n           IF  IO-STATUS NOT NUMERIC\n           OR  IO-STAT1 = '9'\n               MOVE IO-STAT1 TO IO-STATUS-04(1:1)\n               MOVE 0        TO TWO-BYTES-BINARY\n               MOVE IO-STAT2 TO TWO-BYTES-RIGHT\n               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           ELSE\n               MOVE '0000' TO IO-STATUS-04\n               MOVE IO-STATUS TO IO-STATUS-04(3:2)\n               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04\n           END-IF\n           EXIT.\n\n",
+        "paragraph_lines": [714, 727],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Evaluates if the I/O status is not numeric or if the first status byte indicates an error by checking if IO-STAT1 equals 9.",
+          "If an error is found, it formats and displays the detailed file status, including binary conversion of status part 2.",
+          "If no error is found, it formats and displays the default file status.",
+          "Displays the formatted file status message indicating the condition of the file I/O operation."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "CEE3ABD",
+        "program_type": "Cobol",
+        "program_name": "CEE3ABD",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "9999-ABEND-PROGRAM",
+        "identifier": []
+      },
+      {
+        "index": 0,
+        "program_id": "CVTRA06Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA06Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "CVTRA05Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA05Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "CVACT03Y",
+        "program_type": "Copy",
+        "program_name": "CVACT03Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CVACT01Y",
+        "program_type": "Copy",
+        "program_name": "CVACT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CVTRA01Y",
+        "program_type": "Copy",
+        "program_name": "CVTRA01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

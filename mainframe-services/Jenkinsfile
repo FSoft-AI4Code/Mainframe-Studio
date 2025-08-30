@@ -1,0 +1,78 @@
+pipeline {
+    agent { label 'nodeName:cobol-migration' }
+    
+    environment {
+        GIT_CREDENTIALS_ID = 'ducnh82-azurefsoft062'
+        GIT_REPO_URL='https://azurefsoft062@dev.azure.com/azurefsoft062/MainframeStudio/_git/mainframe-services'
+        GIT_BRANCH='deploy'
+        DOCKER_CREDENTIALS_ID = 'cobolMigration' 
+        DOCKER_REGISTRY = 'cobolmigration.azurecr.io'
+        DOCKER_NETWORK = "cobol-network-beta"
+        IMAGE_NAME = "mainframe-services:0.0.${env.BUILD_NUMBER}"
+        PREVIOUS_IMAGE = "mainframe-services:0.0.${env.BUILD_NUMBER.toInteger() - 1}"
+    }
+    stages {
+        stage ('Git Clone') {
+            steps {
+                script {
+                    git branch: "${GIT_BRANCH}",
+                        url: "${GIT_REPO_URL}",
+                        credentialsId: "${GIT_CREDENTIALS_ID}"
+                }
+            }
+        }
+        stage ('Generate/check the environment'){
+            steps {
+                script {
+                    try {
+                        sh 'docker network inspect ${DOCKER_NETWORK}'
+                    } catch (Exception e) {
+                        echo 'Exception occurred: ' + e.toString() + '\n Create the ${DOCKER_NETWORK} \n'
+                        sh 'docker network create ${DOCKER_NETWORK}'
+                    }
+                    sh "printenv > .env"
+                }
+            }
+        }
+        
+        stage ('Docker Login') {
+            steps {
+                script {
+                    // Log in to Docker registry
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin ${DOCKER_REGISTRY}"
+                    }
+                }
+            }
+        }
+
+        stage ('Build and push the docker image') {
+            steps {
+                script {
+                    sh "docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME} ."
+                    sh "docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}"
+                }
+            }
+        }
+
+        stage ('Run docker compose') {
+            steps {
+                script {
+                    sh "export MAINFRAME_SERVICES_IMAGE=${DOCKER_REGISTRY}/${IMAGE_NAME} && docker compose up -d"
+                }
+            }
+        }
+        stage ('Clean old image and environment') {
+            steps {
+                script {    
+                    try {
+                        sh "docker rmi ${DOCKER_REGISTRY}/${PREVIOUS_IMAGE}"
+                    } catch (Exception e) {
+                        echo 'Exception occurred: ' + e.toString() + '\n Skip create the old image \n'
+                    }
+                    sh "docker logout ${DOCKER_REGISTRY}"
+                }
+            }
+        }
+    }
+}

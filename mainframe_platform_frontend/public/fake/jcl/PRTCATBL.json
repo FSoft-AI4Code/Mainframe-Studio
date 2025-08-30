@@ -1,0 +1,151 @@
+{
+  "overview": {
+    "job_name": "PRTCATBL",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM efficiently manages datasets and batch processing with detailed control over input/output file handling, disposition, and job control statements."
+  },
+  "step_list": [
+    {
+      "step_name": "DELDEF",
+      "program_executed": "IEFBR14",
+      "description": "Dummy program for dataset allocation or deletion",
+      "dd_statement": [
+        {
+          "ddname": "THEFILE",
+          "parameters_map": {
+            "DISP": "(MOD,DELETE)",
+            "UNIT": "SYSDA",
+            "SPACE": "(TRK,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT",
+              "variable_name": "THEFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT",
+              "program_id": "IEFBR14"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["THEFILE: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT\n"],
+      "property": "The DELDEF step in JCL uses the IEFBR14 dummy program to delete the dataset FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT with a disposition of (MOD,DELETE)."
+    },
+    {
+      "step_name": "STEP05R",
+      "program_executed": null,
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "PRC001.FILEIN",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS",
+              "variable_name": "PRC001.FILEIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS",
+              "program_id": "REPROC"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "PRC001.FILEOUT",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "50",
+            "LRECL": "50",
+            "RECFM": "50",
+            "BLKSIZE": "50",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.BKUP(+1)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.BKUP(+1)",
+              "variable_name": "PRC001.FILEOUT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.BKUP(+1)",
+              "program_id": "REPROC"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "PRC001.FILEIN: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.VSAM.KSDS\n",
+        "PRC001.FILEOUT: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.BKUP(+1)\n"
+      ],
+      "property": "JCL IBM efficiently manages datasets with detailed control over input and output file handling and disposition."
+    },
+    {
+      "step_name": "STEP10R",
+      "program_executed": "SORT",
+      "description": "Sorts and merges records in files",
+      "dd_statement": [
+        {
+          "ddname": "SORTIN",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.BKUP(+1)" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.BKUP(+1)",
+              "variable_name": "SORTIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.BKUP(+1)",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYMNAMES",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "TRANCAT-ACCT-ID,1,11,ZD\r\nTRANCAT-TYPE-CD,12,2,CH\r\nTRANCAT-CD,14,4,ZD\r\nTRAN-CAT-BAL,18,11,ZD\r\n"
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " SORT FIELDS=(TRANCAT-ACCT-ID,A,TRANCAT-TYPE-CD,A,TRANCAT-CD,A)\r\n OUTREC FIELDS=(TRANCAT-ACCT-ID,X,\r\n     TRANCAT-TYPE-CD,X,\r\n     TRANCAT-CD,X,\r\n     TRAN-CAT-BAL,EDIT=(TTTTTTTTT.TT),9X)\r\n"
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SORTOUT",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "40",
+            "LRECL": "40",
+            "RECFM": "40",
+            "BLKSIZE": "40",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT",
+              "variable_name": "SORTOUT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "SORTIN: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.BKUP(+1)\n",
+        "SORTOUT: DSN=FPTLT01.DEMO.CARDDEMO.TCATBALF.REPT\n"
+      ],
+      "property": "JCL IBM efficiently manages batch processing tasks by specifying job control statements, including sorting and merging files as demonstrated in STEP10R."
+    }
+  ]
+}

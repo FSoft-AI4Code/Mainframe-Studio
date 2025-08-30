@@ -1,0 +1,191 @@
+[
+  {
+    "level": "000100",
+    "name": "01CC-WORK-AREAS",
+    "picture_clause": "X(5).0009000100100088CCARD-AID-ENTER",
+    "default_value": "01",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "00110001",
+    "name": "001200",
+    "picture_clause": null,
+    "default_value": "001200",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00120001",
+    "name": "001300",
+    "picture_clause": null,
+    "default_value": "001300",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00130001",
+    "name": "001400",
+    "picture_clause": null,
+    "default_value": "001400",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00140001",
+    "name": "001500",
+    "picture_clause": null,
+    "default_value": "001500",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00150001",
+    "name": "001600",
+    "picture_clause": null,
+    "default_value": "001600",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00160001",
+    "name": "001700",
+    "picture_clause": null,
+    "default_value": "001700",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00170001",
+    "name": "001800",
+    "picture_clause": null,
+    "default_value": "001800",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00180001",
+    "name": "001900",
+    "picture_clause": null,
+    "default_value": "001900",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00190001",
+    "name": "002000",
+    "picture_clause": null,
+    "default_value": "002000",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00200001",
+    "name": "002100",
+    "picture_clause": null,
+    "default_value": "002100",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00210001",
+    "name": "002200",
+    "picture_clause": null,
+    "default_value": "002200",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00220001",
+    "name": "002300",
+    "picture_clause": null,
+    "default_value": "002300",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00230001",
+    "name": "002400",
+    "picture_clause": null,
+    "default_value": "002400",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00240001",
+    "name": "002500",
+    "picture_clause": null,
+    "default_value": "002500",
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "00250001",
+    "name": "002600",
+    "picture_clause": "X(8).0026000100270010CCARD-NEXT-PROG",
+    "default_value": "002600",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "00370001",
+    "name": "00380010CCARD-ERROR-MSG",
+    "picture_clause": "X(75).0038000100390010CCARD-RETURN-MSG",
+    "default_value": "003800",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "00430001",
+    "name": "00440010CC-ACCT-ID",
+    "picture_clause": "X(11)00440005004500",
+    "default_value": "004400",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "10",
+    "name": "CC-ACCT-ID-N",
+    "picture_clause": "9(11)",
+    "default_value": null,
+    "redefine": "CC-ACCT-ID",
+    "occur": null,
+    "data_type": "numeric"
+  },
+  {
+    "level": "004600",
+    "name": "10CC-CARD-NUM",
+    "picture_clause": "X(16)00460005004700",
+    "default_value": "10",
+    "redefine": "CC-CARD-NUM",
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "004800",
+    "name": "10CC-CUST-ID",
+    "picture_clause": "X(09)00480005004900",
+    "default_value": "10",
+    "redefine": "CC-CUST-ID",
+    "occur": null,
+    "data_type": "char"
+  }
+]

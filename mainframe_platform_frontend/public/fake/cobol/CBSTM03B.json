@@ -1,0 +1,621 @@
+{
+  "id": "4e2f68b27b9b40eb97ddbfafe8814acf",
+  "name": "CBSTM03B",
+  "path": "DEMO.CARDDEMO.CBL/CBSTM03B",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "CBSTM03B",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [],
+    "call_files": [],
+    "summarization": "The COBOL code provided handles file operations based on different file types indicated by the `LK-M03B-DD` variable. The `PROCEDURE DIVISION` directs the flow of actions depending on the file type, such as TRNXFILE, XREFFILE, CUSTFILE, or ACCTFILE. Here's a concise summary of each main action:\n\n1. **Main Flow Control (0000-START)**:\n   - **EVALUATE** statement directs to specific processing sections based on the value of `LK-M03B-DD`.\n   - Each section corresponds to a different file type (TRNXFILE, XREFFILE, CUSTFILE, ACCTFILE).\n   - If the file type doesn't match any listed, control proceeds to `9999-GOBACK`.\n\n2. **TRNXFILE Processing (1000-TRNXFILE-PROC)**:\n   - Handles opening, reading, and closing of TRNX-FILE.\n   - Each operation updates the status variable `TRNXFILE-STATUS` to `LK-M03B-RC`.\n\n3. **XREFFILE Processing (2000-XREFFILE-PROC)**:\n   - Similar to `TRNXFILE`, this section manages opening, reading, and closing of XREF-FILE.\n   - The operation status is moved to `LK-M03B-RC` from `XREFFILE-STATUS`.\n\n4. **CUSTFILE Processing (3000-CUSTFILE-PROC)**:\n   - Manages CUST-FILE with additional key-based reading.\n   - `LK-M03B-KEY` is used to identify specific records.\n   - Status updates to `LK-M03B-RC` from `CUSTFILE-STATUS`.\n\n5. **ACCTFILE Processing (4000-ACCTFILE-PROC)**:\n   - Manages ACCT-FILE with opening, key-based reading, and closing operations.\n   - Uses `LK-M03B-KEY` similarly as in CUSTFILE processing.\n   - Status is forwarded to `LK-M03B-RC` from `ACCTFILE-STATUS`.\n\nEach processing section ends with updating a status code and an `EXIT` for control flow, ultimately returning control with `GO BACK` in `9999-GOBACK`. This structured approach allows modular handling of different file types with specific operations encapsulated in their respective sections.",
+    "io_table": [
+      {
+        "index": 1,
+        "item_name": "TRNX-FILE",
+        "physical_name": "TRNXFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "XREF-FILE",
+        "physical_name": "XREFFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "CUST-FILE",
+        "physical_name": "CUSTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      },
+      {
+        "index": 1,
+        "item_name": "ACCT-FILE",
+        "physical_name": "ACCTFILE",
+        "type": "",
+        "crud_op": "",
+        "access_mode": "",
+        "notes": ""
+      }
+    ]
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "10",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "9",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "",
+        "access_mode": "INPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "LK-M03B-AREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-DD",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-OPER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "         M03B-OPEN",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'O'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-CLOSE",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'C'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-READ",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'R'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-READ-K",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'K'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-WRITE",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'W'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-REWRITE",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'Z'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-KEY",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "25",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-KEY-LN",
+        "cobol_level": "05",
+        "cobol_dtype": "S9",
+        "length": "4",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-FLDT",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "1000",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "LK-M03B-AREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-DD",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "08",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-OPER",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "         M03B-OPEN",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'O'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-CLOSE",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'C'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-READ",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'R'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-READ-K",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'K'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-WRITE",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'W'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "         M03B-REWRITE",
+        "cobol_level": "88",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "'Z'",
+        "remarks": "Java  data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-RC",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "02",
+        "access_mode": "OUTPUT",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-KEY",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "25",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-KEY-LN",
+        "cobol_level": "05",
+        "cobol_dtype": "S9",
+        "length": "4",
+        "access_mode": "I-O",
+        "dtype": "Int",
+        "default_value": "",
+        "remarks": "Java Int data type equivalence"
+      },
+      {
+        "item_name": "   LK-M03B-FLDT",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "1000",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "0000-START": {
+        "paragraph_name": "0000-START",
+        "section": "procedure division",
+        "paragraph_code": "0000-START.\n\n           EVALUATE LK-M03B-DD\n             WHEN 'TRNXFILE'\n               PERFORM 1000-TRNXFILE-PROC THRU 1999-EXIT\n             WHEN 'XREFFILE'\n               PERFORM 2000-XREFFILE-PROC THRU 2999-EXIT\n             WHEN 'CUSTFILE'\n               PERFORM 3000-CUSTFILE-PROC THRU 3999-EXIT\n             WHEN 'ACCTFILE'\n               PERFORM 4000-ACCTFILE-PROC THRU 4999-EXIT\n             WHEN OTHER\n               GO TO 9999-GOBACK.\n\n",
+        "paragraph_lines": [116, 128],
+        "ref_paragraphs": [
+          "1000-TRNXFILE-PROC",
+          "1999-EXIT",
+          "2000-XREFFILE-PROC",
+          "2999-EXIT",
+          "3000-CUSTFILE-PROC",
+          "3999-EXIT",
+          "4000-ACCTFILE-PROC",
+          "4999-EXIT"
+        ],
+        "paragraph_logic": [
+          "Evaluates the content of LK-M03B-DD to determine the type of file being processed.",
+          "If LK-M03B-DD is TRNXFILE, calls transaction file processing<1000-TRNXFILE-PROC> to handle transaction records.",
+          "If LK-M03B-DD is XREFFILE, calls cross-reference file processing<2000-XREFFILE-PROC> to handle reference records.",
+          "If LK-M03B-DD is CUSTFILE, calls customer file processing<3000-CUSTFILE-PROC> to handle customer records.",
+          "If LK-M03B-DD is ACCTFILE, calls account file processing<4000-ACCTFILE-PROC> to handle account records.",
+          "If LK-M03B-DD does not match any of the specified files, exits the program through<9999-GOBACK>."
+        ]
+      },
+      "9999-GOBACK": {
+        "paragraph_name": "9999-GOBACK",
+        "section": "procedure division",
+        "paragraph_code": "9999-GOBACK.\n           GOBACK.\n\n",
+        "paragraph_lines": [130, 131],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the [end-of-program process]<9999-GOBACK> to return control from the program back to the operating system, signaling the completion of the COBOL program."
+        ]
+      },
+      "1000-TRNXFILE-PROC": {
+        "paragraph_name": "1000-TRNXFILE-PROC",
+        "section": "procedure division",
+        "paragraph_code": "1000-TRNXFILE-PROC.\n\n           IF M03B-OPEN\n               OPEN INPUT TRNX-FILE\n               GO TO 1900-EXIT\n           END-IF.\n\n           IF M03B-READ\n               READ TRNX-FILE INTO LK-M03B-FLDT\n               END-READ\n               GO TO 1900-EXIT\n           END-IF.\n\n           IF M03B-CLOSE\n               CLOSE TRNX-FILE\n               GO TO 1900-EXIT\n           END-IF.\n\n",
+        "paragraph_lines": [133, 149],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the transaction file should be opened and opens it if required, then exits to 1900-EXIT.",
+          "Checks if the transaction file should be read and reads it into the specified field, then exits to 1900-EXIT.",
+          "Checks if the transaction file should be closed and closes it if required, then exits to 1900-EXIT."
+        ]
+      },
+      "1900-EXIT": {
+        "paragraph_name": "1900-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1900-EXIT.\n           MOVE TRNXFILE-STATUS TO LK-M03B-RC.\n\n",
+        "paragraph_lines": [151, 152],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the transaction file status code to the return code field for LK-M03B."
+        ]
+      },
+      "1999-EXIT": {
+        "paragraph_name": "1999-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "1999-EXIT.\n           EXIT.\n\n",
+        "paragraph_lines": [154, 155],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the [exit process]<1999-EXIT> to terminate the current procedure or paragraph."
+        ]
+      },
+      "2000-XREFFILE-PROC": {
+        "paragraph_name": "2000-XREFFILE-PROC",
+        "section": "procedure division",
+        "paragraph_code": "2000-XREFFILE-PROC.\n\n           IF M03B-OPEN\n               OPEN INPUT XREF-FILE\n               GO TO 2900-EXIT\n           END-IF.\n\n           IF M03B-READ\n               READ XREF-FILE INTO LK-M03B-FLDT\n               END-READ\n               GO TO 2900-EXIT\n           END-IF.\n\n           IF M03B-CLOSE\n               CLOSE XREF-FILE\n               GO TO 2900-EXIT\n           END-IF.\n\n",
+        "paragraph_lines": [157, 173],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Opens the cross-reference file if the OPEN condition for M03B is met and then exits the procedure.",
+          "Reads a record from the cross-reference file into the field LK-M03B-FLDT if the READ condition for M03B is met and then exits the procedure.",
+          "Closes the cross-reference file if the CLOSE condition for M03B is met and then exits the procedure."
+        ]
+      },
+      "2900-EXIT": {
+        "paragraph_name": "2900-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2900-EXIT.\n           MOVE XREFFILE-STATUS TO LK-M03B-RC.\n\n",
+        "paragraph_lines": [175, 176],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the status of the cross-reference file to the return code field LK-M03B-RC."
+        ]
+      },
+      "2999-EXIT": {
+        "paragraph_name": "2999-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "2999-EXIT.\n           EXIT.\n\n",
+        "paragraph_lines": [178, 179],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Executes the [exit process]<2999-EXIT> to leave the current paragraph or perform block and return to the calling procedure or point."
+        ]
+      },
+      "3000-CUSTFILE-PROC": {
+        "paragraph_name": "3000-CUSTFILE-PROC",
+        "section": "procedure division",
+        "paragraph_code": "3000-CUSTFILE-PROC.\n\n           IF M03B-OPEN\n               OPEN INPUT CUST-FILE\n               GO TO 3900-EXIT\n           END-IF.\n\n           IF M03B-READ-K\n               MOVE LK-M03B-KEY (1:LK-M03B-KEY-LN) TO FD-CUST-ID\n               READ CUST-FILE INTO LK-M03B-FLDT\n               END-READ\n               GO TO 3900-EXIT\n           END-IF.\n\n           IF M03B-CLOSE\n               CLOSE CUST-FILE\n               GO TO 3900-EXIT\n           END-IF.\n\n",
+        "paragraph_lines": [181, 198],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the customer file should be opened and opens it if required.",
+          "Checks if a record should be read and reads the customer file based on the provided key.",
+          "Closes the customer file if the operation indicates it should be closed."
+        ]
+      },
+      "3900-EXIT": {
+        "paragraph_name": "3900-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "3900-EXIT.\n           MOVE CUSTFILE-STATUS TO LK-M03B-RC.\n\n",
+        "paragraph_lines": [200, 201],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the status of the customer file to LK-M03B-RC for further use or verification."
+        ]
+      },
+      "3999-EXIT": {
+        "paragraph_name": "3999-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "3999-EXIT.\n           EXIT.\n\n",
+        "paragraph_lines": [203, 204],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Defines the [exit process]<3999-EXIT> to mark the end of a paragraph or to exit from a loop.",
+          "Executes the [exit statement]<3999-EXIT> to terminate the current paragraph or return control to the calling program."
+        ]
+      },
+      "4000-ACCTFILE-PROC": {
+        "paragraph_name": "4000-ACCTFILE-PROC",
+        "section": "procedure division",
+        "paragraph_code": "4000-ACCTFILE-PROC.\n\n           IF M03B-OPEN\n               OPEN INPUT ACCT-FILE\n               GO TO 4900-EXIT\n           END-IF.\n\n           IF M03B-READ-K\n               MOVE LK-M03B-KEY (1:LK-M03B-KEY-LN) TO FD-ACCT-ID\n               READ ACCT-FILE INTO LK-M03B-FLDT\n               END-READ\n               GO TO 4900-EXIT\n           END-IF.\n\n           IF M03B-CLOSE\n               CLOSE ACCT-FILE\n               GO TO 4900-EXIT\n           END-IF.\n\n",
+        "paragraph_lines": [206, 223],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the account file should be opened and opens it if M03B-OPEN is true, then exits to 4900-EXIT.",
+          "Copies the key to the account file ID and reads the account file into the working storage field if M03B-READ-K is true, then exits to 4900-EXIT after reading.",
+          "Closes the account file if M03B-CLOSE is true and then exits to 4900-EXIT."
+        ]
+      },
+      "4900-EXIT": {
+        "paragraph_name": "4900-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "4900-EXIT.\n           MOVE ACCTFILE-STATUS TO LK-M03B-RC.\n\n",
+        "paragraph_lines": [225, 226],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves the account file status to the return code for further processing or status indication."
+        ]
+      },
+      "4999-EXIT": {
+        "paragraph_name": "4999-EXIT",
+        "section": "procedure division",
+        "paragraph_code": "4999-EXIT.\n           EXIT.\n",
+        "paragraph_lines": [228, 229],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Exits the current paragraph execution and returns control to the calling paragraph or process."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [],
+    "details": [""]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "overview": {
+    "job_name": "OPENFIL",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The JCL IBM job 'OPENFIL' executes the 'SDSF' program to open various CICS files using specific commands."
+  },
+  "step_list": [
+    {
+      "step_name": "OPCIFIL",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /F CICSA,'CEMT SET FIL(TRANSACT ) OPE'\r\n /F CICSA,'CEMT SET FIL(CCXREF ) OPE'\r\n /F CICSA,'CEMT SET FIL(ACCTDAT ) OPE'\r\n /F CICSA,'CEMT SET FIL(CXACAIX ) OPE'\r\n /F CICSA,'CEMT SET FIL(USRSEC ) OPE'\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

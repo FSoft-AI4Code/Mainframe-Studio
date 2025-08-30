@@ -1,0 +1,7 @@
+export const storage = {
+  SETTING: "SETTING",
+  ENVIRONMENT: "ENVIRONMENT",
+  TOKEN: "TOKEN",
+  REPO: "REPO",
+  MIGRATION_REPO: "MIGRATION_REPO"
+};

@@ -1,0 +1,203 @@
+{
+  "overview": {
+    "job_name": "TRANREPT",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM allows efficient resource allocation and management for COBOL programs, with seamless handling of input and output datasets."
+  },
+  "step_list": [
+    {
+      "step_name": "STEP05R",
+      "program_executed": "SORT",
+      "description": "Sorts and merges records in files",
+      "dd_statement": [
+        {
+          "ddname": "SORTIN",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(+1)" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(+1)",
+              "variable_name": "SORTIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(+1)",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYMNAMES",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": "TRAN-CARD-NUM,263,16,ZD\r\nTRAN-PROC-DT,305,10,CH\r\nPARM-START-DATE,C'2022-01-01'                                      //Date\r\nPARM-END-DATE,C'2022-07-06'                                        //Date\r\n"
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " SORT FIELDS=(TRAN-CARD-NUM,A)\r\n INCLUDE COND=(TRAN-PROC-DT,GE,PARM-START-DATE,AND,\r\n         TRAN-PROC-DT,LE,PARM-END-DATE)\r\n"
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SORTOUT",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "(*.SORTIN)",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.TRANSACT.DALY(+1)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANSACT.DALY(+1)",
+              "variable_name": "SORTOUT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.DALY(+1)",
+              "program_id": "SORT"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "SORTIN: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.BKUP(+1)\n",
+        "SORTOUT: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.DALY(+1)\n"
+      ],
+      "property": "JCL IBM allows the efficient sorting and merging of records with specified sorting fields and conditions, managing input and output datasets seamlessly."
+    },
+    {
+      "step_name": "STEP10R",
+      "program_executed": "CBTRN03C",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.LOADLIB" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB",
+              "program_id": "CBTRN03C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "TRANFILE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TRANSACT.DALY(+1)" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANSACT.DALY(+1)",
+              "variable_name": "TRANFILE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.DALY(+1)",
+              "program_id": "CBTRN03C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "CARDXREF",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "variable_name": "CARDXREF",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS",
+              "program_id": "CBTRN03C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "TRANTYPE",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TRANTYPE.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANTYPE.VSAM.KSDS",
+              "variable_name": "TRANTYPE",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANTYPE.VSAM.KSDS",
+              "program_id": "CBTRN03C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "TRANCATG",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.TRANCATG.VSAM.KSDS" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANCATG.VSAM.KSDS",
+              "variable_name": "TRANCATG",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANCATG.VSAM.KSDS",
+              "program_id": "CBTRN03C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "DATEPARM",
+          "parameters_map": { "DISP": "SHR", "DSN": "FPTLT01.DEMO.CARDDEMO.DATEPARM" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.DATEPARM",
+              "variable_name": "DATEPARM",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.DATEPARM",
+              "program_id": "CBTRN03C"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "TRANREPT",
+          "parameters_map": {
+            "DISP": "(NEW,CATLG,DELETE)",
+            "UNIT": "SYSDA",
+            "DCB": "133",
+            "LRECL": "133",
+            "RECFM": "133",
+            "BLKSIZE": "133",
+            "SPACE": "(CYL,(1,1),RLSE)",
+            "DSN": "FPTLT01.DEMO.CARDDEMO.TRANREPT(+1)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.TRANREPT(+1)",
+              "variable_name": "TRANREPT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.TRANREPT(+1)",
+              "program_id": "CBTRN03C"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=FPTLT01.DEMO.CARDDEMO.LOADLIB\n",
+        "TRANFILE: DSN=FPTLT01.DEMO.CARDDEMO.TRANSACT.DALY(+1)\n",
+        "CARDXREF: DSN=FPTLT01.DEMO.CARDDEMO.CARDXREF.VSAM.KSDS\n",
+        "TRANTYPE: DSN=FPTLT01.DEMO.CARDDEMO.TRANTYPE.VSAM.KSDS\n",
+        "TRANCATG: DSN=FPTLT01.DEMO.CARDDEMO.TRANCATG.VSAM.KSDS\n",
+        "DATEPARM: DSN=FPTLT01.DEMO.CARDDEMO.DATEPARM\n",
+        "TRANREPT: DSN=FPTLT01.DEMO.CARDDEMO.TRANREPT(+1)\n"
+      ],
+      "property": "JCL allows for detailed job control and resource allocation, enabling efficient execution and management of COBOL programs."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-frontend
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/secure-backends: "true"    
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    
+spec:
+    ingressClassName: {{ .Values.ingress.className }}
+    tls:
+    - hosts:
+      {{- with .Values.ingress.hosts }}
+        {{- range . }}
+        - {{ .host | indent 6}}
+        {{- end }}
+      {{- end }}
+      secretName: {{ .Release.Name }}-frontend-tls
+    rules:
+    - host: beta.mainframe-studio.fpt-aic.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Release.Name }}-frontend
+              port:
+                number: {{ .Values.service.port }}

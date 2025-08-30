@@ -1,0 +1,422 @@
+{
+  "id": "4adb65911d074dbf8e3601bcfb12f7cd",
+  "name": "COUSR00C",
+  "path": "DEMO.CARDDEMO.CBL/COUSR00C",
+  "label": "COBOL",
+  "overview": {
+    "programe_name": "COUSR00C",
+    "io_files": [],
+    "db_accesses": [],
+    "copy_files": [
+      "COCOM01Y",
+      "COUSR00",
+      "COTTL01Y",
+      "CSDAT01Y",
+      "CSMSG01Y",
+      "CSUSR01Y",
+      "DFHAID",
+      "DFHBMSCA"
+    ],
+    "call_files": [],
+    "summarization": "This COBOL Procedure Division manages user interactions with a user list screen within a CICS environment. The main functionalities include:\n\n1. **Initialization and Main Screen Handling (MAIN-PARA)**:\n   - Initialization flags and setting default values.\n   - Checks if the program is being called cold or is re-entered (re-entered if `EIBCALEN > 0`).\n   - Depending on the user action (e.g., pressing Enter, PF3, PF7, PF8), different routines are called to process input or navigate within the user list.\n   - Error handling and returning control to CICS.\n\n2. **Process User Input (PROCESS-ENTER-KEY)**:\n   - Evaluates user input to identify which user record is selected.\n   - Invokes different sub-programs (`COUSR02C` for 'U' and `COUSR03C` for 'D') for further processing based on user selection.\n   - Handles invalid selections by displaying an error message.\n\n3. **Navigation Keys Processing**:\n   - **PF7 Key (PROCESS-PF7-KEY)**: Handles backward pagination, adjusting indices and invoking page backward subroutine if needed.\n   - **PF8 Key (PROCESS-PF8-KEY)**: Handles forward pagination, adjusting indices and invoking page forward subroutine if needed.\n\n4. **Data Management**:\n   - Loads user data to be displayed in the list format.\n   - Handles both initialization and population of user data for display purposes.\n  \n5. **Navigation and File Handling**:\n   - **Page Forward (PROCESS-PAGE-FORWARD)**: Processes forward navigation through the list of users by reading from a user security file (`USER-SEC-FILE`), populating a work table, and handling end-of-file conditions.\n   - **Page Backward (PROCESS-PAGE-BACKWARD)**: Handles backward navigation similarly, but reading previous records.\n\n6. **Screen Interaction**:\n   - **SEND-USRLST-SCREEN**: Sends the user list screen with the option to erase previous screen data.\n   - **RECEIVE-USRLST-SCREEN**: Receives input data from the user list screen.\n\n7. **Data Base Interaction Routines**:\n   - **STARTBR-USER-SEC-FILE, READNEXT-USER-SEC-FILE, READPREV-USER-SEC-FILE, ENDBR-USER-SEC-FILE**: Handles reading user records in both forward and backward directions from `USER-SEC-FILE`, managing browse operations including start browse, end browse, read next, and read previous.\n\nThe code manages a paginated list of users, processes user inputs, handles errors, and communicates effectively with the CICS environment.",
+    "io_table": []
+  },
+  "io_params_def": {
+    "input_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "input_note": "",
+    "output_table": [
+      {
+        "item_name": "DFHCOMMAREA",
+        "cobol_level": "01",
+        "cobol_dtype": "",
+        "length": "",
+        "access_mode": "I-O",
+        "dtype": "",
+        "default_value": "",
+        "remarks": "Java DTO class equivalence"
+      },
+      {
+        "item_name": "   LK-COMMAREA",
+        "cobol_level": "05",
+        "cobol_dtype": "X",
+        "length": "01",
+        "access_mode": "I-O",
+        "dtype": "String",
+        "default_value": "",
+        "remarks": "Java String data type equivalence"
+      }
+    ],
+    "output_note": ""
+  },
+  "process_logic": {
+    "paragraph_level": {
+      "MAIN-PARA": {
+        "paragraph_name": "MAIN-PARA",
+        "section": "procedure division",
+        "paragraph_code": "MAIN-PARA.\n\n           SET ERR-FLG-OFF TO TRUE\n           SET USER-SEC-NOT-EOF TO TRUE\n           SET NEXT-PAGE-NO TO TRUE\n           SET SEND-ERASE-YES TO TRUE\n\n           MOVE SPACES TO WS-MESSAGE\n                          ERRMSGO OF COUSR0AO\n\n           MOVE -1       TO USRIDINL OF COUSR0AI\n\n           IF EIBCALEN = 0\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n               PERFORM RETURN-TO-PREV-SCREEN\n           ELSE\n               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA\n               IF NOT CDEMO-PGM-REENTER\n                   SET CDEMO-PGM-REENTER    TO TRUE\n                   MOVE LOW-VALUES          TO COUSR0AO\n                   PERFORM PROCESS-ENTER-KEY\n                   PERFORM SEND-USRLST-SCREEN\n               ELSE\n                   PERFORM RECEIVE-USRLST-SCREEN\n                   EVALUATE EIBAID\n                       WHEN DFHENTER\n                           PERFORM PROCESS-ENTER-KEY\n                       WHEN DFHPF3\n                           MOVE 'COADM01C' TO CDEMO-TO-PROGRAM\n                           PERFORM RETURN-TO-PREV-SCREEN\n                       WHEN DFHPF7\n                           PERFORM PROCESS-PF7-KEY\n                       WHEN DFHPF8\n                           PERFORM PROCESS-PF8-KEY\n                       WHEN OTHER\n                           MOVE 'Y'                       TO WS-ERR-FLG\n                           MOVE -1       TO USRIDINL OF COUSR0AI\n                           MOVE CCDA-MSG-INVALID-KEY      TO WS-MESSAGE\n                           PERFORM SEND-USRLST-SCREEN\n                   END-EVALUATE\n               END-IF\n           END-IF\n\n           EXEC CICS RETURN\n                     TRANSID (WS-TRANID)\n                     COMMAREA (CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [98, 144],
+        "ref_paragraphs": [
+          "RETURN-TO-PREV-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "SEND-USRLST-SCREEN",
+          "RECEIVE-USRLST-SCREEN",
+          "PROCESS-ENTER-KEY",
+          "RETURN-TO-PREV-SCREEN",
+          "PROCESS-PF7-KEY",
+          "PROCESS-PF8-KEY",
+          "SEND-USRLST-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Initializes various flags and fields to their default states, including setting the error flag off and preparing the message field.",
+          "Checks if the module is called initially; conditionally performs RETURN-TO-PREV-SCREEN or processes entered data accordingly.",
+          "If re-entering, moves values to communication area and conditionally performs PROCESS-ENTER-KEY and SEND-USRLST-SCREEN.",
+          "Processes different keys using EVALUATE to call specific paragraphs: PROCESS-ENTER-KEY, RETURN-TO-PREV-SCREEN, PROCESS-PF7-KEY, and PROCESS-PF8-KEY.",
+          "Handles other conditions by setting error flags and messages, finally sending the screen using SEND-USRLST-SCREEN.",
+          "Returns control to CICS, passing any updated transaction ID and communication area."
+        ]
+      },
+      "PROCESS-ENTER-KEY": {
+        "paragraph_name": "PROCESS-ENTER-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-ENTER-KEY.\n\n           EVALUATE TRUE\n               WHEN SEL0001I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0001I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID01I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0002I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0002I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID02I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0003I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0003I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID03I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0004I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0004I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID04I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0005I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0005I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID05I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0006I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0006I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID06I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0007I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0007I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID07I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0008I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0008I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID08I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0009I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0009I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID09I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN SEL0010I OF COUSR0AI NOT = SPACES AND LOW-VALUES\n                   MOVE SEL0010I OF COUSR0AI TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE USRID10I OF COUSR0AI TO CDEMO-CU00-USR-SELECTED\n               WHEN OTHER\n                   MOVE SPACES   TO CDEMO-CU00-USR-SEL-FLG\n                   MOVE SPACES   TO CDEMO-CU00-USR-SELECTED\n           END-EVALUATE\n\n           IF (CDEMO-CU00-USR-SEL-FLG NOT = SPACES AND LOW-VALUES) AND\n              (CDEMO-CU00-USR-SELECTED NOT = SPACES AND LOW-VALUES)\n               EVALUATE CDEMO-CU00-USR-SEL-FLG\n                   WHEN 'U'\n                   WHEN 'u'\n                        MOVE 'COUSR02C'   TO CDEMO-TO-PROGRAM\n                        MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n                        MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n                        MOVE 0        TO CDEMO-PGM-CONTEXT\n                        EXEC CICS\n                            XCTL PROGRAM(CDEMO-TO-PROGRAM)\n                            COMMAREA(CARDDEMO-COMMAREA)\n                        END-EXEC\n                   WHEN 'D'\n                   WHEN 'd'\n                        MOVE 'COUSR03C'   TO CDEMO-TO-PROGRAM\n                        MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n                        MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n                        MOVE 0        TO CDEMO-PGM-CONTEXT\n                        EXEC CICS\n                            XCTL PROGRAM(CDEMO-TO-PROGRAM)\n                            COMMAREA(CARDDEMO-COMMAREA)\n                        END-EXEC\n                   WHEN OTHER\n                       MOVE\n                       'Invalid selection. Valid values are U and D' TO\n                                       WS-MESSAGE\n                       MOVE -1       TO USRIDINL OF COUSR0AI\n               END-EVALUATE\n           END-IF\n\n           IF USRIDINI OF COUSR0AI = SPACES OR LOW-VALUES\n               MOVE LOW-VALUES TO SEC-USR-ID\n           ELSE\n               MOVE USRIDINI  OF COUSR0AI TO SEC-USR-ID\n           END-IF\n\n           MOVE -1       TO USRIDINL OF COUSR0AI\n\n\n           MOVE 0       TO CDEMO-CU00-PAGE-NUM\n           PERFORM PROCESS-PAGE-FORWARD\n\n           IF NOT ERR-FLG-ON\n               MOVE SPACE   TO USRIDINO  OF COUSR0AO\n           END-IF.\n\n",
+        "paragraph_lines": [149, 232],
+        "ref_paragraphs": ["PROCESS-PAGE-FORWARD"],
+        "paragraph_logic": [
+          "Evaluates user selections and updates the user selection flag and ID for various conditions (SEL0001I to SEL0010I).",
+          "Checks if the user selection flag and ID are valid, then evaluates the selection to perform different actions based on the flag values.",
+          "Executes a CICS XCTL command to transfer control to another program if the selection is U or D and updates the transaction and context information.",
+          "Moves a warning message to a workspace if the selection is invalid and sets an error flag.",
+          "Moves user ID to the security user ID field, handling both valid and low-value user IDs.",
+          "Resets the page number and performs the page forward process, followed by clearing user ID if no errors are found."
+        ]
+      },
+      "PROCESS-PF7-KEY": {
+        "paragraph_name": "PROCESS-PF7-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-PF7-KEY.\n\n           IF CDEMO-CU00-USRID-FIRST = SPACES OR LOW-VALUES\n               MOVE LOW-VALUES TO SEC-USR-ID\n           ELSE\n               MOVE CDEMO-CU00-USRID-FIRST TO SEC-USR-ID\n           END-IF\n\n           SET NEXT-PAGE-YES TO TRUE\n           MOVE -1       TO USRIDINL OF COUSR0AI\n\n           IF CDEMO-CU00-PAGE-NUM > 1\n               PERFORM PROCESS-PAGE-BACKWARD\n           ELSE\n               MOVE 'You are already at the top of the page...' TO\n                               WS-MESSAGE\n               SET SEND-ERASE-NO TO TRUE\n               PERFORM SEND-USRLST-SCREEN\n           END-IF.\n\n",
+        "paragraph_lines": [237, 255],
+        "ref_paragraphs": ["PROCESS-PAGE-BACKWARD", "SEND-USRLST-SCREEN"],
+        "paragraph_logic": [
+          "Checks if the CDEMO user ID is blank or contains low values; if so, sets SEC-USR-ID to low values, otherwise moves the user ID to SEC-USR-ID.",
+          "Sets the flag to indicate the next page is available and prepares a control variable for user ID input length.",
+          "If the current page number is greater than one, it calls the [page backward process]<PROCESS-PAGE-BACKWARD> to move to the previous page.",
+          "If on the first page, updates WS-MESSAGE with a warning that the user is already at the top and sets the no-erase flag.",
+          "Calls the [screen sending process]<SEND-USRLST-SCREEN> to display the user list on the screen."
+        ]
+      },
+      "PROCESS-PF8-KEY": {
+        "paragraph_name": "PROCESS-PF8-KEY",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-PF8-KEY.\n\n           IF CDEMO-CU00-USRID-LAST = SPACES OR LOW-VALUES\n               MOVE HIGH-VALUES TO SEC-USR-ID\n           ELSE\n               MOVE CDEMO-CU00-USRID-LAST TO SEC-USR-ID\n           END-IF\n\n           MOVE -1       TO USRIDINL OF COUSR0AI\n\n           IF NEXT-PAGE-YES\n               PERFORM PROCESS-PAGE-FORWARD\n           ELSE\n               MOVE 'You are already at the bottom of the page...' TO\n                               WS-MESSAGE\n               SET SEND-ERASE-NO TO TRUE\n               PERFORM SEND-USRLST-SCREEN\n           END-IF.\n\n",
+        "paragraph_lines": [260, 277],
+        "ref_paragraphs": ["PROCESS-PAGE-FORWARD", "SEND-USRLST-SCREEN"],
+        "paragraph_logic": [
+          "Checks if the last user ID is blank or contains low values and sets the search user ID accordingly.",
+          "Initializes the user ID length to -1.",
+          "If the next page flag is set, calls [PROCESS-PAGE-FORWARD] to handle pagination.",
+          "Otherwise, displays an error message indicating the end of the list and sets screen attributes.",
+          "Calls the [SEND-USRLST-SCREEN] to send the user list screen."
+        ]
+      },
+      "PROCESS-PAGE-FORWARD": {
+        "paragraph_name": "PROCESS-PAGE-FORWARD",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-PAGE-FORWARD.\n\n           PERFORM STARTBR-USER-SEC-FILE\n\n           IF NOT ERR-FLG-ON\n\n               IF EIBAID NOT = DFHENTER AND DFHPF7 AND DFHPF3\n                   PERFORM READNEXT-USER-SEC-FILE\n               END-IF\n\n               IF USER-SEC-NOT-EOF AND ERR-FLG-OFF\n               PERFORM VARYING WS-IDX FROM 1 BY 1 UNTIL WS-IDX > 10\n                   PERFORM INITIALIZE-USER-DATA\n               END-PERFORM\n               END-IF\n\n               MOVE 1             TO  WS-IDX\n\n               PERFORM UNTIL WS-IDX >= 11 OR USER-SEC-EOF OR ERR-FLG-ON\n                   PERFORM READNEXT-USER-SEC-FILE\n                   IF USER-SEC-NOT-EOF AND ERR-FLG-OFF\n                       PERFORM POPULATE-USER-DATA\n                       COMPUTE WS-IDX = WS-IDX + 1\n                   END-IF\n               END-PERFORM\n\n               IF USER-SEC-NOT-EOF AND ERR-FLG-OFF\n                   COMPUTE CDEMO-CU00-PAGE-NUM =\n                           CDEMO-CU00-PAGE-NUM + 1\n                   PERFORM READNEXT-USER-SEC-FILE\n                   IF USER-SEC-NOT-EOF AND ERR-FLG-OFF\n                       SET NEXT-PAGE-YES TO TRUE\n                   ELSE\n                       SET NEXT-PAGE-NO TO TRUE\n                   END-IF\n               ELSE\n                   SET NEXT-PAGE-NO TO TRUE\n                   IF WS-IDX > 1\n                       COMPUTE CDEMO-CU00-PAGE-NUM = CDEMO-CU00-PAGE-NUM\n                        + 1\n                   END-IF\n               END-IF\n\n               PERFORM ENDBR-USER-SEC-FILE\n\n               MOVE CDEMO-CU00-PAGE-NUM TO PAGENUMI  OF COUSR0AI\n               MOVE SPACE   TO USRIDINO  OF COUSR0AO\n               PERFORM SEND-USRLST-SCREEN\n\n           END-IF.\n\n",
+        "paragraph_lines": [282, 331],
+        "ref_paragraphs": [
+          "STARTBR-USER-SEC-FILE",
+          "READNEXT-USER-SEC-FILE",
+          "INITIALIZE-USER-DATA",
+          "READNEXT-USER-SEC-FILE",
+          "POPULATE-USER-DATA",
+          "READNEXT-USER-SEC-FILE",
+          "ENDBR-USER-SEC-FILE",
+          "SEND-USRLST-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Calls the [start browse process]<STARTBR-USER-SEC-FILE> to begin browsing through the user security file.",
+          "If there is no error, it checks if the Enter or function keys (PF7 or PF3) are pressed and then calls the [read-next process]<READNEXT-USER-SEC-FILE> to read the next user security record.",
+          "If the end-of-file condition is not met and no error occurs, it iterates to call the [initialize user data process]<INITIALIZE-USER-DATA>, initializing up to 10 user data entries.",
+          "Continues reading the next user security records and populating user data by repeatedly calling [read-next process]<READNEXT-USER-SEC-FILE> and [populate user data process]<POPULATE-USER-DATA> until conditions to stop are met.",
+          "Ends the browse by calling the [end browse process]<ENDBR-USER-SEC-FILE> and prepares the user list screen for display via the [send user list screen process]<SEND-USRLST-SCREEN>."
+        ]
+      },
+      "PROCESS-PAGE-BACKWARD": {
+        "paragraph_name": "PROCESS-PAGE-BACKWARD",
+        "section": "procedure division",
+        "paragraph_code": "PROCESS-PAGE-BACKWARD.\n\n           PERFORM STARTBR-USER-SEC-FILE\n\n           IF NOT ERR-FLG-ON\n\n               IF EIBAID NOT = DFHENTER  AND DFHPF8\n                   PERFORM READPREV-USER-SEC-FILE\n               END-IF\n\n               IF USER-SEC-NOT-EOF AND ERR-FLG-OFF\n               PERFORM VARYING WS-IDX FROM 1 BY 1 UNTIL WS-IDX > 10\n                   PERFORM INITIALIZE-USER-DATA\n               END-PERFORM\n               END-IF\n\n               MOVE 10          TO  WS-IDX\n\n               PERFORM UNTIL WS-IDX <= 0 OR USER-SEC-EOF OR ERR-FLG-ON\n                   PERFORM READPREV-USER-SEC-FILE\n                   IF USER-SEC-NOT-EOF AND ERR-FLG-OFF\n                       PERFORM POPULATE-USER-DATA\n                       COMPUTE WS-IDX = WS-IDX - 1\n                   END-IF\n               END-PERFORM\n\n               IF USER-SEC-NOT-EOF AND ERR-FLG-OFF\n               PERFORM READPREV-USER-SEC-FILE\n               IF NEXT-PAGE-YES\n                   IF USER-SEC-NOT-EOF AND ERR-FLG-OFF AND\n                       CDEMO-CU00-PAGE-NUM > 1\n                       SUBTRACT 1 FROM CDEMO-CU00-PAGE-NUM\n                   ELSE\n                       MOVE 1 TO CDEMO-CU00-PAGE-NUM\n                   END-IF\n               END-IF\n               END-IF\n\n               PERFORM ENDBR-USER-SEC-FILE\n\n               MOVE CDEMO-CU00-PAGE-NUM TO PAGENUMI  OF COUSR0AI\n               PERFORM SEND-USRLST-SCREEN\n\n           END-IF.\n\n",
+        "paragraph_lines": [336, 379],
+        "ref_paragraphs": [
+          "STARTBR-USER-SEC-FILE",
+          "READPREV-USER-SEC-FILE",
+          "INITIALIZE-USER-DATA",
+          "READPREV-USER-SEC-FILE",
+          "POPULATE-USER-DATA",
+          "READPREV-USER-SEC-FILE",
+          "ENDBR-USER-SEC-FILE",
+          "SEND-USRLST-SCREEN"
+        ],
+        "paragraph_logic": [
+          "Calls the [start browse process]<STARTBR-USER-SEC-FILE> to initiate reading records from the user security file.",
+          "If the Enter key or F8 key is pressed, calls the [read previous record process]<READPREV-USER-SEC-FILE> to read the previous record.",
+          "If no errors occur, calls the [initialize user data process]<INITIALIZE-USER-DATA> to prepare structures for user data loading.",
+          "Performs a loop to read and populate user records backwards using [read previous record process]<READPREV-USER-SEC-FILE> and [populate user data process]<POPULATE-USER-DATA>.",
+          "Adjusts the page number based on the browsing direction and calls [end browse process]<ENDBR-USER-SEC-FILE> to conclude the browsing session.",
+          "Displays the user list screen by calling the [send user list screen process]<SEND-USRLST-SCREEN>, showing the updated page and user data."
+        ]
+      },
+      "POPULATE-USER-DATA": {
+        "paragraph_name": "POPULATE-USER-DATA",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-USER-DATA.\n\n           EVALUATE WS-IDX\n               WHEN 1\n                   MOVE SEC-USR-ID    TO USRID01I OF COUSR0AI\n                                         CDEMO-CU00-USRID-FIRST\n                   MOVE SEC-USR-FNAME TO FNAME01I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME01I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE01I OF COUSR0AI\n               WHEN 2\n                   MOVE SEC-USR-ID    TO USRID02I OF COUSR0AI\n                   MOVE SEC-USR-FNAME TO FNAME02I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME02I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE02I OF COUSR0AI\n               WHEN 3\n                   MOVE SEC-USR-ID    TO USRID03I OF COUSR0AI\n                   MOVE SEC-USR-FNAME TO FNAME03I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME03I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE03I OF COUSR0AI\n               WHEN 4\n                   MOVE SEC-USR-ID    TO USRID04I OF COUSR0AI\n                   MOVE SEC-USR-FNAME TO FNAME04I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME04I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE04I OF COUSR0AI\n               WHEN 5\n                   MOVE SEC-USR-ID    TO USRID05I OF COUSR0AI\n                   MOVE SEC-USR-FNAME TO FNAME05I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME05I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE05I OF COUSR0AI\n               WHEN 6\n                   MOVE SEC-USR-ID    TO USRID06I OF COUSR0AI\n                   MOVE SEC-USR-FNAME TO FNAME06I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME06I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE06I OF COUSR0AI\n               WHEN 7\n                   MOVE SEC-USR-ID    TO USRID07I OF COUSR0AI\n                   MOVE SEC-USR-FNAME TO FNAME07I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME07I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE07I OF COUSR0AI\n               WHEN 8\n                   MOVE SEC-USR-ID    TO USRID08I OF COUSR0AI\n                   MOVE SEC-USR-FNAME TO FNAME08I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME08I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE08I OF COUSR0AI\n               WHEN 9\n                   MOVE SEC-USR-ID    TO USRID09I OF COUSR0AI\n                   MOVE SEC-USR-FNAME TO FNAME09I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME09I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE09I OF COUSR0AI\n               WHEN 10\n                   MOVE SEC-USR-ID    TO USRID10I OF COUSR0AI\n                                         CDEMO-CU00-USRID-LAST\n                   MOVE SEC-USR-FNAME TO FNAME10I OF COUSR0AI\n                   MOVE SEC-USR-LNAME TO LNAME10I OF COUSR0AI\n                   MOVE SEC-USR-TYPE  TO UTYPE10I OF COUSR0AI\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [384, 441],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Evaluates the index WS-IDX to determine which user slot to populate.",
+          "For each value of WS-IDX from 1 to 10, moves user data (user ID, first name, last name, type) to the corresponding slots in the user data array COUSR0AI.",
+          "Specifically, values like user ID, first name, last name, and user type are moved to respective positions (USRID, FNAME, LNAME, UTYPE) within the COUSR0AI structure.",
+          "Handles each user slot one by one, ensuring all user data fields are correctly assigned based on WS-IDX value.",
+          "If WS-IDX does not match any expected values (1-10), the WHEN OTHER case continues execution without performing any data movement."
+        ]
+      },
+      "INITIALIZE-USER-DATA": {
+        "paragraph_name": "INITIALIZE-USER-DATA",
+        "section": "procedure division",
+        "paragraph_code": "INITIALIZE-USER-DATA.\n\n           EVALUATE WS-IDX\n               WHEN 1\n                   MOVE SPACES TO USRID01I OF COUSR0AI\n                   MOVE SPACES TO FNAME01I OF COUSR0AI\n                   MOVE SPACES TO LNAME01I OF COUSR0AI\n                   MOVE SPACES TO UTYPE01I OF COUSR0AI\n               WHEN 2\n                   MOVE SPACES TO USRID02I OF COUSR0AI\n                   MOVE SPACES TO FNAME02I OF COUSR0AI\n                   MOVE SPACES TO LNAME02I OF COUSR0AI\n                   MOVE SPACES TO UTYPE02I OF COUSR0AI\n               WHEN 3\n                   MOVE SPACES TO USRID03I OF COUSR0AI\n                   MOVE SPACES TO FNAME03I OF COUSR0AI\n                   MOVE SPACES TO LNAME03I OF COUSR0AI\n                   MOVE SPACES TO UTYPE03I OF COUSR0AI\n               WHEN 4\n                   MOVE SPACES TO USRID04I OF COUSR0AI\n                   MOVE SPACES TO FNAME04I OF COUSR0AI\n                   MOVE SPACES TO LNAME04I OF COUSR0AI\n                   MOVE SPACES TO UTYPE04I OF COUSR0AI\n               WHEN 5\n                   MOVE SPACES TO USRID05I OF COUSR0AI\n                   MOVE SPACES TO FNAME05I OF COUSR0AI\n                   MOVE SPACES TO LNAME05I OF COUSR0AI\n                   MOVE SPACES TO UTYPE05I OF COUSR0AI\n               WHEN 6\n                   MOVE SPACES TO USRID06I OF COUSR0AI\n                   MOVE SPACES TO FNAME06I OF COUSR0AI\n                   MOVE SPACES TO LNAME06I OF COUSR0AI\n                   MOVE SPACES TO UTYPE06I OF COUSR0AI\n               WHEN 7\n                   MOVE SPACES TO USRID07I OF COUSR0AI\n                   MOVE SPACES TO FNAME07I OF COUSR0AI\n                   MOVE SPACES TO LNAME07I OF COUSR0AI\n                   MOVE SPACES TO UTYPE07I OF COUSR0AI\n               WHEN 8\n                   MOVE SPACES TO USRID08I OF COUSR0AI\n                   MOVE SPACES TO FNAME08I OF COUSR0AI\n                   MOVE SPACES TO LNAME08I OF COUSR0AI\n                   MOVE SPACES TO UTYPE08I OF COUSR0AI\n               WHEN 9\n                   MOVE SPACES TO USRID09I OF COUSR0AI\n                   MOVE SPACES TO FNAME09I OF COUSR0AI\n                   MOVE SPACES TO LNAME09I OF COUSR0AI\n                   MOVE SPACES TO UTYPE09I OF COUSR0AI\n               WHEN 10\n                   MOVE SPACES TO USRID10I OF COUSR0AI\n                   MOVE SPACES TO FNAME10I OF COUSR0AI\n                   MOVE SPACES TO LNAME10I OF COUSR0AI\n                   MOVE SPACES TO UTYPE10I OF COUSR0AI\n               WHEN OTHER\n                   CONTINUE\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [446, 501],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Calls the [data initialization process]<INITIALIZE-USER-DATA> to reset all user data fields to spaces based on the index value.",
+          "Evaluates the index value in WS-IDX to determine the specific user record to initialize.",
+          "For index value 1, clears user ID, first name, last name, and user type for the first user record.",
+          "For index value 2, clears user ID, first name, last name, and user type for the second user record; similar actions repeat for indices up to 10.",
+          "If the index value is between 3 to 10, initializes corresponding user data fields in the respective user records.",
+          "For any other index value, continues without making changes to user data."
+        ]
+      },
+      "RETURN-TO-PREV-SCREEN": {
+        "paragraph_name": "RETURN-TO-PREV-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RETURN-TO-PREV-SCREEN.\n\n           IF CDEMO-TO-PROGRAM = LOW-VALUES OR SPACES\n               MOVE 'COSGN00C' TO CDEMO-TO-PROGRAM\n           END-IF\n           MOVE WS-TRANID    TO CDEMO-FROM-TRANID\n           MOVE WS-PGMNAME   TO CDEMO-FROM-PROGRAM\n           MOVE ZEROS        TO CDEMO-PGM-CONTEXT\n           EXEC CICS\n               XCTL PROGRAM(CDEMO-TO-PROGRAM)\n               COMMAREA(CARDDEMO-COMMAREA)\n           END-EXEC.\n\n",
+        "paragraph_lines": [506, 517],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Checks if the target program name is uninitialized or empty and sets it to the default program COSGN00C if so.",
+          "Moves the current transaction ID to the from transaction ID field for tracking purposes.",
+          "Moves the current program name to the from program field for tracking purposes.",
+          "Initializes the program context field to zeros.",
+          "Transfers control to the target program specified in CDEMO-TO-PROGRAM, passing the communication area CARDDEMO-COMMAREA."
+        ]
+      },
+      "SEND-USRLST-SCREEN": {
+        "paragraph_name": "SEND-USRLST-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "SEND-USRLST-SCREEN.\n\n           PERFORM POPULATE-HEADER-INFO\n\n           MOVE WS-MESSAGE TO ERRMSGO OF COUSR0AO\n\n           IF SEND-ERASE-YES\n               EXEC CICS SEND\n                         MAP('COUSR0A')\n                         MAPSET('COUSR00')\n                         FROM(COUSR0AO)\n                         ERASE\n                         CURSOR\n               END-EXEC\n           ELSE\n               EXEC CICS SEND\n                         MAP('COUSR0A')\n                         MAPSET('COUSR00')\n                         FROM(COUSR0AO)\n      *                  ERASE\n                         CURSOR\n               END-EXEC\n           END-IF.\n\n",
+        "paragraph_lines": [522, 544],
+        "ref_paragraphs": ["POPULATE-HEADER-INFO"],
+        "paragraph_logic": [
+          "Calls the [header information population process]<POPULATE-HEADER-INFO> to prepare the screens header data.",
+          "Moves the working storage message to the error message field on the screen.",
+          "Checks the condition SEND-ERASE-YES to decide whether to send the screen with the erase option enabled.",
+          "Performs a CICS SEND MAP command with the specified map and mapset, including the ERASE option if SEND-ERASE-YES is true.",
+          "Otherwise, performs a CICS SEND MAP command with the specified map and mapset without the ERASE option."
+        ]
+      },
+      "RECEIVE-USRLST-SCREEN": {
+        "paragraph_name": "RECEIVE-USRLST-SCREEN",
+        "section": "procedure division",
+        "paragraph_code": "RECEIVE-USRLST-SCREEN.\n\n           EXEC CICS RECEIVE\n                     MAP('COUSR0A')\n                     MAPSET('COUSR00')\n                     INTO(COUSR0AI)\n                     RESP(WS-RESP-CD)\n                     RESP2(WS-REAS-CD)\n           END-EXEC.\n\n",
+        "paragraph_lines": [549, 557],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Initiates the screen receiving process for the user list.",
+          "Executes a CICS RECEIVE command to receive the map COUSR0A from the mapset COUSR00.",
+          "Stores the received data into the COUSR0AI data area.",
+          "Handles the response code in WS-RESP-CD and the reason code in WS-REAS-CD in case of issues."
+        ]
+      },
+      "POPULATE-HEADER-INFO": {
+        "paragraph_name": "POPULATE-HEADER-INFO",
+        "section": "procedure division",
+        "paragraph_code": "POPULATE-HEADER-INFO.\n\n           MOVE FUNCTION CURRENT-DATE  TO WS-CURDATE-DATA\n\n           MOVE CCDA-TITLE01           TO TITLE01O OF COUSR0AO\n           MOVE CCDA-TITLE02           TO TITLE02O OF COUSR0AO\n           MOVE WS-TRANID              TO TRNNAMEO OF COUSR0AO\n           MOVE WS-PGMNAME             TO PGMNAMEO OF COUSR0AO\n\n           MOVE WS-CURDATE-MONTH       TO WS-CURDATE-MM\n           MOVE WS-CURDATE-DAY         TO WS-CURDATE-DD\n           MOVE WS-CURDATE-YEAR(3:2)   TO WS-CURDATE-YY\n\n           MOVE WS-CURDATE-MM-DD-YY    TO CURDATEO OF COUSR0AO\n\n           MOVE WS-CURTIME-HOURS       TO WS-CURTIME-HH\n           MOVE WS-CURTIME-MINUTE      TO WS-CURTIME-MM\n           MOVE WS-CURTIME-SECOND      TO WS-CURTIME-SS\n\n           MOVE WS-CURTIME-HH-MM-SS    TO CURTIMEO OF COUSR0AO.\n\n",
+        "paragraph_lines": [562, 581],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Moves current date to working storage (WS-CURDATE-DATA) to capture the system date.",
+          "Populates the screen title fields (TITLE01O, TITLE02O) with predefined titles (CCDA-TITLE01, CCDA-TITLE02).",
+          "Moves transaction ID (WS-TRANID) and program name (WS-PGMNAME) to output fields (TRNNAMEO, PGMNAMEO).",
+          "Extracts and formats the current date (month, day, year) into WS-CURDATE-MM, WS-CURDATE-DD, and WS-CURDATE-YY respectively.",
+          "Moves the formatted current date (WS-CURDATE-MM-DD-YY) to the date output field (CURDATEO).",
+          "Extracts and formats the current time (hours, minutes, seconds) into WS-CURTIME-HH, WS-CURTIME-MM, and WS-CURTIME-SS respectively.",
+          "Moves the formatted current time (WS-CURTIME-HH-MM-SS) to the time output field (CURTIMEO)."
+        ]
+      },
+      "STARTBR-USER-SEC-FILE": {
+        "paragraph_name": "STARTBR-USER-SEC-FILE",
+        "section": "procedure division",
+        "paragraph_code": "STARTBR-USER-SEC-FILE.\n\n           EXEC CICS STARTBR\n                DATASET   (WS-USRSEC-FILE)\n                RIDFLD    (SEC-USR-ID)\n                KEYLENGTH (LENGTH OF SEC-USR-ID)\n      *         GTEQ\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(NOTFND)\n                   CONTINUE\n                   SET USER-SEC-EOF TO TRUE\n                   MOVE 'You are at the top of the page...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR0AI\n                   PERFORM SEND-USRLST-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup User...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR0AI\n                   PERFORM SEND-USRLST-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [586, 614],
+        "ref_paragraphs": ["SEND-USRLST-SCREEN", "SEND-USRLST-SCREEN"],
+        "paragraph_logic": [
+          "Starts browsing through the user security dataset based on the user ID index.",
+          "Evaluates the response code from the browse initiation to determine the action.",
+          "If the response is NORMAL, the browsing starts successfully and continues.",
+          "If the response is NOTFND, sets the end-of-file condition and prepares a message indicating the top of the page, then calls the screen update process <SEND-USRLST-SCREEN> to update the user list.",
+          "For any other response, displays the error response and reason codes, sets an error flag, prepares an error message, and calls the screen update process <SEND-USRLST-SCREEN> to show the message on the screen."
+        ]
+      },
+      "READNEXT-USER-SEC-FILE": {
+        "paragraph_name": "READNEXT-USER-SEC-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READNEXT-USER-SEC-FILE.\n\n           EXEC CICS READNEXT\n                DATASET   (WS-USRSEC-FILE)\n                INTO      (SEC-USER-DATA)\n                LENGTH    (LENGTH OF SEC-USER-DATA)\n                RIDFLD    (SEC-USR-ID)\n                KEYLENGTH (LENGTH OF SEC-USR-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(ENDFILE)\n                   CONTINUE\n                   SET USER-SEC-EOF TO TRUE\n                   MOVE 'You have reached the bottom of the page...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR0AI\n                   PERFORM SEND-USRLST-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup User...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR0AI\n                   PERFORM SEND-USRLST-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [619, 648],
+        "ref_paragraphs": ["SEND-USRLST-SCREEN", "SEND-USRLST-SCREEN"],
+        "paragraph_logic": [
+          "Starts reading the next record from the user security file into the SEC-USER-DATA structure.",
+          "Evaluates the response code to determine the outcome of the read operation.",
+          "If the read is successful (DFHRESP(NORMAL)), the program continues processing.",
+          "If the end of the file is reached (DFHRESP(ENDFILE)), sets the end-of-file flag and sends a message, then performs SEND-USRLST-SCREEN.",
+          "In case of any other response, logs the response and reason codes, sets the error flag, informs the user, and performs SEND-USRLST-SCREEN."
+        ]
+      },
+      "READPREV-USER-SEC-FILE": {
+        "paragraph_name": "READPREV-USER-SEC-FILE",
+        "section": "procedure division",
+        "paragraph_code": "READPREV-USER-SEC-FILE.\n\n           EXEC CICS READPREV\n                DATASET   (WS-USRSEC-FILE)\n                INTO      (SEC-USER-DATA)\n                LENGTH    (LENGTH OF SEC-USER-DATA)\n                RIDFLD    (SEC-USR-ID)\n                KEYLENGTH (LENGTH OF SEC-USR-ID)\n                RESP      (WS-RESP-CD)\n                RESP2     (WS-REAS-CD)\n           END-EXEC.\n\n           EVALUATE WS-RESP-CD\n               WHEN DFHRESP(NORMAL)\n                   CONTINUE\n               WHEN DFHRESP(ENDFILE)\n                   CONTINUE\n                   SET USER-SEC-EOF TO TRUE\n                   MOVE 'You have reached the top of the page...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR0AI\n                   PERFORM SEND-USRLST-SCREEN\n               WHEN OTHER\n                   DISPLAY 'RESP:' WS-RESP-CD 'REAS:' WS-REAS-CD\n                   MOVE 'Y'     TO WS-ERR-FLG\n                   MOVE 'Unable to lookup User...' TO\n                                   WS-MESSAGE\n                   MOVE -1       TO USRIDINL OF COUSR0AI\n                   PERFORM SEND-USRLST-SCREEN\n           END-EVALUATE.\n\n",
+        "paragraph_lines": [653, 682],
+        "ref_paragraphs": ["SEND-USRLST-SCREEN", "SEND-USRLST-SCREEN"],
+        "paragraph_logic": [
+          "Executes a CICS READPREV to read the previous record from the user security file into the SEC-USER-DATA structure based on the security user ID.",
+          "Evaluates the response code from the READPREV operation.",
+          "When the response is NORMAL, continues processing without any additional actions.",
+          "When the response is ENDFILE, sets the end-of-file flag to TRUE, updates the message to indicate reaching the top of the page, and performs the [user list screen sending process]<SEND-USRLST-SCREEN>.",
+          "For any other response, displays the RESP and REAS codes, sets an error flag, updates the error message, and performs the [user list screen sending process]<SEND-USRLST-SCREEN>."
+        ]
+      },
+      "ENDBR-USER-SEC-FILE": {
+        "paragraph_name": "ENDBR-USER-SEC-FILE",
+        "section": "procedure division",
+        "paragraph_code": "ENDBR-USER-SEC-FILE.\n\n           EXEC CICS ENDBR\n                DATASET   (WS-USRSEC-FILE)\n           END-EXEC.\n\n",
+        "paragraph_lines": [687, 691],
+        "ref_paragraphs": [],
+        "paragraph_logic": [
+          "Stops the browsing operation on the user security dataset, thereby closing the browse sequence."
+        ]
+      }
+    }
+  },
+  "copy_graph": {
+    "programs": [
+      {
+        "index": 0,
+        "program_id": "COCOM01Y",
+        "program_type": "Copy",
+        "program_name": "COCOM01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 1,
+        "program_id": "COUSR00",
+        "program_type": "Copy",
+        "program_name": "COUSR00",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 2,
+        "program_id": "COTTL01Y",
+        "program_type": "Copy",
+        "program_name": "COTTL01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 3,
+        "program_id": "CSDAT01Y",
+        "program_type": "Copy",
+        "program_name": "CSDAT01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 4,
+        "program_id": "CSMSG01Y",
+        "program_type": "Copy",
+        "program_name": "CSMSG01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 5,
+        "program_id": "CSUSR01Y",
+        "program_type": "Copy",
+        "program_name": "CSUSR01Y",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 6,
+        "program_id": "DFHAID",
+        "program_type": "Copy",
+        "program_name": "DFHAID",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      },
+      {
+        "index": 7,
+        "program_id": "DFHBMSCA",
+        "program_type": "Copy",
+        "program_name": "DFHBMSCA",
+        "call_type": "Static Call",
+        "notes": "",
+        "locations": "",
+        "paragraph": "",
+        "identifier": []
+      }
+    ],
+    "details": [""]
+  }
+}

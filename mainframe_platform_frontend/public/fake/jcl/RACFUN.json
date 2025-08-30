@@ -1,0 +1,60 @@
+{
+  "overview": {
+    "job_name": "RACFUN",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The best property of JCL IBM is its ability to efficiently manage and execute batch jobs by defining precise job steps, datasets, and program execution parameters."
+  },
+  "step_list": [
+    {
+      "step_name": "UNLOAD",
+      "program_executed": "IRRDBU00",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "INDD1",
+          "parameters_map": { "DSN": "SYS1.BACKUP.RACF", "DISP": "SYS1.BACKUP.RACF" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SYS1.BACKUP.RACF",
+              "variable_name": "INDD1",
+              "dd_statement": "DSN=SYS1.BACKUP.RACF",
+              "program_id": "IRRDBU00"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "OUTDD",
+          "parameters_map": {
+            "DSN": "FPTLT01.RACF.UNLOAD",
+            "DISP": "FPTLT01.RACF.UNLOAD",
+            "UNIT": "SYSDA",
+            "SPACE": "SYSDA",
+            "RECFM": "VB",
+            "LRECL": "VB"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.RACF.UNLOAD",
+              "variable_name": "OUTDD",
+              "dd_statement": "DSN=FPTLT01.RACF.UNLOAD",
+              "program_id": "IRRDBU00"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        }
+      ],
+      "io_statements": ["INDD1: DSN=SYS1.BACKUP.RACF\n", "OUTDD: DSN=FPTLT01.RACF.UNLOAD\n"],
+      "property": "The best property of JCL IBM is its ability to efficiently manage and execute batch jobs by defining precise job steps, datasets, and program execution parameters."
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "overview": {
+    "job_name": "DUSRSECJ",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "JCL IBM allows precise control over job execution steps, dataset management, and resource allocation, ensuring efficient and organized batch processing."
+  },
+  "step_list": [
+    {
+      "step_name": "PREDEL",
+      "program_executed": "IEFBR14",
+      "description": "Dummy program for dataset allocation or deletion",
+      "dd_statement": [
+        {
+          "ddname": "DD01",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+            "DISP": "(MOD,DELETE,DELETE)",
+            "SPACE": "(TRK,1)"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+              "variable_name": "DD01",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+              "program_id": "IEFBR14"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": ["DD01: DSN=FPTLT01.DEMO.CARDDEMO.USRSEC.PS\n"],
+      "property": "PREDEL step uses the IEFBR14 program to allocate or delete the dataset 'FPTLT01.DEMO.CARDDEMO.USRSEC.PS' with specified DISP and SPACE parameters."
+    },
+    {
+      "step_name": "STEP01",
+      "program_executed": "IEBGENER",
+      "description": "Copies records from a sequential dataset",
+      "dd_statement": [
+        {
+          "ddname": "SYSUT1",
+          "parameters_map": {
+            "UNNAMED_1": "*"
+          },
+          "dataset_map_list": [],
+          "logic": "ADMIN001MARGARET            GOLD                PASSWORDA\r\nADMIN002RUSSELL             RUSSELL             PASSWORDA\r\nADMIN003RAYMOND             WHITMORE            PASSWORDA\r\nADMIN004EMMANUEL            CASGRAIN            PASSWORDA\r\nADMIN005GRANVILLE           LACHAPELLE          PASSWORDA\r\nUSER0001LAWRENCE            THOMAS              PASSWORDU\r\nUSER0002AJITH               KUMAR               PASSWORDU\r\nUSER0003LAURITZ             ALME                PASSWORDU\r\nUSER0004AVERARDO            MAZZI               PASSWORDU\r\nUSER0005LEE                 TING                PASSWORDU\r\n"
+        },
+        {
+          "ddname": "SYSUT2",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+            "DISP": "(NEW,CATLG,DELETE)",
+            "DCB": "80",
+            "LRECL": "80",
+            "RECFM": "80",
+            "DSORG": "80",
+            "BLKSIZE": "80",
+            "UNIT": "SYSDA",
+            "SPACE": "SYSDA"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+              "variable_name": "SYSUT2",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+              "program_id": "IEBGENER"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": {
+            "SYSOUT": "*"
+          },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": {
+            "UNNAMED_1": "DUMMY"
+          },
+          "dataset_map_list": [],
+          "logic": null
+        }
+      ],
+      "io_statements": ["SYSUT2: DSN=FPTLT01.DEMO.CARDDEMO.USRSEC.PS\n"],
+      "property": "JCL for STEP01 uses IEBGENER to copy records from a sequential dataset to a new dataset with specified attributes."
+    },
+    {
+      "step_name": "STEP02",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": {
+            "SYSOUT": "*"
+          },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": {
+            "UNNAMED_1": "*"
+          },
+          "dataset_map_list": [],
+          "logic": " DELETE                  FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS\r\n SET       MAXCC = 0\r\n DEFINE    CLUSTER (NAME(FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS)    -\r\n                    KEYS(8,0)                                 -\r\n                    RECORDSIZE(80,80)                         -\r\n                    REUSE                                     -\r\n                    INDEXED                                   -\r\n                    VOLUMES(USER04)                           -\r\n                    TRACKS(45,15)                             -\r\n                    FREESPACE(10,15)                          -\r\n                    CISZ(8192))                               -\r\n           DATA    (NAME(FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS.DAT)) -\r\n           INDEX   (NAME(FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS.IDX))\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    },
+    {
+      "step_name": "STEP03",
+      "program_executed": "IDCAMS",
+      "description": "Access Method Services",
+      "dd_statement": [
+        {
+          "ddname": "IN",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.USRSEC.PS"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+              "variable_name": "IN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.USRSEC.PS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "OUT",
+          "parameters_map": {
+            "DSN": "FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS",
+            "DISP": "FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS"
+          },
+          "dataset_map_list": [
+            {
+              "dataset_name": "FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS",
+              "variable_name": "OUT",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS",
+              "program_id": "IDCAMS"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSOUT",
+          "parameters_map": {
+            "SYSOUT": "*"
+          },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": {
+            "SYSOUT": "*"
+          },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": {
+            "UNNAMED_1": "*"
+          },
+          "dataset_map_list": [],
+          "logic": "  REPRO INFILE(IN) OUTFILE(OUT)\r\n"
+        }
+      ],
+      "io_statements": [
+        "IN: DSN=FPTLT01.DEMO.CARDDEMO.USRSEC.PS\n",
+        "OUT: DSN=FPTLT01.DEMO.CARDDEMO.USRSEC.VSAM.KSDS\n"
+      ],
+      "property": "JCL allows you to define and execute steps like STEP03 with IDCAMS to perform dataset operations using detailed DD statements and parameters."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "overview": {
+    "job_name": "CLOSEFIL",
+    "class": "A",
+    "msgclass": null,
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The JCL IBM job 'CLOSEFIL' executes the 'SDSF' program to close multiple CICS files with SYSOUT directed to '*'."
+  },
+  "step_list": [
+    {
+      "step_name": "CLCIFIL",
+      "program_executed": "SDSF",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "ISFOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CMDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "ISFIN",
+          "parameters_map": { "UNNAMED_1": "*" },
+          "dataset_map_list": [],
+          "logic": " /F CICSA,'CEMT SET FIL(TRANSACT ) CLO'\r\n /F CICSA,'CEMT SET FIL(CCXREF ) CLO'\r\n /F CICSA,'CEMT SET FIL(ACCTDAT ) CLO'\r\n /F CICSA,'CEMT SET FIL(CXACAIX ) CLO'\r\n /F CICSA,'CEMT SET FIL(USRSEC ) CLO'\r\n"
+        }
+      ],
+      "io_statements": [],
+      "property": null
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "level": "01",
+    "name": "CCDA-SCREEN-TITLE",
+    "picture_clause": null,
+    "default_value": null,
+    "redefine": null,
+    "occur": null,
+    "data_type": null
+  },
+  {
+    "level": "05",
+    "name": "CCDA-TITLE01",
+    "picture_clause": "X(40)",
+    "default_value": "'      FPT Mainframe Modernization       '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "CCDA-TITLE02",
+    "picture_clause": "X(40)",
+    "default_value": "'              CardDemo                  '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  },
+  {
+    "level": "05",
+    "name": "CCDA-THANK-YOU",
+    "picture_clause": "X(40)",
+    "default_value": "'Thank you for using CCDA application... '",
+    "redefine": null,
+    "occur": null,
+    "data_type": "char"
+  }
+]

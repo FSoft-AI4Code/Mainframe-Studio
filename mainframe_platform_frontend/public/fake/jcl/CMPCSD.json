@@ -1,0 +1,82 @@
+{
+  "overview": {
+    "job_name": "CMPCSD",
+    "class": "A",
+    "msgclass": "H",
+    "notify": "&SYSUID",
+    "time": null,
+    "description": "The JCL IBM job 'CMPCSD' executes the DFHCSDUP program in the step 'CSDDEF' using datasets DFH410.SDFHLOAD, DFH410.CICS.DFHCSD, and FPTLT01.DEMO.CARDDEMO.CSD(CSDDEL) with output directed to SYSOUT."
+  },
+  "step_list": [
+    {
+      "step_name": "CSDDEF",
+      "program_executed": "DFHCSDUP",
+      "description": null,
+      "dd_statement": [
+        {
+          "ddname": "STEPLIB",
+          "parameters_map": { "DSN": "DFH410.SDFHLOAD", "DISP": "DFH410.SDFHLOAD" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "DFH410.SDFHLOAD",
+              "variable_name": "STEPLIB",
+              "dd_statement": "DSN=DFH410.SDFHLOAD",
+              "program_id": "DFHCSDUP"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "DFHCSD",
+          "parameters_map": { "DSN": "DFH410.CICS.DFHCSD", "DISP": "DFH410.CICS.DFHCSD" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "DFH410.CICS.DFHCSD",
+              "variable_name": "DFHCSD",
+              "dd_statement": "DSN=DFH410.CICS.DFHCSD",
+              "program_id": "DFHCSDUP"
+            }
+          ],
+          "logic": null
+        },
+        {
+          "ddname": "SYSPRINT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "CBDOUT",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "AMSDUMP",
+          "parameters_map": { "SYSOUT": "*" },
+          "dataset_map_list": [],
+          "logic": null
+        },
+        {
+          "ddname": "SYSIN",
+          "parameters_map": { "DISP": "SHR", "DSN": "SHR" },
+          "dataset_map_list": [
+            {
+              "dataset_name": "SHR",
+              "variable_name": "SYSIN",
+              "dd_statement": "DSN=FPTLT01.DEMO.CARDDEMO.CSD(CSDDEL)",
+              "program_id": "DFHCSDUP"
+            }
+          ],
+          "logic": null
+        }
+      ],
+      "io_statements": [
+        "STEPLIB: DSN=DFH410.SDFHLOAD\n",
+        "DFHCSD: DSN=DFH410.CICS.DFHCSD\n",
+        "SYSIN: DSN=FPTLT01.DEMO.CARDDEMO.CSD(CSDDEL)\n"
+      ],
+      "property": "The JCL step CSDDEF executes the DFHCSDUP program, utilizing input from DFH410.SDFHLOAD, DFH410.CICS.DFHCSD, and FPTLT01.DEMO.CARDDEMO.CSD(CSDDEL), with output directed to SYSOUT."
+    }
+  ]
+}
